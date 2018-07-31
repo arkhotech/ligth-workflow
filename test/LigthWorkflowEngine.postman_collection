@@ -1,0 +1,83 @@
+{
+	"variables": [],
+	"info": {
+		"name": "LigthWorkflowEngine",
+		"_postman_id": "feb9ea37-05d5-2c30-f7b5-14a0ad492752",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Test ",
+			"request": {
+				"url": "http://{{host}}/api/oauth/authorize ",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 7UNs16inBzD8PStY7rGcwV8RVWShtmopH6TWJyXi",
+						"description": ""
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Auth SignUp",
+			"request": {
+				"url": "http://{{host}}/api/auth/signup",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-Requested-With",
+						"value": "XMLHttpRequest",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Marcelo\",\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"password_confirmation\": \"123456\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Auth Login",
+			"request": {
+				"url": "http://{{host}}/api/auth/login",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-Requested-With",
+						"value": "XMLHttpRequest",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"name\" : \"Marcelo\",\n\t\"password\": \"123456\",\n\t\"remember_me\": true\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
