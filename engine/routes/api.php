@@ -24,15 +24,39 @@ Route::group([
     ], function() {
         Route::get('logout', 'AuthController@logout');
         Route::get('user', 'AuthController@user');
+        
     });
 });
 
+Route::group(
+        ["prefix" => "domain"],
+        function(){
+            Route::post('/','DomainController@create');
+            Route::get('/','DomainController@index');
+            Route::put('/{id}','DomainController@updateDomain');
+            Route::delete('/{id}','DomainController@deleteDomain');
+        });
+
+Route::group(
+        ["prefix" => "process"],
+        function(){
+            Route::get('/', 'ProcessController@listProcess');
+            Route::post('/','ProcessController@newProcess');
+            Route::put('/{id}','ProcessController@updateProcess');
+            Route::delete('/{id}','ProcessController@deleteProcess');
+        });
 
 /*
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'middleware'=>'auth:api'
+],function(){
+   Route::get('process','Process@listProcess'); 
 });
-
-
-Route::get('process','Process@listProcess')->middleware('auth:api');
 */
+//Route::group([
+//    'middleware' => 'auth:api',
+//    'prefix' => 'process'
+//],function(){
+//   Route::get('/','Process@listProcess');  //Listar procesos
+//   Route::post('/','Process@newProcess');
+//});

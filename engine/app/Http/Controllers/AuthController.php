@@ -50,12 +50,12 @@ class AuthController extends Controller
             'password' => 'required|string',
             'remember_me' => 'boolean'
         ]);
-        $credentials['request'] = $request;//request(['email', 'password']);
-        if(!Auth::validate($credentials))
+        $credentials = request(['email', 'password']);
+        if(!Auth::guard('web')->attempt($credentials))
             return response()->json([
                 'message' => 'Unauthorized'
             ], 401);
-        $user = $request->user();
+        $user = Auth::guard('web')->user();
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         if ($request->remember_me)
