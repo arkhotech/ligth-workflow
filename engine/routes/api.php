@@ -40,10 +40,14 @@ Route::group(
 Route::group(
         ["prefix" => "process"],
         function(){
-            Route::get('/', 'ProcessController@listProcess');
-            Route::post('/','ProcessController@newProcess');
+            Route::get('/{id_domain}', 'ProcessController@listProcess');
+            Route::get('/trash/{id_domain}', 'ProcessController@listTrashedProcess');
+            Route::patch('/trash/{id_process}','ProcessController@restoreProcess');
+            Route::post('/{id_domain}','ProcessController@newProcess');
             Route::put('/{id}','ProcessController@updateProcess');
             Route::delete('/{id}','ProcessController@deleteProcess');
+            Route::post('/start/{id}','ProcessController@startProcess');
+            Route::get('/instances/{id_dominio}/{id_proceso}','ProcessController@instances');
         });
 
 /*

@@ -12,7 +12,7 @@ services:
      - frontend
      - backend
   core:
-    image: "arkhotech/php-fpm"
+    image: "arkhotech/php-fpm:7.2"
     volumes:
       - ./engine:/app
     networks:

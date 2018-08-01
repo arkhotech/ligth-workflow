@@ -18,7 +18,7 @@ class CreateProcessInstancesTable extends Migration
             $table->string('state');
             $table->unsignedInteger('process_id');
             $table->timestamps();
-            $table->foreign('process_id')->references('id')->on('users');
+            $table->foreign('process_id')->references('id')->on('processes');
             
         });
     }

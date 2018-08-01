@@ -17,6 +17,7 @@ class AlterProcess extends Migration
         Schema::table("processes",function(Blueprint $table){
             $table->unsignedInteger('role_owner_id');
             $table->unique(['name','domain_id']);
+            $table->softDeletes();
         });
     }
 
