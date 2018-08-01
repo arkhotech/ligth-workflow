@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Process;
 
 class ProcessController extends Controller
 {
@@ -24,14 +25,22 @@ class ProcessController extends Controller
     public function newProcess(Request $request){
         $request->validate([
             'name' => 'required|string',
-            "domain_id" => 'required|integer'
+            "domain_id" => 'required|integer',
+            'role_owner_id' => 'required|integer'
         ]);
-        
+        //check Si existe:
+        if(Process::where("name = ? and domain_id = ?", 
+                $request->input('name'),
+                $request->input('role_owner_id'))!=null){
+            return response()->json(['status' => 'registro existe'],409);
+        }
         $process = new Process();
         
         foreach(Process::fields as $field){
            $process->{$field} = $request->input($field);
-        }
+        } 
+        
+        $process->save();
         
         return response()->json(['status' => 'ok'],201);
         
