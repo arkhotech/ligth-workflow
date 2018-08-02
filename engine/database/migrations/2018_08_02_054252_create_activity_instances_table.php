@@ -33,7 +33,7 @@ class CreateActivityInstancesTable extends Migration
     public function down()
     {
         Schema::table('activity_instances',function(Blueprint $table){
-            $table->dropForeign('activity_process_instance_foreign');
+            $table->dropForeign('activity_instances_activity_id_foreign');
         });
         Schema::dropIfExists('activity_instances');
     }

@@ -68,3 +68,10 @@ Route::group(
         function(){
             
         });
+        
+        
+Route::group(
+    ["prefix" => "process/{id_proceso}/activity/{id_activity}/upload"],
+        function(){
+            Route::post("/","AttachmentController@upload");
+        });

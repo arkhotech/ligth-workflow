@@ -23,13 +23,12 @@ class CreateAttachmentsTable extends Migration
             $table->string('extension');
             $table->string('mime_type')->default('text/plain');
             $table->string('url');  //location
-            $table->json('metadata');
-            $table->string('description');
+            $table->json('metadata')->null();
+            $table->string('description')->null();
             
-            $table->foreignKey('activity_instance_id')
+            $table->foreign('activity_instance_id')
                     ->references('id')
-                    ->on('activity_instances')
-                    ->onDelete('null');
+                    ->on('activity_instances');
             
         });
     }

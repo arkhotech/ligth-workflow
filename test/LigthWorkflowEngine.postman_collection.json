@@ -1,0 +1,458 @@
+{
+	"info": {
+		"_postman_id": "6de73e40-8647-4163-8b7b-8ca739b2ff98",
+		"name": "LigthWorkflowEngine",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Domain",
+			"description": "Servicios para la creación de dominios",
+			"item": [
+				{
+					"name": "Nuevo Dominio",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"example.com\",\n\t\"company_name\": \"Arkhotech SpA\",\n\t\"admin_email\" : \"msilva@arkhotech.com\"\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/domain",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Dominios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/domain",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain"
+							]
+						},
+						"description": "Parametros por Query String"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Dominio",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"description\": \"Esto es una prueba\"}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/domain/4",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Dominio",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/domain/2",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Process",
+			"description": null,
+			"item": [
+				{
+					"name": "Recuperar Registro",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/process/trash/3",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"trash",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo Proceso",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/javascript"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Prueba\",\n\t\"role_owner_id\": 1\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Process",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/process/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Proceso",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/process/3",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"3"
+							]
+						},
+						"description": "Elimina logicamente el proceso"
+					},
+					"response": []
+				},
+				{
+					"name": "List Deleted Process",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/process/trash/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"trash",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Start Process",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/process/start/3",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"start",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Instancias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/process/instances/1/2",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"instances",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Attachments",
+			"description": "",
+			"item": [
+				{
+					"name": "Upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"description": "",
+									"type": "file"
+								},
+								{
+									"key": "name",
+									"value": "prueba.txt",
+									"description": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Esto es una prueba",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/1/activity/1/upload",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"1",
+								"activity",
+								"1",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test ",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImExMDljNjI0MWNiYjIxNjgwM2NlNDMyYmEwOWFmNDk3Y2E4MWViYjQ0ZDUyNjY0OTY2YmNjNmNjNzA4ZGM2Nzc3ZmNhZTIyNzVlY2RlODZlIn0.eyJhdWQiOiIxIiwianRpIjoiYTEwOWM2MjQxY2JiMjE2ODAzY2U0MzJiYTA5YWY0OTdjYTgxZWJiNDRkNTI2NjQ5NjZiY2M2Y2M3MDhkYzY3NzdmY2FlMjI3NWVjZGU4NmUiLCJpYXQiOjE1MzMwNDUyNTUsIm5iZiI6MTUzMzA0NTI1NSwiZXhwIjoxNTY0NTgxMjU1LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.UwrlPNjD8FjqK03XxxzxYHqvVEDrxXQ4fvSzNx9t13FHyh0VayfJxU_DN5tO150j5wS2_N2c4YWsvYU9ske5GVdnJCvyr4FJI3EksjZM9rfgtEpKTbu0uKslBMAzgiRPco200rn4k7-4G31rGrGCSf7a9uUZy7kbsDWQoEoIz6gYBUx_UUsV36HzF1Q_iPueUZAxqr73jTPW7EMSIB9QMwqsKJOizo2c70c8iHPVhQCOlE2wj7jhjpgu3OxUOlpqYEOwyPN4JwsT861n-BRC5pgkoeG4LNbvQGwonNPRfRcFI1WyXrH7EKTDYtg7Mo02Z_gCi254YT24v3o1uVN4x4SsAC5m-nUy7Bu_GkOrddTSTIRDz_653nlrs326msbaan58cCBgWSoGLge0TVjE7KA5rk5lrUsEdUHTBdv_ghxrKe3mIGFQeXBzLOgwc_4uLlUY61Kob0UkLe4TpLP8oh09Ad8G5h-15WbNCLWKMPwLiym4TIbjWQlmbJs1x_d98Qk4xWOmEGaplUnN1X7H7mBfiy4FI2DX8by7TYcdPmt8CnArCE7TQszf-VBXExiaABEofMTE2O5xB751_dEfhrFNqjyKH7Anf9_Ro5B43dyURcgDXjnnM631p2mASHAdLKvDDFCkSNmsvyBHh_EZN6kIO4iD6DsOX_gIHt8A9a0\n   "
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{host}}/api/oauth/authorize",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"oauth",
+						"authorize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth SignUp",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Requested-With",
+						"value": "XMLHttpRequest"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Marcelo\",\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"password_confirmation\": \"123456\"\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "X-Requested-With",
+						"value": "XMLHttpRequest"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456____\",\n\t\"remember_me\": true\n}"
+				},
+				"url": {
+					"raw": "http://{{host}}/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

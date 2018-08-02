@@ -11,6 +11,12 @@ services:
     networks:
      - frontend
      - backend
+
+  redis:
+    image: "redis"
+    networks:
+      - backend
+
   core:
     image: "arkhotech/php-fpm:7.2"
     volumes:
