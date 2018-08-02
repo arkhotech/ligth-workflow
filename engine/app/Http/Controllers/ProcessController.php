@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Process;
 use App\Domain;
 use App\ProcessInstance;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ProcessController extends Controller
 {
@@ -83,9 +85,14 @@ class ProcessController extends Controller
     }
     
     public function startProcess($id_process){
+        Log::debug("User: ".Auth::user());
         $process = Process::find($id_process);
-        
+        return response(null,300);
         if($process != null){
+            //check si el usuario es aninimo o no (usuario anonimo 0)
+            if($process->role_owner_id!=0){
+                
+            }
             $id_instance = Process::newProcessInstance($process);
             return response()->json(array('instance_id'=> $id_instance),200);
         }

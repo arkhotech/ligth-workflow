@@ -19,7 +19,11 @@ class Process extends Model{
     }
     
     public function instances(){
-            return $this->hasMany("App\ProcessInstance");
+        return $this->hasMany("App\ProcessInstance");
+    }
+    
+    public function activities(){
+        return $this->hasMany("App\Activity");
     }
     
     public static function newProcessInstance($process){

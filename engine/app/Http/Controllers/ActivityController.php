@@ -3,83 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Activity;
+use App\Process;
 use Illuminate\Http\Request;
 
-class ActivityController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+class ActivityController extends Controller{
+    
+    public function newActivity(Request $request, $id_domain,$id_proceso){
+        $request->validate(
+                ["activity_name" => "required|string"]
+                );
+        if( Process::find($id_proceso) != null ){  
+            //Check si es que existe el proceso para parear
+            $activity = new Activity();
+            $activity->name = $request->input('activity_name');
+            $activity->process_id = $id_proceso;
+            $activity->save();
+            return response(null,201);
+        }
+        return response()->json(array("message" => "No existe el proceso"),412);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    
+    public function listActivities($id_proceso){
+        $process = Process::find($id_proceso);
+        if($process == null){
+            return response()->json(array("message" => "No existe el proceso"),412);
+        }
+        return response()->json($process->activities()->get());      
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+    
+    public function editActivity(Request $request,$id_proceso, $id_activity){
+        
+        $process = Process::find($id_proceso);
+        if($process != null){
+            $activity = $process->activities()
+                    ->where('id',$id_activity)
+                    ->first();
+            if($activity == null){
+                return response(null,404);
+            }
+            foreach(Activity::editable_fields as $field ){
+                if($request->input($field)==null){
+                    continue;
+                }
+                $activity->{$field} = $request->input($field);
+            }
+            $activity->save();
+            return response(null,200);
+        }
+        return response()->json(array("message" => "No existe el proceso"),412);
+      
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Activity $activity)
-    {
-        //
+    
+    public function deleteActivity($id_proceso, $id_activity){
+        $process = Process::find($id_proceso);
+        if($process != null){
+            $activity = $process->activites()
+                    ->where('id',$id_activity)
+                    ->first();
+            if($activity == null ){
+                return response(null,404);
+            }
+        }
+        response()->json(array("message" => "No existe el proceso"),412);
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Activity $activity)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Activity $activity)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Activity  $activity
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Activity $activity)
-    {
-        //
-    }
+    
 }

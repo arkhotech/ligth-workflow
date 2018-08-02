@@ -38,7 +38,8 @@ Route::group(
         });
 
 Route::group(
-        ["prefix" => "process"],
+        ["prefix" => "process",
+         'middleware' => 'auth:api'],
         function(){
             Route::get('/{id_domain}', 'ProcessController@listProcess');
             Route::get('/trash/{id_domain}', 'ProcessController@listTrashedProcess');
@@ -48,19 +49,22 @@ Route::group(
             Route::delete('/{id}','ProcessController@deleteProcess');
             Route::post('/start/{id}','ProcessController@startProcess');
             Route::get('/instances/{id_dominio}/{id_proceso}','ProcessController@instances');
+            
         });
 
-/*
-Route::group([
-    'middleware'=>'auth:api'
-],function(){
-   Route::get('process','Process@listProcess'); 
-});
-*/
-//Route::group([
-//    'middleware' => 'auth:api',
-//    'prefix' => 'process'
-//],function(){
-//   Route::get('/','Process@listProcess');  //Listar procesos
-//   Route::post('/','Process@newProcess');
-//});
+
+Route::group(
+        ["prefix" => "process/{id_proceso}/activity",
+            'middleware' => 'auth:api'],
+        function(){
+            Route::get('/','ActivityController@listActivities');
+            Route::post('/','ActivityController@newActivity');
+            Route::delete('/{id}','ActivityController@deleteActivity');
+            Route::put('/{id}','ActivityController@editActivity');
+        });
+
+Route::group(
+    ["prefix" => "process/{id_proceso}/activity/{id_activity}"],
+        function(){
+            
+        });
