@@ -19,7 +19,7 @@ class CreateActivityInstancesTable extends Migration
             $table->unsignedInteger('activity_id');
             $table->foreign('activity_id')
                     ->references('id')
-                    ->on('process_instances')
+                    ->on('activity_instances')
                     ->onDelete('cascade');
             $table->timestamps();
         });

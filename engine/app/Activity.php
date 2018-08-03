@@ -16,10 +16,11 @@ class Activity extends Model{
         return $this->belongsTo('\App\Process');
     }
     
-    public function createInstance(ProcessInstance $process){
-        if($this->process_id != $process->process_id){
-            return null;
-        }
-        
+    public function newActivityInstance(){
+        $instance = new ActivityInstance();
+        $instance->process_instance_id = $this->process_id;
+        $instance->activity_id = $this->id;
+        $instance->save();
+        return $instance;
     }
 }

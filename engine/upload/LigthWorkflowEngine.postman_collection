@@ -1,8 +1,10 @@
 {
+	"variables": [],
 	"info": {
-		"_postman_id": "6de73e40-8647-4163-8b7b-8ca739b2ff98",
 		"name": "LigthWorkflowEngine",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"_postman_id": "9bcff707-4173-e630-7df8-61e38dc1afb3",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
 		{
@@ -12,6 +14,7 @@
 				{
 					"name": "Nuevo Dominio",
 					"request": {
+						"url": "http://{{host}}/api/domain",
 						"method": "POST",
 						"header": [
 							{
@@ -31,39 +34,19 @@
 							"mode": "raw",
 							"raw": "{\n\t\"name\" : \"example.com\",\n\t\"company_name\": \"Arkhotech SpA\",\n\t\"admin_email\" : \"msilva@arkhotech.com\"\n}"
 						},
-						"url": {
-							"raw": "http://{{host}}/api/domain",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"domain"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Dominios",
 					"request": {
+						"url": "http://{{host}}/api/domain",
 						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
-						},
-						"url": {
-							"raw": "http://{{host}}/api/domain",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"domain"
-							]
 						},
 						"description": "Parametros por Query String"
 					},
@@ -72,6 +55,7 @@
 				{
 					"name": "Actualizar Dominio",
 					"request": {
+						"url": "http://{{host}}/api/domain/4",
 						"method": "PUT",
 						"header": [
 							{
@@ -87,42 +71,21 @@
 							"mode": "raw",
 							"raw": "{ \"description\": \"Esto es una prueba\"}"
 						},
-						"url": {
-							"raw": "http://{{host}}/api/domain/4",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"domain",
-								"4"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Eliminar Dominio",
 					"request": {
+						"url": "http://{{host}}/api/domain/2",
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": {
-							"raw": "http://{{host}}/api/domain/2",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"domain",
-								"2"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				}
@@ -130,33 +93,26 @@
 		},
 		{
 			"name": "Process",
-			"description": null,
+			"description": "",
 			"item": [
 				{
 					"name": "Recuperar Registro",
 					"request": {
+						"url": "http://{{host}}/api/process/trash/3",
 						"method": "PATCH",
 						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://{{host}}/api/process/trash/3",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"trash",
-								"3"
-							]
-						}
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Nuevo Proceso",
 					"request": {
+						"url": "http://{{host}}/api/process/1",
 						"method": "POST",
 						"header": [
 							{
@@ -176,59 +132,33 @@
 							"mode": "raw",
 							"raw": "{\n\t\"name\" : \"Prueba\",\n\t\"role_owner_id\": 1\n}"
 						},
-						"url": {
-							"raw": "http://{{host}}/api/process/1",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"1"
-							]
-						}
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "List Process",
 					"request": {
+						"url": "http://{{host}}/api/process/1",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://{{host}}/api/process/1",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"1"
-							]
-						}
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Eliminar Proceso",
 					"request": {
+						"url": "http://{{host}}/api/process/3",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://{{host}}/api/process/3",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"3"
-							]
+						"body": {
+							"mode": "raw",
+							"raw": ""
 						},
 						"description": "Elimina logicamente el proceso"
 					},
@@ -237,67 +167,42 @@
 				{
 					"name": "List Deleted Process",
 					"request": {
+						"url": "http://{{host}}/api/process/trash/1",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://{{host}}/api/process/trash/1",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"trash",
-								"1"
-							]
-						}
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Start Process",
 					"request": {
+						"url": "http://{{host}}/api/process/start/3",
 						"method": "POST",
 						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://{{host}}/api/process/start/3",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"start",
-								"3"
-							]
-						}
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Instancias",
 					"request": {
+						"url": "http://{{host}}/api/process/instances/1/2",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"url": {
-							"raw": "http://{{host}}/api/process/instances/1/2",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"instances",
-								"1",
-								"2"
-							]
-						}
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -310,6 +215,7 @@
 				{
 					"name": "Upload",
 					"request": {
+						"url": "http://{{host}}/api/process/1/activity/1/upload",
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -335,21 +241,95 @@
 								}
 							]
 						},
-						"url": {
-							"raw": "http://{{host}}/api/process/1/activity/1/upload",
-							"protocol": "http",
-							"host": [
-								"{{host}}"
-							],
-							"path": [
-								"api",
-								"process",
-								"1",
-								"activity",
-								"1",
-								"upload"
-							]
-						}
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Activities",
+			"description": "",
+			"item": [
+				{
+					"name": "Listar Actividades",
+					"request": {
+						"url": "http://{{host}}/api/process/1/activity",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Nueva Actividad",
+					"request": {
+						"url": "http://{{host}}/api/process/1/activity",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"activity_name\" : \"test\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Actualiar Actividad",
+					"request": {
+						"url": "http://{{host}}/api/process/1/activity/1",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"test2\"\n}"
+						},
+						"description": ""
 					},
 					"response": []
 				}
@@ -358,6 +338,7 @@
 		{
 			"name": "Test ",
 			"request": {
+				"url": "http://{{host}}/api/oauth/authorize",
 				"method": "GET",
 				"header": [
 					{
@@ -373,24 +354,14 @@
 					"mode": "raw",
 					"raw": ""
 				},
-				"url": {
-					"raw": "http://{{host}}/api/oauth/authorize",
-					"protocol": "http",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"oauth",
-						"authorize"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Auth SignUp",
 			"request": {
+				"url": "http://{{host}}/api/auth/signup",
 				"method": "POST",
 				"header": [
 					{
@@ -406,24 +377,14 @@
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"Marcelo\",\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"password_confirmation\": \"123456\"\n}"
 				},
-				"url": {
-					"raw": "http://{{host}}/api/auth/signup",
-					"protocol": "http",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"auth",
-						"signup"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		},
 		{
 			"name": "Auth Login",
 			"request": {
+				"url": "http://{{host}}/api/auth/login",
 				"method": "POST",
 				"header": [
 					{
@@ -439,18 +400,7 @@
 					"mode": "raw",
 					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456____\",\n\t\"remember_me\": true\n}"
 				},
-				"url": {
-					"raw": "http://{{host}}/api/auth/login",
-					"protocol": "http",
-					"host": [
-						"{{host}}"
-					],
-					"path": [
-						"api",
-						"auth",
-						"login"
-					]
-				}
+				"description": ""
 			},
 			"response": []
 		}

@@ -66,7 +66,7 @@ Route::group(
 Route::group(
     ["prefix" => "process/{id_proceso}/activity/{id_activity}"],
         function(){
-            
+            Route::post('start','ActivityInstanceController@start');
         });
         
         

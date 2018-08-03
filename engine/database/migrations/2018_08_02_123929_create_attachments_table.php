@@ -15,7 +15,7 @@ class CreateAttachmentsTable extends Migration
     {
         Schema::create('attachments', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+//            $table->timestamps();
             $table->unsignedInteger('activity_instance_id');
             $table->unsignedInteger('process_instance_id');
             $table->string('driver')->default('fs'); //Tipo de archivo, s3, fs, alfresco u otro
@@ -31,6 +31,7 @@ class CreateAttachmentsTable extends Migration
                     ->on('activity_instances');
             
         });
+        
     }
 
     /**
