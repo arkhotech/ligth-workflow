@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class ActivityInstance extends Model{
     
     
-    public function activities(){
+    public function activity(){
         return $this->belongsTo("\App\Activity");
     }
     
-    public function parameters(){
-        return $this->many("App\ActivityParameter");
+    public function variables(){
+        return $this->many("App\ActivityVarible");
+    }
+    
+    public function process(){
+        return $this->belongTo("App\ProcessInstance"); 
     }
 }

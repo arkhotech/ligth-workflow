@@ -3,83 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\ProcessInstance;
+use App\Process;
 use Illuminate\Http\Request;
+use App\ProcessVariable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 
 class ProcessInstanceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
+   public function createInstance(Request $request, $id_process){
+        Log::debug("User: ".Auth::user());
+        $request->validate(['parameters' => 'array']);
+        
+        $process = Process::find($id_process);
+        
+        if($process != null){
+            //check si el usuario es aninimo o no (usuario anonimo 0) 
+            $id_instance = Process::newProcessInstance($process);
+            $declared_vars = $process->declaredVariables()->get();
+            
+            $keys = array();
+            foreach($declared_vars as $var){
+                $keys[$var->name] = $var;
+            }
+            try{
+                DB::beginTransaction();
+                $error = [];
+                foreach(Input::get('parameters') as   $item){
+                    if( key_exists(key($item),$keys)){
+                        
+                        $param = new ProcessVariable();
+                        $param->name = key($item);
+                        $param->value = json_encode($item[key($item)]);
+                        $param->id_process = $id_instance;
+                        $param->save();
+                    }else{
+                        $error[] =  key($item);
+                    }
+                }
+                
+                if(count($error) != 0 ){
+                     DB::rollback();
+                    return response()
+                                ->json(
+                        array("variables.no.declaradas" => $error),404);
+                }
+                
+                DB::commit();
+                return response(null,201);
+            }catch(Throwable $e){
+               DB::rollback();
+               return response(null,500);
+            }
+            
+            return response()->json(array('instance_id'=> $id_instance),201);
+        }
+        return response(null,404);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    
+    public function instances($id_proceso){
+        $process = Process::where("id",$id_proceso)->first();
+        if($process!= null){
+            return response()->json($process->instances()->get());
+        }
+        return response(null,404);
+        
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\ProcessInstance  $processInstance
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ProcessInstance $processInstance)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ProcessInstance  $processInstance
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ProcessInstance $processInstance)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ProcessInstance  $processInstance
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ProcessInstance $processInstance)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\ProcessInstance  $processInstance
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(ProcessInstance $processInstance)
-    {
-        //
-    }
+   
 }

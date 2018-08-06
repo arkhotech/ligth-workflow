@@ -13,7 +13,7 @@ class CreateParametersTable extends Migration
      */
     public function up()
     {
-        Schema::create('activity_parameters',function(Blueprint $table){
+        Schema::create('activity_variables',function(Blueprint $table){
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('id_activity');
@@ -26,13 +26,13 @@ class CreateParametersTable extends Migration
                     ->on('activity_instances')
                     ->onDelete('cascade');
         });
-        Schema::create('process_parameters',function(Blueprint $table){
+        Schema::create('process_variables',function(Blueprint $table){
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('id_process');
             $table->string('name');
-            $table->json('parameter');
-            $table->string('script');
+            $table->json('value');
+            $table->string('script')->nullable();
             $table->unique('id','name');
             $table->foreign('id_process')
                     ->references('id')
@@ -48,7 +48,7 @@ class CreateParametersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('activity_parameters');
-        Schema::dropIfExists('process_parameters');
+        Schema::dropIfExists('activity_variables');
+        Schema::dropIfExists('process_variables');
     }
 }

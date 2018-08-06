@@ -47,8 +47,8 @@ Route::group(
             Route::post('/{id_domain}','ProcessController@newProcess');
             Route::put('/{id}','ProcessController@updateProcess');
             Route::delete('/{id}','ProcessController@deleteProcess');
-            Route::post('/start/{id}','ProcessController@startProcess');
-            Route::get('/instances/{id_dominio}/{id_proceso}','ProcessController@instances');
+            Route::post('/start/{id}','ProcessInstanceController@createInstance');
+            Route::get('/instances/{id_proceso}','ProcessInstanceController@instances');
             
         });
 
@@ -63,12 +63,31 @@ Route::group(
             Route::put('/{id}','ActivityController@editActivity');
         });
 
+//Todo lo relacionado con instancias        
+        
 Route::group(
-    ["prefix" => "process/{id_proceso}/activity/{id_activity}"],
+        ["prefix"  => "instances/activity/{id_instance}"],
         function(){
-            Route::post('start','ActivityInstanceController@start');
+            Route::get("/transitions/{sense}","ActivityInstanceController@listTransitions");
+    
+        });
+
+Route::group(
+    ["prefix" => 'activity/{id_prev}'],
+        function(){
+            Route::post('/start','ActivityInstanceController@start');
+            Route::post('/transition_to/{id_next}',"TransitionController@createTransition");
+           
+        });        
+
+Route::group(
+        ["prefix" => "activity/{id_activity}"],
+        function(){
+             Route::get('/transitions',"ActivityInstanceController@getTransitions");
+             Route::get("/instances","ActivityInstanceController@listInstances");             
         });
         
+
         
 Route::group(
     ["prefix" => "process/{id_proceso}/activity/{id_activity}/upload"],

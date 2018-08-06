@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ActivityController extends Controller{
     
-    public function newActivity(Request $request, $id_domain,$id_proceso){
+    public function newActivity(Request $request,$id_proceso){
         $request->validate(
                 ["activity_name" => "required|string"]
                 );

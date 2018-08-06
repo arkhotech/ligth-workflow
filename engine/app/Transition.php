@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ActivityParameter extends Model
+class Transition extends Model
 {
     //
 }

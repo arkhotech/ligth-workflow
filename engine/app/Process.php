@@ -26,6 +26,10 @@ class Process extends Model{
         return $this->hasMany("App\Activity");
     }
     
+    public function declaredVariables(){
+        return $this->hasMany('App\DeclaredVariable');
+    }
+    
     public static function newProcessInstance($process){
         $instance = new ProcessInstance();
         $instance->process_id = $process->id;

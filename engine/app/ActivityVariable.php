@@ -4,9 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-
-
-class ProcessInstance extends Model{
-    
-    
+class ActivityVariable extends Model
+{
+    //
 }

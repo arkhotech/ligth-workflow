@@ -16,6 +16,14 @@ class Activity extends Model{
         return $this->belongsTo('\App\Process');
     }
     
+    public function outputTransitions(){
+        return $this->hasMany('\App\Transition','next_activity_id');
+    }
+    
+    public function inputTransitions(){
+        return $this->hasMany('\App\Transition','prev_activity_id');
+    }
+    
     public function newActivityInstance(){
         $instance = new ActivityInstance();
         $instance->process_instance_id = $this->process_id;

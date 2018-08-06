@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Process;
 use App\Domain;
-use App\ProcessInstance;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\DeclaredVariable;
 
 class ProcessController extends Controller
 {
@@ -19,7 +18,7 @@ class ProcessController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $this->middleware("auth:api");
+        //$this->middleware("auth:api");
     }
     
     public function listProcess($id_domain){
@@ -36,8 +35,12 @@ class ProcessController extends Controller
     public function newProcess(Request $request,$domain_id){
         $request->validate([
             'name' => 'required|string',
-            'role_owner_id' => 'required|integer'
+            'role_owner_id' => 'required|integer',
+            'variables' => 'array'
         ]);
+        DB::beginTransaction();
+        
+       
         //check Si existe:
         if(Process::where("name","=",$request->input('name'))
                 ->where('role_owner_id',"=",$request->input('role_owner_id'))->first()!=null){
@@ -54,8 +57,18 @@ class ProcessController extends Controller
         } 
         
         $process->save();
+        $variables = $request->input('variables.*');
+        foreach($variables as $item){
+            $new_var = new DeclaredVariable();
+            $new_var->name = $item['name'];
+            $new_var->process_id = $process->id;
+            $new_var->type = $item['type'];
+            $new_var->validator = $item['validator'];
+            $new_var->save();
+        }
         
-        return response()->json(['status' => 'ok'],201);
+        DB::commit();
+        return response()->json(['id_process' => $process->id ],201);
         
     }
     
@@ -84,29 +97,6 @@ class ProcessController extends Controller
         }
     }
     
-    public function startProcess($id_process){
-        Log::debug("User: ".Auth::user());
-        $process = Process::find($id_process);
-        return response(null,300);
-        if($process != null){
-            //check si el usuario es aninimo o no (usuario anonimo 0)
-            if($process->role_owner_id!=0){
-                
-            }
-            $id_instance = Process::newProcessInstance($process);
-            return response()->json(array('instance_id'=> $id_instance),200);
-        }
-        return response(null,404);
-    }
-    
-    public function instances($id_dominio,$id_proceso){
-        $process = Process::where("domain_id",$id_dominio)
-                ->where("id",$id_proceso)->first();
-        if($process!= null){
-            return response()->json($process->instances()->get());
-        }
-        return response(null,404);
-        
-    }
+   
   
 }
