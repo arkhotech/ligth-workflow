@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\Input;
 
 class ProcessInstanceController extends Controller
 {
+    
+    /**
+     * 
+     * @param Request $request
+     * @param type $id_process
+     * @return type
+     */
    public function createInstance(Request $request, $id_process){
         Log::debug("User: ".Auth::user());
         $request->validate(['parameters' => 'array']);

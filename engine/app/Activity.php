@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model{
     //
-    const editable_fields = [ 'name'];
+    const editable_fields = [ 'name','start_activity','end_activity'];
     
     public function activities(){
         return $this->hasMany("\App\ActivityInstance");
