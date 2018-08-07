@@ -117,20 +117,23 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "{{token}}"
+								"value": "Bearer {{token}}",
+								"description": ""
 							},
 							{
 								"key": "Accept",
-								"value": "application/javascript"
+								"value": "application/javascript",
+								"description": ""
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Prueba\",\n\t\"role_owner_id\": 1\n}"
+							"raw": "{\n\t\"name\" : \"Fin\",\n\t\"role_owner_id\": 1,\n\t\"variables\" : []\n}"
 						},
 						"description": ""
 					},
@@ -141,11 +144,24 @@
 					"request": {
 						"url": "http://{{host}}/api/process/1",
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": ""
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -181,12 +197,28 @@
 				{
 					"name": "Start Process",
 					"request": {
-						"url": "http://{{host}}/api/process/start/3",
+						"url": "http://{{host}}/api/process/start/6",
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n\t\"parameters\" : []\n}"
 						},
 						"description": ""
 					},
@@ -195,13 +227,10 @@
 				{
 					"name": "Listar Instancias",
 					"request": {
-						"url": "http://{{host}}/api/process/instances/1/2",
+						"url": "http://{{host}}/api/process/instances/2",
 						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -254,7 +283,7 @@
 				{
 					"name": "Listar Actividades",
 					"request": {
-						"url": "http://{{host}}/api/process/1/activity",
+						"url": "http://{{host}}/api/process/6/activity",
 						"method": "GET",
 						"header": [
 							{
@@ -276,7 +305,7 @@
 				{
 					"name": "Nueva Actividad",
 					"request": {
-						"url": "http://{{host}}/api/process/1/activity",
+						"url": "http://{{host}}/api/process/6/activity",
 						"method": "POST",
 						"header": [
 							{
@@ -297,16 +326,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"activity_name\" : \"test\"\n}"
+							"raw": "{\n\t\"activity_name\" : \"Conditional\",\n\t\"type\" : \"conditional\"\n}"
 						},
 						"description": ""
 					},
 					"response": []
 				},
 				{
-					"name": "Actualiar Actividad",
+					"name": "Actualizar Actividad",
 					"request": {
-						"url": "http://{{host}}/api/process/1/activity/1",
+						"url": "http://{{host}}/api/process/6/activity/3",
 						"method": "PUT",
 						"header": [
 							{
@@ -327,9 +356,135 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"test2\"\n}"
+							"raw": "{\n\t\"name\": \"Conditional\",\n\t\"end_activity\": false,\n\t\"start_activity\": true\n}"
 						},
 						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Start Activiity",
+					"request": {
+						"url": "{{api}}/activity/3/start",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"parameters\" : \n\t\t[ { \"p1\" : \"v1\" },  \n\t\t  { \"p2\" : \"v2\" },\n\t\t  { \"p3\" : \"v3\" },\n\t\t  { \"p4\" : \"v4\" }\n\t\t]\n}"
+						},
+						"description": "Inicia una instancia de actividad"
+					},
+					"response": []
+				},
+				{
+					"name": "Listar instancias",
+					"request": {
+						"url": "{{api}}/activity/2/instances",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transition",
+			"description": "Transiciones entre actividades",
+			"item": [
+				{
+					"name": "TransitionTo",
+					"request": {
+						"url": "http://{{host}}/api/transition/from/2/to/3",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Transiciones",
+					"request": {
+						"url": "{{api}}/instances/activity/3/transitions/next",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Modificar Transicion",
+					"request": {
+						"url": "http://{{host}}/api/transition/2/from/1/to/2",
+						"method": "PATCH",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Editar Condicion",
+					"request": {
+						"url": "http://{{host}}/api/transition/2/condition",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"condition\" : \"\"\n}"
+						},
+						"description": "Edita la condicion de una transición"
 					},
 					"response": []
 				}
@@ -389,16 +544,18 @@
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json"
+						"value": "application/json",
+						"description": ""
 					},
 					{
 						"key": "X-Requested-With",
-						"value": "XMLHttpRequest"
+						"value": "XMLHttpRequest",
+						"description": ""
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456____\",\n\t\"remember_me\": true\n}"
+					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"remember_me\": true\n}"
 				},
 				"description": ""
 			},
