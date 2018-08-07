@@ -33,9 +33,10 @@ class Process extends Model{
     public static function newProcessInstance($process){
         $instance = new ProcessInstance();
         $instance->process_id = $process->id;
-        $instance->state = "START";
+        $instance->state = "active";
+        $instance->activityCursor = 0;
         $instance->save();
-        return $instance->id;
+        return $instance;
     }
     
 }

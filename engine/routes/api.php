@@ -50,6 +50,7 @@ Route::group(
             Route::post('/start/{id}','ProcessInstanceController@createInstance');
             Route::get('/instances/{id_proceso}','ProcessInstanceController@instances');
             
+            
         });
 
 
@@ -76,7 +77,7 @@ Route::group(
     ["prefix" => 'activity/{id_prev}'],
         function(){
             Route::post('/start','ActivityInstanceController@start');
-            Route::post('/transition_to/{id_next}',"TransitionController@createTransition");
+//            Route::post('/transition_to/{id_next}',"TransitionController@createTransition");
            
         });        
 
@@ -87,10 +88,23 @@ Route::group(
              Route::get("/instances","ActivityInstanceController@listInstances");             
         });
         
-
+Route::group(
+        ["prefix"=> "transition"],
+        function(){
+            Route::post("/from/{from_id}/to/{to_id}","TransitionController@createTransition");
+            Route::get("/list/fromprocess/{id_process}","TransitionController@listTransitions");
+            Route::patch("/{id_transition}/from/{from_id}/to/{to_id}","TransintionController@editTransition");
+        });
         
 Route::group(
     ["prefix" => "process/{id_proceso}/activity/{id_activity}/upload"],
         function(){
             Route::post("/","AttachmentController@upload");
+        });
+        
+        
+Route::group(
+        ["prefix" => "/process_control"],
+        function(){
+            
         });

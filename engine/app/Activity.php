@@ -6,7 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model{
     //
-    const editable_fields = [ 'name','start_activity','end_activity'];
+    const editable_fields = [ 'name','start_activity','end_activity','type'];
+    
+    const STATES = ['active','finished','error'];
+    
+    public function getPreAction(){
+        return Action::find($this->pre_activity);
+    }
+    
+    public function getPostAction(){
+        return Action::find($this->port_activity);
+    }
     
     public function activities(){
         return $this->hasMany("\App\ActivityInstance");
@@ -28,6 +38,7 @@ class Activity extends Model{
         $instance = new ActivityInstance();
         $instance->process_instance_id = $this->process_id;
         $instance->activity_id = $this->id;
+        $instance->state = 0;
         $instance->save();
         return $instance;
     }

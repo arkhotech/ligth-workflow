@@ -16,8 +16,7 @@ class ProcessController extends Controller
      * @param  \Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
-    {
+    public function __invoke(Request $request){
         //$this->middleware("auth:api");
     }
     

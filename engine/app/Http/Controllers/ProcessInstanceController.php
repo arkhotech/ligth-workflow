@@ -28,7 +28,8 @@ class ProcessInstanceController extends Controller
         
         if($process != null){
             //check si el usuario es aninimo o no (usuario anonimo 0) 
-            $id_instance = Process::newProcessInstance($process);
+            $process_instance = Process::newProcessInstance($process);
+            $id_instance = $process_instance->id;
             $declared_vars = $process->declaredVariables()->get();
             
             $keys = array();
@@ -57,7 +58,7 @@ class ProcessInstanceController extends Controller
                                 ->json(
                         array("variables.no.declaradas" => $error),404);
                 }
-                
+                $process_instance->start();
                 DB::commit();
                 return response(null,201);
             }catch(Throwable $e){
