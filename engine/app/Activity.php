@@ -27,11 +27,12 @@ class Activity extends Model{
     }
     
     public function outputTransitions(){
-        return $this->hasMany('\App\Transition','next_activity_id');
+        //La transicion anterior aputa a esta clase
+        return $this->hasMany('\App\Transition','prev_activity_id');
     }
     
     public function inputTransitions(){
-        return $this->hasMany('\App\Transition','prev_activity_id');
+        return $this->hasMany('\App\Transition','next_activity_id');
     }
     
     public function newActivityInstance(){

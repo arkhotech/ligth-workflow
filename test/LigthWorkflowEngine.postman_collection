@@ -133,7 +133,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Fin\",\n\t\"role_owner_id\": 1,\n\t\"variables\" : []\n}"
+							"raw": "{\n\t\"name\" : \"Inicio\",\n\t\"role_owner_id\": 1,\n\t\"variables\" : [ {\"name\":  \"p1\", \"type\" : \"string\" ,\"validator\" : \"is_string()\" }]\n}"
 						},
 						"description": ""
 					},
@@ -185,11 +185,25 @@
 					"request": {
 						"url": "http://{{host}}/api/process/trash/1",
 						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -485,6 +499,150 @@
 							"raw": "{\n\t\"condition\" : \"\"\n}"
 						},
 						"description": "Edita la condicion de una transición"
+					},
+					"response": []
+				},
+				{
+					"name": "Trasitions from Process",
+					"request": {
+						"url": "{{api}}/transition/list/fromprocess/6",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": "Lista todas las transiciones de un proceso"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Variables",
+			"description": "Grupos de servicios relacionados con variables",
+			"item": [
+				{
+					"name": "Listar Variables",
+					"request": {
+						"url": "http://{{host}}/api/variables/process/6",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add Process Variables",
+					"request": {
+						"url": "http://{{host}}/api/variables/process/6",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \"variables\" : [ \n\t{ \"name\" : \"p1\" , \"value\" : \"1\" }\n\t]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Variables de actividad",
+					"request": {
+						"url": "http://{{host}}/api/variables/activity/6",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "Variables locales"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Process Variable",
+					"request": {
+						"url": "http://{{host}}/api/variables/process/6",
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"variables\" : [ { \"name\" : \"p1\" } ]\n}"
+						},
+						"description": "Eliminar una variable de proceso"
 					},
 					"response": []
 				}

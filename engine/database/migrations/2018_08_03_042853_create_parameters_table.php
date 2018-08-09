@@ -21,10 +21,7 @@ class CreateParametersTable extends Migration
             $table->json('value');
             $table->string('script')->nullable();
             $table->unique('id','name');
-            $table->foreign('id_activity')
-                    ->references('id')
-                    ->on('activity_instances')
-                    ->onDelete('cascade');
+
         });
         Schema::create('process_variables',function(Blueprint $table){
             $table->increments('id');
@@ -34,10 +31,7 @@ class CreateParametersTable extends Migration
             $table->json('value');
             $table->string('script')->nullable();
             $table->unique('id','name');
-            $table->foreign('id_process')
-                    ->references('id')
-                    ->on('process_instances')
-                    ->onDelete('cascade');
+
         });
     }
 

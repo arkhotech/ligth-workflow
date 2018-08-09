@@ -19,12 +19,12 @@ class CreateActionsTable extends Migration
             $table->timestamps();
         });
         Schema::table('activities', function (Blueprint $table) {
-            $table->unsignedInteger('pre_activity')->before('name');
-            $table->unsignedInteger('post_activity')->before('pre_activity');
+            $table->unsignedInteger('pre_activity')->before('name')->nullable();
+            $table->unsignedInteger('post_activity')->before('pre_activity')->nullable();
         });
         
         Schema::table('activity_instances', function (Blueprint $table) {
-            $table->unsignedInteger('state')->before('id');
+            $table->unsignedInteger('state')->before('id')->deafult(0);
         });
     }
 

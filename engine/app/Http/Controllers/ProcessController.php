@@ -20,6 +20,8 @@ class ProcessController extends Controller
         //$this->middleware("auth:api");
     }
     
+ 
+    
     public function listProcess($id_domain){
         //validar dominio
         if(Domain::find($id_domain)==null){
@@ -38,8 +40,7 @@ class ProcessController extends Controller
             'variables' => 'array'
         ]);
         DB::beginTransaction();
-        
-       
+               
         //check Si existe:
         if(Process::where("name","=",$request->input('name'))
                 ->where('role_owner_id',"=",$request->input('role_owner_id'))->first()!=null){
@@ -58,7 +59,7 @@ class ProcessController extends Controller
         $process->save();
         $variables = $request->input('variables.*');
         foreach($variables as $item){
-            $new_var = new DeclaredVariable();
+            $new_var = new ProcessVariable();
             $new_var->name = $item['name'];
             $new_var->process_id = $process->id;
             $new_var->type = $item['type'];

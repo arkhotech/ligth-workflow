@@ -19,6 +19,10 @@ class ActivityInstance extends Model{
         return $this->belongTo("App\ProcessInstance"); 
     }
     
+    public function declaredVariables(){
+        return $this->hasMany("App\ActivityVariables","id_activity");
+    }
+    
     public function nextStage(){
         
     }
@@ -27,14 +31,23 @@ class ActivityInstance extends Model{
         $activity = $this->activity()->first();
         //$this->execAction($activity->getPreAction());
         //Si hay stages, entonces recueprar y ejecutar el primero
-        if($this->type == "xx"){
-            //entonces hay varias condicioes
+        if($this->type == "conditional"){
+            //entonces hay varias condiciones
+            $transitions = $activity->outputTransitions()->get();
+            foreach($transitions as $transition){
+                if( $transition->evaluate() ) {  //Si es correcta, el camino es por acá
+                    $next_activity = Activity::find($transition->next_activity_id);
+                    return $next_activity->newActivityInstance();
+                }
+            }
         }else{
+            Log::debug($activity->name);
             $transition = $activity->outputTransitions()->first();
             
             if($transition!= null){ 
-                $activity = Activity::find($transition->next_activity_id);
-                return $activity::newActivityInstance();
+                $next_activity = Activity::find($transition->next_activity_id);
+                
+                return $next_activity->newActivityInstance();
             }else{
                 Log::debug("Transicion nula");
             }

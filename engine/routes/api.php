@@ -41,6 +41,7 @@ Route::group(
         ["prefix" => "process",
          'middleware' => 'auth:api'],
         function(){
+            Route::get('/variables/{id_process?}','ProcessController@listVariables');
             Route::get('/{id_domain}', 'ProcessController@listProcess');
             Route::get('/trash/{id_domain}', 'ProcessController@listTrashedProcess');
             Route::patch('/trash/{id_process}','ProcessController@restoreProcess');
@@ -104,7 +105,11 @@ Route::group(
         
         
 Route::group(
-        ["prefix" => "/process_control"],
+        ["prefix" => "variables"],
         function(){
-            
+            Route::get("/process/{id_process}","DeclaredVariableController@listProcessVariables");
+            Route::get("/activity/{id_activity?}","DeclaredVariableController@listActivityVariables");
+            Route::post("/process/{id_process}","DeclaredVariableController@addGlobalVariables");
+            Route::put("/process/{id_process}","DeclaredVariableController@addGlobalVariables");
+            Route::delete("/process/{id_process}","DeclaredVariableController@removeGlobalVariables");
         });
