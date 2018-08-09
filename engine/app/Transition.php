@@ -6,18 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Hoa\Ruler\Context;
 use Illuminate\Support\Facades\Log;
 
-
 class Transition extends Model
 {
     //
   
     public function evaluate(ActivityInstance $instance){
         //$instance = Activity::find($this->prev_activity_id);
-        $vars = $instance->declaredVariables()
-                ->select('id','name','value')
-                ->get();
-        var_dump($vars);die;
-        
+        Log::debug('Ejecutando validacion de reglas');
+        $vars = $instance->globalVariables();
+        $ruler = new \Hoa\Ruler\Ruler();
         $rule = $this->condition;
         $context = new Context();
         
@@ -27,6 +24,6 @@ class Transition extends Model
             $context[$var->name] = $var->value;
         }
         return $ruler->assert($rule, $context);
-  
+ 
     }
 }

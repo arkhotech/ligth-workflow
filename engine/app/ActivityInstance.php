@@ -11,15 +11,26 @@ class ActivityInstance extends Model{
     public function activity(){
         return $this->belongsTo("\App\Activity");
     }
-    
+    /**
+     *
+     * @return type
+     */
     public function variables(){
-        return $this->many("App\ActivityVarible");
+        return $this->hasMany("App\ActivityVariable");
+    }
+    
+    public function globalVariables(){
+        $process_instance = $this->process()->first();
+        return $process_instance->variables()->get();
     }
     
     public function process(){
-        return $this->belongsTo("App\ProcessInstance"); 
+        return $this->belongsTo("App\ProcessInstance","process_instance_id"); 
     }
-    
+    /**
+     * Trae las variables declaradas en el proecso
+     * @return type
+     */
     public function declaredVariables(){
         return $this->hasMany("App\ActivityVariable","id_activity");
     }
@@ -28,7 +39,7 @@ class ActivityInstance extends Model{
         
     }
     
-    public function next(){
+    public function next(ProcessInstance $process){
         $activity = $this->activity()->first();
         //$this->execAction($activity->getPreAction());
         //Si hay stages, entonces recueprar y ejecutar el primero
@@ -38,7 +49,7 @@ class ActivityInstance extends Model{
             foreach($transitions as $transition){
                 if( $transition->evaluate() ) {  //Si es correcta, el camino es por acá
                     $next_activity = Activity::find($transition->next_activity_id);
-                    return $next_activity->newActivityInstance();
+                    return $next_activity->newActivityInstance($process);
                 }
             }
         }else{
@@ -49,7 +60,7 @@ class ActivityInstance extends Model{
                 $transition->evaluate($this);
                 $next_activity = Activity::find($transition->next_activity_id);
                 
-                return $next_activity->newActivityInstance();
+                return $next_activity->newActivityInstance($process);
             }else{
                 Log::debug("Transicion nula");
             }

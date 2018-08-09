@@ -39,7 +39,7 @@ Route::group(
 
 Route::group(
         ["prefix" => "process",
-         'middleware' => 'auth:api'],
+            "miffleware" => "auth:api"],
         function(){
             Route::get('/variables/{id_process?}','ProcessController@listVariables');
             Route::get('/{id_domain}', 'ProcessController@listProcess');
@@ -48,7 +48,7 @@ Route::group(
             Route::post('/{id_domain}','ProcessController@newProcess');
             Route::put('/{id}','ProcessController@updateProcess');
             Route::delete('/{id}','ProcessController@deleteProcess');
-            Route::post('/start/{id}','ProcessInstanceController@createInstance');
+            Route::post('/start/{id}','ProcessController@createInstance');
             Route::get('/instances/{id_proceso}','ProcessInstanceController@instances');
             
             Route::post('compiler',"CompileProcessController@compile");
@@ -57,8 +57,7 @@ Route::group(
 
 
 Route::group(
-        ["prefix" => "process/{id_proceso}/activity",
-            'middleware' => 'auth:api'],
+        ["prefix" => "process/{id_proceso}/activity"],
         function(){
             Route::get('/','ActivityController@listActivities');
             Route::post('/','ActivityController@newActivity');
@@ -66,14 +65,7 @@ Route::group(
             Route::put('/{id}','ActivityController@editActivity');
         });
 
-//Todo lo relacionado con instancias        
-        
-//Route::group(
-//        ["prefix"  => "instances/activity/{id_instance}"],
-//        function(){
-//            Route::get("/transitions/{sense}","ActivityInstanceController@listTransitions");
-//    
-//        });
+
 
 Route::group(
     ["prefix" => 'activity'],
@@ -81,15 +73,11 @@ Route::group(
             Route::post('/{id_prev}/start','ActivityInstanceController@start');
             Route::get('/instance/{id_instance}/{sense}/transitions',"ActivityInstanceController@listTransitions");
 //            Route::post('/transition_to/{id_next}',"TransitionController@createTransition");
+            Route::get('/{id_activity}/transitions',"ActivityInstanceController@getTransitions");
+            Route::get("{id_activity}/instances","ActivityInstanceController@listInstances");       
            
         });        
 
-Route::group(
-        ["prefix" => "activity/{id_activity}"],
-        function(){
-             Route::get('/transitions',"ActivityInstanceController@getTransitions");
-             Route::get("/instances","ActivityInstanceController@listInstances");             
-        });
         
 Route::group(
         ["prefix"=> "transition"],

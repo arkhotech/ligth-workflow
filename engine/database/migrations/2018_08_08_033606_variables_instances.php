@@ -18,30 +18,33 @@ class VariablesInstances extends Migration
         Schema::create('activity_vars_instances',function(Blueprint $table){
             $table->increments('id');
             $table->timestamps();
-            $table->unsignedInteger('id_activity_var');
+            $table->unsignedInteger('id_activity_var')->notNull();
+            $table->unsignedInteger('id_activity_instance');
             $table->string('name');
             $table->string('value')->nullable();
             $table->string('type');
             $table->json('jsonValue')->nullable();
-            $table->foreign('id_activity_var')
+            $table->foreign('id_activity_instance')
                     ->references('id')
-                    ->on('activity_variables')
+                    ->on('activity_instances')
                     ->onDelete('cascade');
         });
         Schema::create('process_vars_instances',function(Blueprint $table){
             $table->increments('id');
             $table->timestamps();
-            $table->unsignedInteger('id_process_var');
+            $table->unsignedInteger('id_process_var')->notNull();
+            $table->unsignedInteger('id_process_instance');
             $table->string('name');
             $table->string('value')->nullable();
             $table->json('jsonValue')->nullable();
             $table->string('type');
-             $table->foreign('id_process_var')
+             $table->foreign('id_process_instance')
                     ->references('id')
-                    ->on('process_variables')
+                    ->on('process_instances')
                     ->onDelete('cascade');
             
         });
+        
     }
 
     /**

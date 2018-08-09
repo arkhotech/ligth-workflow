@@ -10,12 +10,14 @@ class ActivityController extends Controller{
     
     public function newActivity(Request $request,$id_proceso){
         $request->validate(
-                ["activity_name" => "required|string"]
+                ["name" => "required|string"]
                 );
+        $activity = new Activity();
         if( Process::find($id_proceso) != null ){  
             //Check si es que existe el proceso para parear
-            $activity = new Activity();
-            $activity->name = $request->input('activity_name');
+            foreach($activity->fields() as $field){
+                $activity->{$field} = $request->input($field);
+            }
             $activity->process_id = $id_proceso;
             $activity->save();
             return response(null,201);

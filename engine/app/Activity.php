@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Activity extends Model{
+class Activity extends Model implements EditableFieldsIF{
     //
-    const editable_fields = [ 'name','start_activity','end_activity','type'];
+    //const editable_fields = [ 'name','start_activity','end_activity','type'];
     
     const STATES = ['active','finished','error'];
     
@@ -35,12 +35,17 @@ class Activity extends Model{
         return $this->hasMany('\App\Transition','next_activity_id');
     }
     
-    public function newActivityInstance(){
+    public function newActivityInstance(ProcessInstance $proc_inst){
         $instance = new ActivityInstance();
-        $instance->process_instance_id = $this->process_id;
+        $instance->process_instance_id = $proc_inst->id;
         $instance->activity_id = $this->id;
         $instance->state = 0;
         $instance->save();
         return $instance;
     }
+
+    public function fields() {
+        return [ 'name','start_activity','end_activity','type','pre_activity',"post_activity"];
+    }
+
 }

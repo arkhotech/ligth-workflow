@@ -15,7 +15,6 @@ class CreateProcessInstancesTable extends Migration
     {
         Schema::create('process_instances', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('state');
             $table->unsignedInteger('process_id');
             $table->timestamps();
             $table->foreign('process_id')->references('id')->on('processes');

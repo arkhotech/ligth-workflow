@@ -12,11 +12,7 @@ use Illuminate\Support\Facades\Log;
 class ProcessInstance extends Model{
     
     public function variables(){
-        $this->process()
-                ->declaredVariables()
-                ->join("process_var_instances",
-                    "process_var_instances.id_process_var",
-                        "process_variable.id")->all();
+        return $this->hasMany("App\ProcVarInstance","id_process_instance");
     }
     
     public function start(){
@@ -25,9 +21,9 @@ class ProcessInstance extends Model{
         $act_instance = Activity::where("process_id",$this->process_id)
                 ->where("start_activity",1)
                 ->first();
-        $activity = $act_instance->newActivityInstance();
+        $activity = $act_instance->newActivityInstance($this);
         do{
-            $activity = $activity->next();
+            $activity = $activity->next($this);
             
             //Actualizar la actividad actual
             if($activity == null){

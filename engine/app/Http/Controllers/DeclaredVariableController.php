@@ -50,6 +50,7 @@ class DeclaredVariableController extends Controller{
             }catch(Exception $e){
                 Log::error($e->getException());
                 DB::rollback();
+                return reposne(null,400);
             }
             return response(null,201);
         }
