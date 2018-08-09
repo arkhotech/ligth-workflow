@@ -51,6 +51,7 @@ Route::group(
             Route::post('/start/{id}','ProcessInstanceController@createInstance');
             Route::get('/instances/{id_proceso}','ProcessInstanceController@instances');
             
+            Route::post('compiler',"CompileProcessController@compile");
             
         });
 
@@ -67,17 +68,18 @@ Route::group(
 
 //Todo lo relacionado con instancias        
         
-Route::group(
-        ["prefix"  => "instances/activity/{id_instance}"],
-        function(){
-            Route::get("/transitions/{sense}","ActivityInstanceController@listTransitions");
-    
-        });
+//Route::group(
+//        ["prefix"  => "instances/activity/{id_instance}"],
+//        function(){
+//            Route::get("/transitions/{sense}","ActivityInstanceController@listTransitions");
+//    
+//        });
 
 Route::group(
-    ["prefix" => 'activity/{id_prev}'],
+    ["prefix" => 'activity'],
         function(){
-            Route::post('/start','ActivityInstanceController@start');
+            Route::post('/{id_prev}/start','ActivityInstanceController@start');
+            Route::get('/instance/{id_instance}/{sense}/transitions',"ActivityInstanceController@listTransitions");
 //            Route::post('/transition_to/{id_next}',"TransitionController@createTransition");
            
         });        
@@ -113,3 +115,4 @@ Route::group(
             Route::put("/process/{id_process}","DeclaredVariableController@addGlobalVariables");
             Route::delete("/process/{id_process}","DeclaredVariableController@removeGlobalVariables");
         });
+        

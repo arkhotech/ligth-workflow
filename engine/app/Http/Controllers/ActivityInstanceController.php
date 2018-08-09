@@ -6,6 +6,7 @@ use App\ActivityInstance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Activity;
 use App\ActivityVariable;
 
@@ -48,13 +49,16 @@ class ActivityInstanceController extends Controller{
    
    public function listTransitions($id_instance,$sense){
        $instance = ActivityInstance::where("id",$id_instance)->first();
-       
+       Log::debug('Sensito: '.$sense);
+       if($sense != 'output' && $sense != 'input' ){
+           return response()->json(array('message'=> "El sentido solo puede ser 'input' u 'output'"),400);
+       }
        if($instance == null ){
            return response(null,404);
        }
        $activity = $instance->activity()->first();
        $transitions = [];
-       if($sense == 'next'){
+       if($sense == 'input'){
            $transitions = $activity->inputTransitions()->get();
        }else{
            $transitions = $activity->outputTransitions()->get();

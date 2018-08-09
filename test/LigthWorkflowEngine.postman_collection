@@ -232,7 +232,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"parameters\" : []\n}"
+							"raw": "{\n\t\"parameters\" :  { \n\t\t\"p1\" : 1 , \"p2\": 25 }\n}"
 						},
 						"description": ""
 					},
@@ -452,7 +452,7 @@
 				{
 					"name": "Listar Transiciones",
 					"request": {
-						"url": "{{api}}/instances/activity/3/transitions/next",
+						"url": "{{api}}/activity/instance/4/output/transitions",
 						"method": "GET",
 						"header": [
 							{
@@ -480,7 +480,7 @@
 				{
 					"name": "Editar Condicion",
 					"request": {
-						"url": "http://{{host}}/api/transition/2/condition",
+						"url": "http://{{host}}/api/transition/1/condition",
 						"method": "PUT",
 						"header": [
 							{
@@ -496,7 +496,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"condition\" : \"\"\n}"
+							"raw": "{\n\t\"condition\" : \"(p1 in (1,2,3))\"\n}"
 						},
 						"description": "Edita la condicion de una transición"
 					},
@@ -537,7 +537,7 @@
 			"description": "Grupos de servicios relacionados con variables",
 			"item": [
 				{
-					"name": "Listar Variables",
+					"name": "Listar Variables Proceso",
 					"request": {
 						"url": "http://{{host}}/api/variables/process/6",
 						"method": "GET",
@@ -649,27 +649,40 @@
 			]
 		},
 		{
-			"name": "Test ",
-			"request": {
-				"url": "http://{{host}}/api/oauth/authorize",
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImExMDljNjI0MWNiYjIxNjgwM2NlNDMyYmEwOWFmNDk3Y2E4MWViYjQ0ZDUyNjY0OTY2YmNjNmNjNzA4ZGM2Nzc3ZmNhZTIyNzVlY2RlODZlIn0.eyJhdWQiOiIxIiwianRpIjoiYTEwOWM2MjQxY2JiMjE2ODAzY2U0MzJiYTA5YWY0OTdjYTgxZWJiNDRkNTI2NjQ5NjZiY2M2Y2M3MDhkYzY3NzdmY2FlMjI3NWVjZGU4NmUiLCJpYXQiOjE1MzMwNDUyNTUsIm5iZiI6MTUzMzA0NTI1NSwiZXhwIjoxNTY0NTgxMjU1LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.UwrlPNjD8FjqK03XxxzxYHqvVEDrxXQ4fvSzNx9t13FHyh0VayfJxU_DN5tO150j5wS2_N2c4YWsvYU9ske5GVdnJCvyr4FJI3EksjZM9rfgtEpKTbu0uKslBMAzgiRPco200rn4k7-4G31rGrGCSf7a9uUZy7kbsDWQoEoIz6gYBUx_UUsV36HzF1Q_iPueUZAxqr73jTPW7EMSIB9QMwqsKJOizo2c70c8iHPVhQCOlE2wj7jhjpgu3OxUOlpqYEOwyPN4JwsT861n-BRC5pgkoeG4LNbvQGwonNPRfRcFI1WyXrH7EKTDYtg7Mo02Z_gCi254YT24v3o1uVN4x4SsAC5m-nUy7Bu_GkOrddTSTIRDz_653nlrs326msbaan58cCBgWSoGLge0TVjE7KA5rk5lrUsEdUHTBdv_ghxrKe3mIGFQeXBzLOgwc_4uLlUY61Kob0UkLe4TpLP8oh09Ad8G5h-15WbNCLWKMPwLiym4TIbjWQlmbJs1x_d98Qk4xWOmEGaplUnN1X7H7mBfiy4FI2DX8by7TYcdPmt8CnArCE7TQszf-VBXExiaABEofMTE2O5xB751_dEfhrFNqjyKH7Anf9_Ro5B43dyURcgDXjnnM631p2mASHAdLKvDDFCkSNmsvyBHh_EZN6kIO4iD6DsOX_gIHt8A9a0\n   "
+			"name": "Compiler",
+			"description": "Servicios de compilación",
+			"item": [
+				{
+					"name": "Compiler",
+					"request": {
+						"url": "http://{{host}}/api/process/compiler",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"test\",\n\t\"activities\": [\n\t\t{ \"name\" : \"a1\",\n\t\t  \"type\" : \"activity\",\n\t\t  \"start\" : true,\n\t\t  \"end\" : false,\n\t\t  \"transition\": [{ \"to\": \"a2\", \"condition\" : \"0\" ,\"default\" : true }],\n\t\t  \"stages\" : [ { \"name\" : \"st1\" },{ \"name\": \"st2 \"} ] \t\n\t\t},\n\t\t{ \"name\" : \"a2\",\n\t\t  \"type\" : \"activity\",\n\t\t  \"end\" : true,\n\t\t  \"start\" :false\n\t\t}\n\t\t]\n}"
+						},
+						"description": ""
 					},
-					{
-						"key": "Accept",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"description": ""
-			},
-			"response": []
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Auth SignUp",

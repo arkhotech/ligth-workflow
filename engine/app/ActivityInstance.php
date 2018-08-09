@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use App\ActivityVariables;
 
 class ActivityInstance extends Model{
     
@@ -16,11 +17,11 @@ class ActivityInstance extends Model{
     }
     
     public function process(){
-        return $this->belongTo("App\ProcessInstance"); 
+        return $this->belongsTo("App\ProcessInstance"); 
     }
     
     public function declaredVariables(){
-        return $this->hasMany("App\ActivityVariables","id_activity");
+        return $this->hasMany("App\ActivityVariable","id_activity");
     }
     
     public function nextStage(){
@@ -45,6 +46,7 @@ class ActivityInstance extends Model{
             $transition = $activity->outputTransitions()->first();
             
             if($transition!= null){ 
+                $transition->evaluate($this);
                 $next_activity = Activity::find($transition->next_activity_id);
                 
                 return $next_activity->newActivityInstance();

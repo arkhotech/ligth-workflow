@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\Log;
  */
 class ProcessInstance extends Model{
     
+    public function variables(){
+        $this->process()
+                ->declaredVariables()
+                ->join("process_var_instances",
+                    "process_var_instances.id_process_var",
+                        "process_variable.id")->all();
+    }
+    
     public function start(){
         //iniciar prerequisitos;
         //Se debe buscar la primera actividad asociada para crear una instancia
