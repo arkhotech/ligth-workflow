@@ -23,7 +23,9 @@ class Transition extends Model
             Log::debug("Var ". $var->name);
             $context[$var->name] = $var->value;
         }
-        return $ruler->assert($rule, $context);
+        $result = $ruler->assert($rule, $context);
+        var_dump($result);die;
+        return $result;
  
     }
 }

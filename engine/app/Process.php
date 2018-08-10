@@ -5,10 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ProcessInstance;
+use App\EditableFieldsIF;
 
-class Process extends Model{
-    
-    const fields = ["name","domain_id","role_owner_id"];
+class Process extends Model implements EditableFieldsIF{
 
     use SoftDeletes;
     
@@ -38,5 +37,9 @@ class Process extends Model{
         $instance->save();
         return $instance;
     }
-    
+
+    public function fields() {
+        return ["name","domain_id","role_owner_id"];
+    }
+
 }

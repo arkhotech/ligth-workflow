@@ -39,7 +39,8 @@ Route::group(
 
 Route::group(
         ["prefix" => "process",
-            "miffleware" => "auth:api"],
+            "middleware" => "auth:api",
+            "middleware" => "domain:admin"],
         function(){
             Route::get('/variables/{id_process?}','ProcessController@listVariables');
             Route::get('/{id_domain}', 'ProcessController@listProcess');
