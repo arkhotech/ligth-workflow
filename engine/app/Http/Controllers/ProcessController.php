@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use App\ProcessVariable;
+use App\Jobs\AsyncStart;
 
 class ProcessController extends Controller
 {
@@ -122,7 +123,7 @@ class ProcessController extends Controller
             Log::debug("Id nueva instancia: ".$id_instance);
             $declared_vars = $process
                     ->declaredVariables()
-                    ->select("id","name","value","type")
+                    ->select("id","name","type")
                     ->get();
             
             $keys = $params = $error = array();
@@ -143,15 +144,26 @@ class ProcessController extends Controller
                 }
                 DB::commit();
                 //validar que entrada sea igual 
-                $process_instance->start();
+                //TODO validar si es un proceso sincrono
+                if($process_instance->asynch){
+                   
+                    $id_job = $this->dispatch(new AsyncStart($process_instance->id));
+                    Log::info('Trabajo despachado, id: '.$id_job);
+                    return response()->json(
+                            array("id_process" => $process_instance->id,
+                                "id_job" => $id_job),202);
+                }else{
+                    $result = $process_instance->start();
                 
-                return response(null,201);
+                    return response()->json(
+                            array("id_process" => $process_instance->id, 
+                                "output" => $result),201);
+                }
             }catch(Throwable $e){
                DB::rollback();
                return response(null,500);
             }
-            
-            return response()->json(array('instance_id'=> $id_instance),201);
+
         }
         return response(null,404);
     }

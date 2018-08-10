@@ -20,3 +20,5 @@ docker exec -ti ligth-workflow_core_1 php artisan passport:client --personal
 Motor de reglas:
 
 https://github.com/hoaproject/Ruler
+
+https://voltagead.com/the-basics-of-laravel-queues-using-redis-and-horizon/

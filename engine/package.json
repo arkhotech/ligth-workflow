@@ -19,6 +19,6 @@
         "lodash": "^4.17.4",
         "vue": "^2.5.7",
         "hoa/ruler": "~2.0",
-        "predis/predis" : "1.1.1"
+        "predis/predis" : "~1.0"
     }
 }

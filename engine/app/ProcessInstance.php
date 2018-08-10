@@ -29,11 +29,17 @@ class ProcessInstance extends Model{
             if($activity == null){
                 Log::debug('Actividad nula');
                 $this->state="finish";
+                return $this->exportVariables();
             }else{
                 Log::debug("actividad -> ".$activity->id);
                 $this->activityCursor = $activity->id; 
             }
         }while($activity != null);
         //iniciar postrequisitos;
+    }
+    
+    public function exportVariables(){
+        $variables = $this->variables()->select("name","value")->get();
+        return array("variables" => $variables);
     }
 }

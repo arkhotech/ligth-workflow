@@ -24,7 +24,6 @@ class Transition extends Model
             $context[$var->name] = $var->value;
         }
         $result = $ruler->assert($rule, $context);
-        var_dump($result);die;
         return $result;
  
     }

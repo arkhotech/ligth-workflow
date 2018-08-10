@@ -34,6 +34,7 @@ class Process extends Model implements EditableFieldsIF{
         $instance->process_id = $this->id;
         $instance->state = "active";
         $instance->activityCursor = 0;
+        $instance->asynch = $this->asynch;
         $instance->save();
         return $instance;
     }
