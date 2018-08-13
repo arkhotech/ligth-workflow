@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\ProcessInstance;
 use App\EditableFieldsIF;
+use App\Events\ActivityEvents;
 
 class Process extends Model implements EditableFieldsIF{
 
@@ -32,7 +33,7 @@ class Process extends Model implements EditableFieldsIF{
     public function createInstance(){
         $instance = new ProcessInstance();
         $instance->process_id = $this->id;
-        $instance->state = "active";
+        $instance->process_state = ActivityEvents::IDLE;
         $instance->activityCursor = 0;
         $instance->asynch = $this->asynch;
         $instance->save();

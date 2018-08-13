@@ -43,7 +43,7 @@ class Activity extends Model implements EditableFieldsIF{
         $instance = new ActivityInstance();
         $instance->process_instance_id = $proc_inst->id;
         $instance->activity_id = $this->id;
-        $instance->state = 0;
+        $instance->activity_state = 0;
         $instance->save();
         return $instance;
     }

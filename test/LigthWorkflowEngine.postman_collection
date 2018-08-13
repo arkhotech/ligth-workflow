@@ -98,13 +98,10 @@
 				{
 					"name": "Recuperar Registro",
 					"request": {
-						"url": "http://{{host}}/api/process/trash/3",
+						"url": "http://{{host}}/api/test",
 						"method": "PATCH",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"body": {},
 						"description": ""
 					},
 					"response": []
@@ -169,13 +166,27 @@
 				{
 					"name": "Eliminar Proceso",
 					"request": {
-						"url": "http://{{host}}/api/process/3",
+						"url": "http://{{host}}/api/process/11",
 						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
 						"description": "Elimina logicamente el proceso"
 					},
 					"response": []
@@ -241,7 +252,7 @@
 				{
 					"name": "Listar Instancias",
 					"request": {
-						"url": "http://{{host}}/api/process/instances/2",
+						"url": "http://{{host}}/api/process/6/instances/113",
 						"method": "GET",
 						"header": [],
 						"body": {},
@@ -349,7 +360,7 @@
 				{
 					"name": "Actualizar Actividad",
 					"request": {
-						"url": "http://{{host}}/api/process/6/activity/3",
+						"url": "http://{{host}}/api/process/6/activity/4",
 						"method": "PUT",
 						"header": [
 							{
@@ -370,7 +381,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Conditional\",\n\t\"end_activity\": false,\n\t\"start_activity\": true\n}"
+							"raw": "{\n\t\"name\": \"Final\",\n\t\"end_activity\": true,\n\t\"start_activity\": false\n}"
 						},
 						"description": ""
 					},
@@ -685,6 +696,92 @@
 			]
 		},
 		{
+			"name": "Actions",
+			"description": "",
+			"item": [
+				{
+					"name": "New Action",
+					"request": {
+						"url": "http://{{host}}/api/actions/activity/3/1",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"type\" : \"ON_ENTRY\",\n\t\"command\" : \"111\",\n\t\"config\" : \"111\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Activity Actions",
+					"request": {
+						"url": "http://{{host}}/api/activity/3/actions",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Accion",
+					"request": {
+						"url": "http://{{host}}/api/actions/5",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Chained Actions",
+					"request": {
+						"url": "http://{{host}}/api/activity/3/actions",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Move Position",
+					"request": {
+						"url": "http://{{host}}/api/actions/6/moveup",
+						"method": "PUT",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Auth SignUp",
 			"request": {
 				"url": "http://{{host}}/api/auth/signup",
@@ -728,6 +825,17 @@
 					"mode": "raw",
 					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"remember_me\": true\n}"
 				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Test",
+			"request": {
+				"url": "http://{{host}}/api/test",
+				"method": "GET",
+				"header": [],
+				"body": {},
 				"description": ""
 			},
 			"response": []

@@ -28,6 +28,7 @@ class ActivityProperties extends Migration
                     ->on('activities')
                     ->onDelete('cascade');
         });
+
     }
 
     /**

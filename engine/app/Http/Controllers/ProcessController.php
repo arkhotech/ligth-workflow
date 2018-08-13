@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use App\ProcessVariable;
+use App\ProcessInstance;
 use App\Jobs\AsyncStart;
+use App\Events\ActivityEvents;
 
 class ProcessController extends Controller
 {
@@ -25,7 +27,12 @@ class ProcessController extends Controller
     }
     
  
-    
+    /**
+     * Losta procesos creados
+     * 
+     * @param type $id_domain
+     * @return type
+     */
     public function listProcess($id_domain){
         //validar dominio
         if(Domain::find($id_domain)==null){
@@ -36,7 +43,12 @@ class ProcessController extends Controller
         
         return response()->json($process,200);
     }
-    
+    /**
+     * Crea un nuevo proceso
+     * @param Request $request
+     * @param type $domain_id
+     * @return type
+     */
     public function newProcess(Request $request,$domain_id){
         $request->validate([
             'name' => 'required|string',
@@ -52,7 +64,7 @@ class ProcessController extends Controller
         }
         $process = new Process();
         
-        foreach(Process::fields as $field){
+        foreach($process->fields() as $field){
             if($field == 'domain_id'){
                 $process->domain_id = $domain_id; 
                 continue;
@@ -102,14 +114,14 @@ class ProcessController extends Controller
     }
     
         /**
-     * Crea e inicia un proceso
+     * Crea una instancia e inicia un proceso
      * 
      * @param Request $request
      * @param type $id_process
      * @return type
      */
     
-   public function createInstance(Request $request, $id_process){
+   public function createInstance(ProcessRequest $request, $id_process){
         //Log::debug("User: ".Auth::user());
         $request->validate(['parameters' => 'array']);
         //Solo para validar el proceso
@@ -153,8 +165,8 @@ class ProcessController extends Controller
                             array("id_process" => $process_instance->id,
                                 "id_job" => $id_job),202);
                 }else{
-                    $result = $process_instance->start();
-                
+                    //var_dump($process_instance);die;
+                    $result = $this->runProcess($process_instance);
                     return response()->json(
                             array("id_process" => $process_instance->id, 
                                 "output" => $result),201);
@@ -184,7 +196,9 @@ class ProcessController extends Controller
             $var->save();
             if( ! $var->validate() ) {
                 Log::debug("Error de validacion variable: ".$key);
-                $error[] = array("error.validacion" => $key, "tipo" => $var->type, "valor" => $var->value);
+                $error[] = array("error.validacion" => $key, 
+                    "tipo" => $var->type,
+                    "valor" => $var->value);
             }else{
                 $var->save();
             }
@@ -192,5 +206,38 @@ class ProcessController extends Controller
         
         return $error;
     }
+    
+    private function runProcess(ProcessInstance $process){
+        //TODO ver los requisitos y post procesos
+        try{
+            $activity = $process->onActivity();
+            
+            while($activity != null 
+                    && $activity->activity_state != ActivityEvents::PENDDING){  
+                // si esta pendiente se rompe el loop
+                Log::info("Procesando actividad: ".$activity->id);
+                $process->activityCursor = $activity->id;
+                $process->save(); 
+                $activity->onEntry();
+                $next_activity = $activity->onActivity();
+                
+                $activity->onExit();
+                $activity = $next_activity;
+            }
+            Log::debug("### saliendo del loop");
+            $process->process_state = ($activity != null ) ? 
+                ActivityEvents::ON_ENTRY : 
+                ActivityEvents::FINISHED;
+            $process->saveOrFail();
+        }catch(Exception $e){
+            $process->process_state = ActivityEvents::ERROR;
+            $process->save();
+        }
+    }
   
+}
+
+
+class ProcessRequest extends Request{
+    
 }

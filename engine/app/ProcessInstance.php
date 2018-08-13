@@ -4,22 +4,16 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-
+use App\Events\ActivityEvents;
 /**
  * Sec crea a partir de una definición Process
  */
-class ProcessInstance extends Model implements Events\ActivityEvents{
+class ProcessInstance extends Model implements ActivityEvents{
 
+    private $state = ActivityEvents::IDLE;
+    
     public function variables() {
         return $this->hasMany("App\ProcVarInstance", "id_process_instance");
-    }
-
-    public function start() {
-        
-        $this->onEntry();
-        $this->onActivity();
-        $this->onExit();
-       
     }
 
     public function exportVariables() {
@@ -30,32 +24,22 @@ class ProcessInstance extends Model implements Events\ActivityEvents{
     public function onActivity() {
          //iniciar prerequisitos;
         //Se debe buscar la primera actividad asociada para crear una instancia
+        
         $act_instance = Activity::where("process_id", $this->process_id)
                 ->where("start_activity", 1)
                 ->first();
+        
         $activity = $act_instance->newActivityInstance($this);
-        do {
-            $activity = $activity->next($this);
-
-            //Actualizar la actividad actual
-            if ($activity == null) {
-                Log::debug('Actividad nula');
-                self::update(['state' => 'finish']);
-                return $this->exportVariables();
-            } else {
-                Log::debug("actividad -> " . $activity->id);
-                self::update([ "activityCursor" => $activity->id]);
-            }
-        } while ($activity != null);
+        return $activity;
         //iniciar postrequisitos;
     }
 
     public function onEntry() {
-        
+        //No implementada aún
     }
 
     public function onExit() {
-        
+        //no implementada aún
     }
 
 }

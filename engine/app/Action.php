@@ -8,7 +8,11 @@ use App\Actions\LinkedExecution;
 
 class Action extends Model implements DoubleLinkedIF, LinkedExecution{
     
-    static $TYPE = ['ON_ENTRY' => 1,'ON_EXIT' => 2];
+    const ON_ENTRY=1;
+    
+    const ON_EXIT=2;
+    
+    public static $TYPE = ['ON_ENTRY' => 1,'ON_EXIT' => 2];
     
     public function next(){
         $this->nextAction()->first();
