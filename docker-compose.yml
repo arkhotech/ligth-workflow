@@ -11,12 +11,26 @@ services:
     networks:
      - frontend
      - backend
-
+#  ldap:
+#    image: "ldap"
+#    ports:
+#     - 389:389
+#    networks:
+#     - backend
+#    environment:
+#     - 
+     
   redis:
     image: "redis"
     networks:
       - backend
-
+  worker:
+    image: "arkhotech/php-fpm:7.2"
+    volumes:
+      - ./engine:/app
+    networks:
+      - backend
+    command: "php artisan queue:work redis"
   core:
     image: "arkhotech/php-fpm:7.2"
     volumes:

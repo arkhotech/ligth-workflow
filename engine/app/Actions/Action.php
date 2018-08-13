@@ -21,7 +21,7 @@ abstract class Action {
         return $this->type;
     }
     
-    public abstract function exectute($params);
+    public abstract function execute(Array $params = null);
     
     
 }

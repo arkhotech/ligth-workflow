@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('test',"Test@test");
 
 Route::group([
     'prefix' => 'auth'
@@ -50,7 +51,7 @@ Route::group(
             Route::put('/{id}','ProcessController@updateProcess');
             Route::delete('/{id}','ProcessController@deleteProcess');
             Route::post('/start/{id}','ProcessController@createInstance');
-            Route::get('/instances/{id_proceso}','ProcessInstanceController@instances');
+            Route::get('/{id_proceso}/instances/{id?}','ProcessInstanceController@instances');
             
             Route::post('compiler',"CompileProcessController@compile");
             
@@ -76,7 +77,8 @@ Route::group(
 //            Route::post('/transition_to/{id_next}',"TransitionController@createTransition");
             Route::get('/{id_activity}/transitions',"ActivityInstanceController@getTransitions");
             Route::get("{id_activity}/instances","ActivityInstanceController@listInstances");       
-           
+            Route::get("{id_activity}/actions","ActionController@listActionsByActivity");
+            Route::get("{id_activity}/actions/chain","ActionController@listActionsChainsByActivity");
         });        
 
         
@@ -104,4 +106,12 @@ Route::group(
             Route::put("/process/{id_process}","DeclaredVariableController@addGlobalVariables");
             Route::delete("/process/{id_process}","DeclaredVariableController@removeGlobalVariables");
         });
+     
         
+Route::group(
+        ["prefix" => "actions" ],
+        function(){
+            Route::post("/activity/{id}/{id_prev_action?}","ActionController@newAction");
+            Route::delete('/{id}','ActionController@removeAction');
+            Route::put('/{id}/{sense}','ActionController@move');
+        });

@@ -5,12 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use App\ActivityVariables;
+use App\Events\ActivityEvents;
 
-class ActivityInstance extends Model{
+class ActivityInstance extends Model implements ActivityEvents{
     
     public function activity(){
         return $this->belongsTo("\App\Activity");
     }
+    
     /**
      *
      * @return type
@@ -38,6 +40,7 @@ class ActivityInstance extends Model{
     public function nextStage(){
         
     }
+    
     
     public function next(ProcessInstance $process){
         $activity = $this->activity()->first();
@@ -69,10 +72,22 @@ class ActivityInstance extends Model{
         //$this->execAction($activity->getPostAction());
     }
     
-    private function execAction(Action $action ){
-        if($action != null){
-            $action->execute();
-        }
+//    private function execAction(Action $action ){
+//        if($action != null){
+//            $action->execute();
+//        }
+//    }
+
+    public function onActivity() {
+        
     }
-    
+
+    public function onEntry() {
+        
+    }
+
+    public function onExit() {
+        
+    }
+
 }

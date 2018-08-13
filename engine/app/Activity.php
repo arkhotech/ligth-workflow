@@ -10,6 +10,10 @@ class Activity extends Model implements EditableFieldsIF{
     
     const STATES = ['active','finished','error'];
     
+    public function actions(){
+        return $this->hasMany('App\Action','id_activity');
+    }
+    
     public function getPreAction(){
         return Action::find($this->pre_activity);
     }

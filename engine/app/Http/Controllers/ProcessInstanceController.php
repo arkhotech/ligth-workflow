@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\ProcessInstance;
 use App\Process;
-use Illuminate\Http\Request;
-use App\ProcessVariable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
 
-class ProcessInstanceController extends Controller
-{
-    
-
-    
-    public function instances($id_proceso){
+class ProcessInstanceController extends Controller{
+   
+    public function instances($id_proceso,$id=null){
+        $retval = array();
         $process = Process::where("id",$id_proceso)->first();
         if($process!= null){
-            return response()->json($process->instances()->get());
+            
+            $instancias = ($id==null) ? 
+                    $process->instances()->get() :
+                    $process->instances()->get()->where("id",$id);
+            
+            foreach($instancias as $instancia){
+                $instancia->variables  = $instancia->variables()->select("name","value")->get();
+                $retval[] = $instancia ;
+            }
+            return response()->json($retval,200);
         }
         return response(null,404);
         
