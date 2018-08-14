@@ -210,23 +210,24 @@ class ProcessController extends Controller
     private function runProcess(ProcessInstance $process){
         //TODO ver los requisitos y post procesos
         try{
-            $activity = $process->onActivity();
+            //Solo trae la primera instancia
+            $activity_instance = $process->onActivity();
             
-            while($activity != null 
-                    && $activity->activity_state != ActivityEvents::PENDDING){  
+            while($activity_instance != null 
+                    && $activity_instance->activity_state != ActivityEvents::PENDDING  ){  
                 // si esta pendiente se rompe el loop
-                Log::info("Procesando actividad: ".$activity->id);
-                $process->activityCursor = $activity->id;
+                Log::info("Procesando instancia de actividad: ".$activity_instance->id);
+                //actualizando el cursor para saber en que actividad esta el proceso
+                $process->activityCursor = $activity_instance->id;
                 $process->save(); 
-                $activity->onEntry();
-                $next_activity = $activity->onActivity();
+                //ejecutar efectivamente la instancia
+                $next_activity = $activity_instance->executeActivity();
                 
-                $activity->onExit();
-                $activity = $next_activity;
+                $activity_instance = $next_activity;
             }
-            Log::debug("### saliendo del loop");
-            $process->process_state = ($activity != null ) ? 
-                ActivityEvents::ON_ENTRY : 
+            Log::debug("### saliendo del loop, status = ".$activity_instance->activity_state);
+            $process->process_state = ($activity_instance != null ) ? 
+                $activity_instance->activity_state : 
                 ActivityEvents::FINISHED;
             $process->saveOrFail();
         }catch(Exception $e){

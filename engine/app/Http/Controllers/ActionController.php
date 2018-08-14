@@ -93,7 +93,7 @@ class ActionController extends Controller
         $action = Action::find($id_action);
         if( $action != null ){
             
-            if( ! LinkedListHelper::moveUp($action)){
+            if( ! $this->moveUp($action)){
                 return response()
                         ->json(["message" 
                             => "La acción esta en el primer lugar de la cadena"],304);

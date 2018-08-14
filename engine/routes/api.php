@@ -82,6 +82,7 @@ Route::group(
             
             Route::post("/{id}/stage","StageController@newStage");
             Route::post("/{id}/stage/prev/{id_prev?}/next/{id_next?}","StageController@newStage");
+            Route::get("/{id}/stage","StageController@listStages");
         });        
 
         

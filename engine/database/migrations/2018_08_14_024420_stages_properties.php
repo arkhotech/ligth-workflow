@@ -25,18 +25,10 @@ class StagesProperties extends Migration
                     ->references('id')
                     ->on('activities')
                     ->onDelete('cascade');
+            $table->unique(['name','activity_id']);
         });
-        
-        Schema::create('stage_instances',function(Blueprint $table){
-            $table->unsignedInteger('stage_instance_id');
-            $table->unsignedInteger('next_stage')->nullable();
-            $table->unsignedInteger('prev_stage')->nullable();
-            $table->unsignedInteger('type');
-            $table->foreign('stage_instance_id')
-                    ->references('id')
-                    ->on('activity_instances')
-                    ->onDelete('cascade');
-        });
+       
+      
     }
 
     /**
@@ -54,8 +46,9 @@ class StagesProperties extends Migration
             $table->dropColumn('descripcion');
             $table->dropColumn('type');
             $table->dropColumn('name');
+            $table->dropUnique('stages_name_activity_id_unique');
         });
         
-        Schema::dropIfExists('stage_instances');
+        
     }
 }

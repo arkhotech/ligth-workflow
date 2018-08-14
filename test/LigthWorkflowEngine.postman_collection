@@ -773,7 +773,24 @@
 					"request": {
 						"url": "http://{{host}}/api/actions/6/moveup",
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
 						"body": {},
 						"description": ""
 					},

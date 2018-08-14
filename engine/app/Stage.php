@@ -13,6 +13,14 @@ class Stage extends Model implements DoubleLinkedIF,  EditableFieldsIF{
     const FORM = 1;
     
     const CHOOSE = 2;
+    
+    public function newStageInstance(){
+        $instance  = new StageInstance();
+        $instance->type = $this->type;
+        $instance->activity_instance_id = $this->id;
+        $instance->save();
+        return $instance;
+    }
     //
     public function activity(){
         return $this->belongsTo("App\Activity");

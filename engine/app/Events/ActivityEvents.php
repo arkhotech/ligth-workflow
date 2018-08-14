@@ -15,8 +15,6 @@ namespace App\Events;
 interface ActivityEvents {
     //put your code here
     
-    const EVENTS = ["ON_ENTRY","ON_ACTIVITY", "ON_EXIT"];
-    
     const IDLE = 0;
     
     const ON_ENTRY=1;

@@ -5,10 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 
 class Activity extends Model implements EditableFieldsIF{
-    //
-    //const editable_fields = [ 'name','start_activity','end_activity','type'];
     
-    const STATES = ['active','finished','error'];
+    public static $STATES = ['active','finished','error'];
+    
+    public function stages(){
+        return $this->hasMany("App\Stage");
+    }
     
     public function actions(){
         return $this->hasMany('App\Action','id_activity');

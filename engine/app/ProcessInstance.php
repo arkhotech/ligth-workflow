@@ -12,6 +12,11 @@ class ProcessInstance extends Model implements ActivityEvents{
 
     private $state = ActivityEvents::IDLE;
     
+    public function __construct() {
+        parent::__construct();
+        $this->state = ActivityEvents::IDLE;
+    }
+    
     public function variables() {
         return $this->hasMany("App\ProcVarInstance", "id_process_instance");
     }
@@ -28,7 +33,9 @@ class ProcessInstance extends Model implements ActivityEvents{
         $act_instance = Activity::where("process_id", $this->process_id)
                 ->where("start_activity", 1)
                 ->first();
-        
+        if($act_instance==null){
+            throw new \ActivityException("Error. No existe actividad de inicio");
+        }
         $activity = $act_instance->newActivityInstance($this);
         return $activity;
         //iniciar postrequisitos;
