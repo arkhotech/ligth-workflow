@@ -79,6 +79,9 @@ Route::group(
             Route::get("{id_activity}/instances","ActivityInstanceController@listInstances");       
             Route::get("{id_activity}/actions","ActionController@listActionsByActivity");
             Route::get("{id_activity}/actions/chain","ActionController@listActionsChainsByActivity");
+            
+            Route::post("/{id}/stage","StageController@newStage");
+            Route::post("/{id}/stage/prev/{id_prev?}/next/{id_next?}","StageController@newStage");
         });        
 
         
@@ -114,4 +117,20 @@ Route::group(
             Route::post("/activity/{id}/{id_prev_action?}","ActionController@newAction");
             Route::delete('/{id}','ActionController@removeAction');
             Route::put('/{id}/{sense}','ActionController@move');
+        });
+        
+        
+Route::group(
+        ["prefix" => "activity/{id_activity}/stage"],
+        function(){
+           
+            
+        });
+        
+Route::group(
+        ["prefix" => "stage"],
+        function(){
+            Route::delete("/{id}","StageController@deleteStage");
+            Route::put("/{id}","StageController@editStage");
+            Route::patch("/{id}/{sense}","StageController@mode");
         });

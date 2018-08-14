@@ -782,6 +782,48 @@
 			]
 		},
 		{
+			"name": "Stages",
+			"description": "Agregar statges",
+			"item": [
+				{
+					"name": "New Stage",
+					"request": {
+						"url": "http://{{host}}/api/activity/3/stage",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"s1\",\n\t\"descripcion\" : \"\",\n\t\"type\" : \"FORM\",\n\t\"next_stage\": null,\n\t\"prev_stage\": null\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Auth SignUp",
 			"request": {
 				"url": "http://{{host}}/api/auth/signup",

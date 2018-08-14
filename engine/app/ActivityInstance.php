@@ -4,7 +4,6 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use App\ActivityVariables;
 use App\Events\ActivityEvents;
 
 class ActivityInstance extends Model implements ActivityEvents{
@@ -41,36 +40,7 @@ class ActivityInstance extends Model implements ActivityEvents{
     public function declaredVariables(){
         return $this->hasMany("App\ActivityVariable","id_activity");
     }
-    
-//    public function next(ProcessInstance $process){
-//        try{
-//            switch($this->activity_state){
-//                case ActivityEvents::IDLE:
-//                    $this->onEntry();
-//                    break;
-//                case ActivityEvents::ON_ENTRY;
-//                    $this->onActivity();
-//                    break;
-//                case ActivityException::ON_EXIT:
-//                    $this->onExit();
-//                    break;
-//                case ActivityInstance::FINISHED:
-//                    return $this;
-//                case ActivityEvents::PENDDING:
-//                    return $this;
-//                default:
-//                    throw new ActivityException("El estado [".$this->activity_state."], no existe");
-//            }
-//            $this->next($process);
-//        }catch(Exception $e){
-//            $this->activity_state = ActivityEvents::ERROR;
-//            $this->save();
-//            log::error("[Event:OnExit][Id: $this->id]:",$e->getMessage());
-//            return;
-//        }        
-//        
-//    }
-    
+
     private function execute(){
         //Se ejecutan las etapas en este punto
         $stage = $this->stages();
