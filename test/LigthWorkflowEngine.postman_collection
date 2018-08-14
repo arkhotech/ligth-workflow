@@ -1,10 +1,8 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "0590d7a4-dd82-4c98-83e3-458d839b8aca",
 		"name": "LigthWorkflowEngine",
-		"_postman_id": "9bcff707-4173-e630-7df8-61e38dc1afb3",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -14,7 +12,6 @@
 				{
 					"name": "Nuevo Dominio",
 					"request": {
-						"url": "http://{{host}}/api/domain",
 						"method": "POST",
 						"header": [
 							{
@@ -34,19 +31,39 @@
 							"mode": "raw",
 							"raw": "{\n\t\"name\" : \"example.com\",\n\t\"company_name\": \"Arkhotech SpA\",\n\t\"admin_email\" : \"msilva@arkhotech.com\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/domain",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Dominios",
 					"request": {
-						"url": "http://{{host}}/api/domain",
 						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/domain",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain"
+							]
 						},
 						"description": "Parametros por Query String"
 					},
@@ -55,7 +72,6 @@
 				{
 					"name": "Actualizar Dominio",
 					"request": {
-						"url": "http://{{host}}/api/domain/4",
 						"method": "PUT",
 						"header": [
 							{
@@ -71,21 +87,42 @@
 							"mode": "raw",
 							"raw": "{ \"description\": \"Esto es una prueba\"}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/domain/4",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain",
+								"4"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Eliminar Dominio",
 					"request": {
-						"url": "http://{{host}}/api/domain/2",
 						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/domain/2",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"domain",
+								"2"
+							]
+						}
 					},
 					"response": []
 				}
@@ -93,100 +130,140 @@
 		},
 		{
 			"name": "Process",
-			"description": "",
+			"description": null,
 			"item": [
 				{
 					"name": "Recuperar Registro",
 					"request": {
-						"url": "http://{{host}}/api/test",
 						"method": "PATCH",
 						"header": [],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/test",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"test"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Nuevo Proceso",
 					"request": {
-						"url": "http://{{host}}/api/process/1",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Accept",
-								"value": "application/javascript",
-								"description": ""
+								"value": "application/javascript"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\" : \"Inicio\",\n\t\"role_owner_id\": 1,\n\t\"variables\" : [ {\"name\":  \"p1\", \"type\" : \"string\" ,\"validator\" : \"is_string()\" }]\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/process/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "List Process",
 					"request": {
-						"url": "http://{{host}}/api/process/1",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
-								"value": "",
-								"description": ""
+								"value": ""
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Eliminar Proceso",
 					"request": {
-						"url": "http://{{host}}/api/process/11",
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/11",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"11"
+							]
+						},
 						"description": "Elimina logicamente el proceso"
 					},
 					"response": []
@@ -194,69 +271,103 @@
 				{
 					"name": "List Deleted Process",
 					"request": {
-						"url": "http://{{host}}/api/process/trash/1",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/trash/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"trash",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Start Process",
 					"request": {
-						"url": "http://{{host}}/api/process/start/6",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"parameters\" :  { \n\t\t\"p1\" : 1 , \"p2\": 25 }\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/process/start/6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"start",
+								"6"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Instancias",
 					"request": {
-						"url": "http://{{host}}/api/process/6/instances/113",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/6/instances/113",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"6",
+								"instances",
+								"113"
+							]
+						}
 					},
 					"response": []
 				}
@@ -264,12 +375,11 @@
 		},
 		{
 			"name": "Attachments",
-			"description": "",
+			"description": null,
 			"item": [
 				{
 					"name": "Upload",
 					"request": {
-						"url": "http://{{host}}/api/process/1/activity/1/upload",
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -278,24 +388,35 @@
 								{
 									"key": "file",
 									"value": "",
-									"description": "",
 									"type": "file"
 								},
 								{
 									"key": "name",
 									"value": "prueba.txt",
-									"description": "",
 									"type": "text"
 								},
 								{
 									"key": "description",
 									"value": "Esto es una prueba",
-									"description": "",
 									"type": "text"
 								}
 							]
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/process/1/activity/1/upload",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"1",
+								"activity",
+								"1",
+								"upload"
+							]
+						}
 					},
 					"response": []
 				}
@@ -303,110 +424,147 @@
 		},
 		{
 			"name": "Activities",
-			"description": "",
+			"description": null,
 			"item": [
 				{
 					"name": "Listar Actividades",
 					"request": {
-						"url": "http://{{host}}/api/process/6/activity",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/6/activity",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"6",
+								"activity"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Nueva Actividad",
 					"request": {
-						"url": "http://{{host}}/api/process/6/activity",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"activity_name\" : \"Conditional\",\n\t\"type\" : \"conditional\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/process/6/activity",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"6",
+								"activity"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Actualizar Actividad",
 					"request": {
-						"url": "http://{{host}}/api/process/6/activity/4",
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"Final\",\n\t\"end_activity\": true,\n\t\"start_activity\": false\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/process/6/activity/4",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"6",
+								"activity",
+								"4"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Start Activiity",
 					"request": {
-						"url": "{{api}}/activity/3/start",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"parameters\" : \n\t\t[ { \"p1\" : \"v1\" },  \n\t\t  { \"p2\" : \"v2\" },\n\t\t  { \"p3\" : \"v3\" },\n\t\t  { \"p4\" : \"v4\" }\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "{{api}}/activity/3/start",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"activity",
+								"3",
+								"start"
+							]
 						},
 						"description": "Inicia una instancia de actividad"
 					},
@@ -415,17 +573,28 @@
 				{
 					"name": "Listar instancias",
 					"request": {
-						"url": "{{api}}/activity/2/instances",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{api}}/activity/2/instances",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"activity",
+								"2",
+								"instances"
+							]
+						}
 					},
 					"response": []
 				}
@@ -438,76 +607,127 @@
 				{
 					"name": "TransitionTo",
 					"request": {
-						"url": "http://{{host}}/api/transition/from/2/to/3",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/transition/from/2/to/3",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"transition",
+								"from",
+								"2",
+								"to",
+								"3"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Transiciones",
 					"request": {
-						"url": "{{api}}/activity/instance/4/output/transitions",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{api}}/activity/instance/4/output/transitions",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"activity",
+								"instance",
+								"4",
+								"output",
+								"transitions"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Modificar Transicion",
 					"request": {
-						"url": "http://{{host}}/api/transition/2/from/1/to/2",
 						"method": "PATCH",
 						"header": [],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/transition/2/from/1/to/2",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"transition",
+								"2",
+								"from",
+								"1",
+								"to",
+								"2"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Editar Condicion",
 					"request": {
-						"url": "http://{{host}}/api/transition/1/condition",
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"condition\" : \"(p1 in (1,2,3))\"\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/transition/1/condition",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"transition",
+								"1",
+								"condition"
+							]
 						},
 						"description": "Edita la condicion de una transición"
 					},
@@ -516,27 +736,38 @@
 				{
 					"name": "Trasitions from Process",
 					"request": {
-						"url": "{{api}}/transition/list/fromprocess/6",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{api}}/transition/list/fromprocess/6",
+							"host": [
+								"{{api}}"
+							],
+							"path": [
+								"transition",
+								"list",
+								"fromprocess",
+								"6"
+							]
+						},
 						"description": "Lista todas las transiciones de un proceso"
 					},
 					"response": []
@@ -550,73 +781,106 @@
 				{
 					"name": "Listar Variables Proceso",
 					"request": {
-						"url": "http://{{host}}/api/variables/process/6",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/variables/process/6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"variables",
+								"process",
+								"6"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Add Process Variables",
 					"request": {
-						"url": "http://{{host}}/api/variables/process/6",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{ \"variables\" : [ \n\t{ \"name\" : \"p1\" , \"value\" : \"1\" }\n\t]\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/variables/process/6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"variables",
+								"process",
+								"6"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Variables de actividad",
 					"request": {
-						"url": "http://{{host}}/api/variables/activity/6",
 						"method": "GET",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/variables/activity/6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"variables",
+								"activity",
+								"6"
+							]
+						},
 						"description": "Variables locales"
 					},
 					"response": []
@@ -624,34 +888,42 @@
 				{
 					"name": "Remove Process Variable",
 					"request": {
-						"url": "http://{{host}}/api/variables/process/6",
 						"method": "DELETE",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"variables\" : [ { \"name\" : \"p1\" } ]\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/variables/process/6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"variables",
+								"process",
+								"6"
+							]
 						},
 						"description": "Eliminar una variable de proceso"
 					},
@@ -666,30 +938,37 @@
 				{
 					"name": "Compiler",
 					"request": {
-						"url": "http://{{host}}/api/process/compiler",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"test\",\n\t\"activities\": [\n\t\t{ \"name\" : \"a1\",\n\t\t  \"type\" : \"activity\",\n\t\t  \"start\" : true,\n\t\t  \"end\" : false,\n\t\t  \"transition\": [{ \"to\": \"a2\", \"condition\" : \"0\" ,\"default\" : true }],\n\t\t  \"stages\" : [ { \"name\" : \"st1\" },{ \"name\": \"st2 \"} ] \t\n\t\t},\n\t\t{ \"name\" : \"a2\",\n\t\t  \"type\" : \"activity\",\n\t\t  \"end\" : true,\n\t\t  \"start\" :false\n\t\t}\n\t\t]\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/process/compiler",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"compiler"
+							]
+						}
 					},
 					"response": []
 				}
@@ -697,102 +976,162 @@
 		},
 		{
 			"name": "Actions",
-			"description": "",
+			"description": null,
 			"item": [
 				{
 					"name": "New Action",
 					"request": {
-						"url": "http://{{host}}/api/actions/activity/3/1",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"type\" : \"ON_ENTRY\",\n\t\"command\" : \"111\",\n\t\"config\" : \"111\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/actions/activity/3/1",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"actions",
+								"activity",
+								"3",
+								"1"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Listar Activity Actions",
 					"request": {
-						"url": "http://{{host}}/api/activity/3/actions",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/activity/3/actions",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"activity",
+								"3",
+								"actions"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Eliminar Accion",
 					"request": {
-						"url": "http://{{host}}/api/actions/5",
 						"method": "DELETE",
 						"header": [],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/actions/5",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"actions",
+								"5"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Chained Actions",
 					"request": {
-						"url": "http://{{host}}/api/activity/3/actions",
 						"method": "GET",
 						"header": [],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/activity/3/actions",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"activity",
+								"3",
+								"actions"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Move Position",
 					"request": {
-						"url": "http://{{host}}/api/actions/6/moveup",
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							}
 						],
-						"body": {},
-						"description": ""
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/actions/6/moveup",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"actions",
+								"6",
+								"moveup"
+							]
+						}
 					},
 					"response": []
 				}
@@ -805,36 +1144,65 @@
 				{
 					"name": "New Stage",
 					"request": {
-						"url": "http://{{host}}/api/activity/3/stage",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
-								"description": ""
+								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
+								"value": "Bearer {{token}}"
 							},
 							{
 								"key": "",
 								"value": "",
-								"description": "",
 								"disabled": true
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"s1\",\n\t\"descripcion\" : \"\",\n\t\"type\" : \"FORM\",\n\t\"next_stage\": null,\n\t\"prev_stage\": null\n}"
+							"raw": "{\n\t\"name\": \"s2\",\n\t\"descripcion\" : \"Etapa 3\",\n\t\"type\" : \"FORM\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "http://{{host}}/api/activity/1/stage",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"activity",
+								"1",
+								"stage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Stages de una actividad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "http://{{host}}/api/activity/1/stage",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"activity",
+								"1",
+								"stage"
+							]
+						}
 					},
 					"response": []
 				}
@@ -843,7 +1211,6 @@
 		{
 			"name": "Auth SignUp",
 			"request": {
-				"url": "http://{{host}}/api/auth/signup",
 				"method": "POST",
 				"header": [
 					{
@@ -859,43 +1226,74 @@
 					"mode": "raw",
 					"raw": "{\n\t\"name\": \"Marcelo\",\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"password_confirmation\": \"123456\"\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Auth Login",
 			"request": {
-				"url": "http://{{host}}/api/auth/login",
 				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
-						"value": "application/json",
-						"description": ""
+						"value": "application/json"
 					},
 					{
 						"key": "X-Requested-With",
-						"value": "XMLHttpRequest",
-						"description": ""
+						"value": "XMLHttpRequest"
 					}
 				],
 				"body": {
 					"mode": "raw",
 					"raw": "{\n\t\"email\": \"msilva@arkhotech.com\",\n\t\"password\": \"123456\",\n\t\"remember_me\": true\n}"
 				},
-				"description": ""
+				"url": {
+					"raw": "http://{{host}}/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "Test",
 			"request": {
-				"url": "http://{{host}}/api/test",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://{{host}}/api/test",
+					"protocol": "http",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"test"
+					]
+				}
 			},
 			"response": []
 		}
