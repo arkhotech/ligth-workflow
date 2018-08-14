@@ -1103,26 +1103,15 @@
 						"header": [
 							{
 								"key": "Accept",
-<<<<<<< HEAD
 								"value": "application/json"
 							},
 							{
 								"key": "Authorization",
 								"value": "Bearer {{token}}"
-=======
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"description": ""
->>>>>>> 9cab77d83fa73a4d7ac639643d4aa072ed0d6725
 							},
 							{
 								"key": "",
 								"value": "",
-<<<<<<< HEAD
 								"disabled": true
 							}
 						],
@@ -1143,14 +1132,6 @@
 								"moveup"
 							]
 						}
-=======
-								"description": "",
-								"disabled": true
-							}
-						],
-						"body": {},
-						"description": ""
->>>>>>> 9cab77d83fa73a4d7ac639643d4aa072ed0d6725
 					},
 					"response": []
 				}
