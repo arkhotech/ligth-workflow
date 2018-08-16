@@ -8,6 +8,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
+    
+    public function roles(){
+        return $this->belongsToMany("App\Role","roles_users");
+    }
+    
     use HasApiTokens, Notifiable;
     /**
      * The attributes that are mass assignable.

@@ -8,8 +8,6 @@ use App\Events\ActivityEvents;
 
 class ActivityInstance extends Model implements ActivityEvents{
     
-    //private $state = ActivityEvents::IDLE;
-    
      public function __construct() {
         parent::__construct();
         $this->state = ActivityEvents::IDLE;
@@ -56,7 +54,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         if($stage != null ){
             //Ejecutar las etapas
             $this->stage = $stage->id;
-            $instance = $stage->newStageInstance();
+            $instance = $stage->newStageInstance($this);
             $instance->onActivity();
             $this->activity_state = ActivityEvents::PENDDING;
         }else{

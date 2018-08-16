@@ -40,8 +40,8 @@ Route::group(
 
 Route::group(
         ["prefix" => "process",
-            "middleware" => "auth:api",
-            "middleware" => "domain:admin"],
+         "middleware" => "auth:api",
+         "middleware" => "domain:admin"],
         function(){
             Route::get('/variables/{id_process?}','ProcessController@listVariables');
             Route::get('/{id_domain}', 'ProcessController@listProcess');
@@ -52,8 +52,9 @@ Route::group(
             Route::delete('/{id}','ProcessController@deleteProcess');
             Route::post('/start/{id}','ProcessController@createInstance');
             Route::get('/{id_proceso}/instances/{id?}','ProcessInstanceController@instances');
-            
             Route::post('compiler',"CompileProcessController@compile");
+            Route::get('/{id_instance}/form',"StageController@actualForm"); //Obtener el formulario actual
+            Route::post('/{id_instance}/form',"StageController@updateForm");  //Actualizar el formaulario actual
             
         });
 
@@ -70,7 +71,9 @@ Route::group(
 
 
 Route::group(
-    ["prefix" => 'activity'],
+    ["prefix" => 'activity',
+     "middleware" => "auth:api",
+     "middleware" => "roles:admin"],
         function(){
             Route::post('/{id_prev}/start','ActivityInstanceController@start');
             Route::get('/instance/{id_instance}/{sense}/transitions',"ActivityInstanceController@listTransitions");
@@ -87,7 +90,9 @@ Route::group(
 
         
 Route::group(
-        ["prefix"=> "transition"],
+        ["prefix"=> "transition",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin"],
         function(){
             Route::post("/from/{from_id}/to/{to_id}","TransitionController@createTransition");
             Route::get("/list/fromprocess/{id_process}","TransitionController@listTransitions");
@@ -95,14 +100,18 @@ Route::group(
         });
         
 Route::group(
-    ["prefix" => "process/{id_proceso}/activity/{id_activity}/upload"],
+    ["prefix" => "process/{id_proceso}/activity/{id_activity}/upload",
+     "middleware" => "auth:api",
+     "middleware" => "roles:admin,users"],
         function(){
             Route::post("/","AttachmentController@upload");
         });
         
         
 Route::group(
-        ["prefix" => "variables"],
+        ["prefix" => "variables",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin"],
         function(){
             Route::get("/process/{id_process}","DeclaredVariableController@listProcessVariables");
             Route::get("/activity/{id_activity?}","DeclaredVariableController@listActivityVariables");
@@ -113,7 +122,9 @@ Route::group(
      
         
 Route::group(
-        ["prefix" => "actions" ],
+        ["prefix" => "actions",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin"],
         function(){
             Route::post("/activity/{id}/{id_prev_action?}","ActionController@newAction");
             Route::delete('/{id}','ActionController@removeAction');
@@ -122,16 +133,29 @@ Route::group(
         
         
 Route::group(
-        ["prefix" => "activity/{id_activity}/stage"],
+        ["prefix" => "tray",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin,users"],
         function(){
-           
-            
+           Route::get("input","TrayController@input");   
+           Route::get("process","TrayController@listProcess");  
         });
         
 Route::group(
-        ["prefix" => "stage"],
+        ["prefix" => "stage",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin"],
         function(){
             Route::delete("/{id}","StageController@deleteStage");
             Route::put("/{id}","StageController@editStage");
             Route::patch("/{id}/{sense}","StageController@mode");
+            Route::post("/{id}/form","FormController@newForm");
+            Route::get("{id}/form","FormController@listForms");
+            Route::delete("{id}/form/{form_id}","FormController@deleteForm");
+        });
+        
+Route::group(
+        ["prefix" => "form/{id}"],
+        function(){
+            Route::patch("field/{id_field}/{sense}","FormController@fieldMove");
         });

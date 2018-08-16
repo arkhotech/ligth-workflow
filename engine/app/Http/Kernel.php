@@ -59,6 +59,7 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'domain' => \App\Http\Middleware\DomainCheck::class
-    ];
+        'domain' => \App\Http\Middleware\DomainCheck::class,
+        'roles' => \App\Http\Middleware\RoleCheck::class
+     ];
 }

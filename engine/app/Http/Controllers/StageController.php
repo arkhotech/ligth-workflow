@@ -61,7 +61,13 @@ class StageController extends Controller{
        return response()->json(["id"=> $stage->id],201);
    }
    
+   private function actualForm(Request $request, $id_process_instance){
+       return response(null,400);
+   }
    
+   private function updateForm(Request $request, $id_process_instance){
+       return response(null,400);
+   }
    
    private function mapType($field,$value){
        
@@ -70,8 +76,5 @@ class StageController extends Controller{
        }
        return $value;
    }
-   
-   
-   
 }
 
