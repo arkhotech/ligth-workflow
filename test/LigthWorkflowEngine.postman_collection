@@ -259,6 +259,42 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "Edit Process",
+					"request": {
+						"url": "http://{{host}}/api/process/1",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Roles\",\n\t\"assign_roles\" : [ \"admin\" , \"users\" ],\n\t\"assign_users\"  : [ \"msilva@arkhotech.com\"]\n}"
+						},
+						"description": "Editar un proceso"
+					},
+					"response": []
 				}
 			]
 		},
