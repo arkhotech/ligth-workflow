@@ -26,7 +26,28 @@ class ProcessController extends Controller
         //$this->middleware("auth:api");
     }
     
- 
+    
+    public function updateProcess(Request $request, $id_process){
+        $process = Process::find($id_process);
+        
+        if( $process != null ){
+            foreach($process->fields() as $field){
+                if($request->input($field) == null){
+                    continue;
+                }
+                $process->{$field} = $request->input($field);
+            }
+            //Revisar roles asignados
+            foreach($request->input("assign_roles.*") as $rol_name){
+                $rol = $Role::where("name",$rol_name)->first();
+                
+            }
+            //$process->save();
+            return response()->json($process,200);
+        }
+        return response()
+                ->json(["message" => "El proceso $id_process no existe"],404);
+    }
     /**
      * Losta procesos creados
      * 
