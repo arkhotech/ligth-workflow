@@ -35,6 +35,6 @@ class RoleUsers extends Migration
     {
         //
         Schema::dropIfExists('roles');
-        Schema::dropIfExits('roles_users');
+        Schema::dropIfExists('roles_users');
     }
 }

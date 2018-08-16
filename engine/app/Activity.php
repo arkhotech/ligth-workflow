@@ -12,6 +12,10 @@ class Activity extends Model implements EditableFieldsIF{
         return $this->hasMany("App\Stage");
     }
     
+    public function roles(){
+        return $this->belongsToMany("App\Role","activity_roles");
+    }
+    
     public function actions(){
         return $this->hasMany('App\Action','id_activity');
     }

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Process;
 use App\Domain;
+use App\Role;
+use App\User;
+use App\ProcessRole;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use App\ProcessVariable;
 use App\ProcessInstance;
@@ -26,6 +28,41 @@ class ProcessController extends Controller
         //$this->middleware("auth:api");
     }
     
+    private function assignRoles($newRoles,$process){
+        foreach($newRoles as $rol_name){
+                //El rol debe existir
+                $rol = Role::where('name',$rol_name)->first();
+                if($rol==null){
+                    return response()->nofound("El rol $rol_name no existe");
+                }
+
+                if( $process->roles()->where("roles.name",$rol_name)->first() == null){
+                    Log::debug("Creando la relacion process role");
+                    $process_role = new ProcessRole();
+                    $process_role->process_id = $process->id;
+                    $process_role->role_id = $rol->id;
+                    $process_role->save();
+                }else{
+                    //El rol esta asignado
+                    Log::debug("Rol existe");
+                }
+            }
+    }
+    
+    private function removeRoles($process, $newRoles){
+        //Intercambia los valores (roles) a claves para busqueda
+        $asignedRoles = $process->roles()->get();
+        $roles = array_flip($newRoles); 
+        foreach($asignedRoles as $role){
+            Log::debug("Buscando: ".$role->name);
+            
+            if(!key_exists($role->name, $roles)){
+                ProcessRole::where('role_id',$role->id)
+                        ->where('process_id',$process->id)
+                        ->delete();
+            }
+        }
+    }
     
     public function updateProcess(Request $request, $id_process){
         $process = Process::find($id_process);
@@ -38,15 +75,16 @@ class ProcessController extends Controller
                 $process->{$field} = $request->input($field);
             }
             //Revisar roles asignados
-            foreach($request->input("assign_roles.*") as $rol_name){
-                $rol = $Role::where("name",$rol_name)->first();
-                
-            }
-            //$process->save();
+            $newRoles = $request->input("assign_roles.*");
+            $this->assignRoles($newRoles,$process);
+            //revisar roles que no están asignados
+            $this->removeRoles($process,$newRoles);
+            
+            $process->save();
+            $process->roles = $process->roles()->select("name")->get();
             return response()->json($process,200);
         }
-        return response()
-                ->json(["message" => "El proceso $id_process no existe"],404);
+        return response()->nofound("El proceso $id_process no existe");
     }
     /**
      * Losta procesos creados
@@ -57,7 +95,7 @@ class ProcessController extends Controller
     public function listProcess($id_domain){
         //validar dominio
         if(Domain::find($id_domain)==null){
-            return response()->json(array("status" => "error","message" => "dominio no existe"),404);
+            return response()->nofound("dominio no existe: $id_domain");
         }
        
         $process = Process::where("domain_id",$id_domain)->get();

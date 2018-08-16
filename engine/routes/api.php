@@ -44,7 +44,7 @@ Route::group(
          "middleware" => "domain:admin"],
         function(){
             Route::get('/variables/{id_process?}','ProcessController@listVariables');
-            Route::get('/{id_domain}', 'ProcessController@listProcess');
+            Route::get('/from/domain/{id_domain}', 'ProcessController@listProcess');
             Route::get('/trash/{id_domain}', 'ProcessController@listTrashedProcess');
             Route::patch('/trash/{id_process}','ProcessController@restoreProcess');
             Route::post('/{id_domain}','ProcessController@newProcess');
