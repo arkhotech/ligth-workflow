@@ -50,7 +50,7 @@ Route::group(
             Route::post('/{id_domain}','ProcessController@newProcess');
             Route::put('/{id}','ProcessController@updateProcess');
             Route::delete('/{id}','ProcessController@deleteProcess');
-            Route::post('/start/{id}','ProcessController@createInstance');
+            Route::post('/start/{id}','ProcessController@startProcess');
             Route::get('/{id_proceso}/instances/{id?}','ProcessInstanceController@instances');
             Route::post('compiler',"CompileProcessController@compile");
             Route::get('/{id_instance}/form',"StageController@actualForm"); //Obtener el formulario actual
@@ -86,6 +86,7 @@ Route::group(
             Route::post("/{id}/stage","StageController@newStage");
             Route::post("/{id}/stage/prev/{id_prev?}/next/{id_next?}","StageController@newStage");
             Route::get("/{id}/stage","StageController@listStages");
+            
         });        
 
         
@@ -137,8 +138,9 @@ Route::group(
          "middleware" => "auth:api",
          "middleware" => "roles:admin,users"],
         function(){
-           Route::get("input","TrayController@input");   
-           Route::get("process","TrayController@listProcess");  
+           Route::get("tasks","TrayController@listTask");   
+           Route::get("process","TrayController@listProcess"); 
+           Route::get("assigned","TrayController@asignedWork");
         });
         
 Route::group(
@@ -158,4 +160,14 @@ Route::group(
         ["prefix" => "form/{id}"],
         function(){
             Route::patch("field/{id_field}/{sense}","FormController@fieldMove");
+        });
+        
+        
+Route::group(
+        ["prefix" => "control",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin"],
+        function(){
+            Route::get("/process/instance/{id}/form","StageController@actualStageFromInstance");
+            Route::post("/activity/instance/{id}/form/next","ProcessControlController@nextForm");
         });

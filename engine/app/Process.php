@@ -18,7 +18,7 @@ class Process extends Model implements EditableFieldsIF{
         return $this->belongsTo("App\Domain");
     }
     
-    public function instances(){
+    public function processInstances(){
         return $this->hasMany("App\ProcessInstance");
     }
     

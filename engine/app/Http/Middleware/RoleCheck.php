@@ -18,6 +18,9 @@ class RoleCheck
     public function handle($request, Closure $next,$permited_role)
     {
         $user = Auth::user();
+        if($user == null ){
+            return response()->json(["message" => "Usuario no autorizado"],401);
+        }
         $roles = explode(",",$permited_role);
         
         $role = $user->roles()->whereIn('name',$roles)->first();

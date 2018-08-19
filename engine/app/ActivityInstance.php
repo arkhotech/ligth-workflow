@@ -10,19 +10,15 @@ class ActivityInstance extends Model implements ActivityEvents{
     
      public function __construct() {
         parent::__construct();
-        $this->state = ActivityEvents::IDLE;
+        $this->activity_state = ActivityEvents::IDLE;
     }
     
     public function activity(){
         return $this->belongsTo("\App\Activity","activity_id");
     }
     
-    public function stages(){
-        $activity = $this->activity()->first();
-        if( $activity != null ){
-            return $activity->stages();
-        }
-        return null;
+    public function stagesInstances(){
+        return $this->hasMany("App\StageInstance","activity_instance_id");
     }
     /**
      *
@@ -49,23 +45,33 @@ class ActivityInstance extends Model implements ActivityEvents{
     }
 
     private function executeStages(){
-        //Se ejecutan las etapas en este punto
-        $stage = $this->stages()->first();
+        //Traere la definicion de stages. Y ejecutar el primer stage
+        $activity = $this->activity()->first();
+        $stage = $activity->stages()
+                ->whereNull("prev_stage")
+                ->first();
+
         if($stage != null ){
             //Ejecutar las etapas
             $this->stage = $stage->id;
-            $instance = $stage->newStageInstance($this);
-            $instance->onActivity();
+            $stage_instance = $stage->newStageInstance($this);
+            $stage_instance->onActivity();
             $this->activity_state = ActivityEvents::PENDDING;
         }else{
-            Log::debug("No hay stages");
+            Log::warning("No hay stages");
             $this->activity_state = ActivityEvents::ON_EXIT; //Para el siguiente evento
         }
         $this->save();
     }
     
     public function executeActivity(){
-        return $this->onEntry();
+        $instance = $this->onEntry();
+        if($instance == null){
+            Log::info('LOPP finalizado');
+        }else{
+            Log::info("Retornando status : " . $this->activity_state);
+        }
+        return $instance;
     }
     /**
      * 
@@ -83,6 +89,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         
         Log::debug('Ejecutando actividad');
         if($this->type == "conditional"){
+//#####  Ejeución condicional (No probada aún)            
             Log::debug("Ejecutando actividad condicional");
             //entonces hay varias condiciones
             $transitions = $activity->outputTransitions()->get();
@@ -93,6 +100,7 @@ class ActivityInstance extends Model implements ActivityEvents{
                 }
             }
         }else{
+//#####  Ejeucion de stages
             Log::debug("Ejecutando stages");
             $this->executeStages();
             Log::debug('Tipo actividada: Activity');
@@ -114,6 +122,7 @@ class ActivityInstance extends Model implements ActivityEvents{
                     
                     break;
                 case ActivityInstance::PENDDING:
+                    Log::debug("Retnornando actividad en modo pending");
                     return $this;
                 default:
                     throw new ActivityException("Estado desconocido ".$this->activity_state);
@@ -127,6 +136,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         Log::debug("[onEntry]");
         $this->activity_state = ActivityEvents::ON_ENTRY;
         $this->save();
+//Obtener el primer form        
         $root_action = $this->hasMany("App\Action","id_activity")
                 ->where("id_prev_action")
                 ->where("type",Action::ON_ENTRY)

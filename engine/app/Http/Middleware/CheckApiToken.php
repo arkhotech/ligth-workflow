@@ -15,6 +15,9 @@ class CheckApiToken
      */
     public function handle($request, Closure $next)
     {
+        if($request->header("Authorization")== null){
+            return response(null,401);
+        }
         if(!empty(trim($request->input('api_token')))){
 
         $is_exists = User::where('id' , Auth::guard('api')->id())->exists();

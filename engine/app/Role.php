@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
+    const ADMIN_ROLE_ID = 1;
     //
     public function users(){
         return $this->belongsToMany("App\User","roles_users");

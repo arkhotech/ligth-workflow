@@ -14,14 +14,13 @@ class ResponseServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-//        Response::macro('success', function ($data) {
-//            return Response::json([
-//                'message'  => $data],200);
-//        
-//        });
+        Response::macro('badreq', function ($data) {
+            return Response::json([
+                "error" => true,
+                'message'  => $data],400);
+        
+        });
 
-        
-        
         Response::macro('created', function ($data=null) {
             if($data==null){
                 return Response::json(null,201);

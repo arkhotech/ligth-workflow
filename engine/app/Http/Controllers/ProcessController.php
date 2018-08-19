@@ -6,15 +6,16 @@ use Illuminate\Http\Request;
 use App\Process;
 use App\Domain;
 use App\Role;
-use App\User;
 use App\ProcessRole;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Auth;
 use App\ProcessVariable;
 use App\ProcessInstance;
 use App\Jobs\AsyncStart;
 use App\Events\ActivityEvents;
+use App\Exceptions\NotUserInRoleException;
 
 class ProcessController extends Controller
 {
@@ -179,8 +180,8 @@ class ProcessController extends Controller
      * @param type $id_process
      * @return type
      */
-    
-   public function createInstance(ProcessRequest $request, $id_process){
+    //TODO quizá moverla a control...
+   public function startProcess(ProcessRequest $request, $id_process){
         //Log::debug("User: ".Auth::user());
         $request->validate(['parameters' => 'array']);
         //Solo para validar el proceso
@@ -224,8 +225,9 @@ class ProcessController extends Controller
                             array("id_process" => $process_instance->id,
                                 "id_job" => $id_job),202);
                 }else{
-                    //var_dump($process_instance);die;
+//#######  Run process                    
                     $result = $this->runProcess($process_instance);
+                    
                     return response()->json(
                             array("id_process" => $process_instance->id, 
                                 "output" => $result),201);
@@ -269,8 +271,10 @@ class ProcessController extends Controller
     private function runProcess(ProcessInstance $process){
         //TODO ver los requisitos y post procesos
         try{
+            
+ // ##### Ejeucion de proceso
             //Solo trae la primera instancia
-            $activity_instance = $process->onActivity();
+            $activity_instance = $process->run(Auth::user());
             
             while($activity_instance != null 
                     && $activity_instance->activity_state != ActivityEvents::PENDDING  ){  
@@ -279,16 +283,24 @@ class ProcessController extends Controller
                 //actualizando el cursor para saber en que actividad esta el proceso
                 $process->activityCursor = $activity_instance->id;
                 $process->save(); 
+// #######  Ejecucion de actividad
                 //ejecutar efectivamente la instancia
                 $next_activity = $activity_instance->executeActivity();
                 
                 $activity_instance = $next_activity;
             }
-            Log::debug("### saliendo del loop, status = ".$activity_instance->activity_state);
-            $process->process_state = ($activity_instance != null ) ? 
-                $activity_instance->activity_state : 
-                ActivityEvents::FINISHED;
+            //
+            if($activity_instance != null ){
+               Log::debug("### saliendo del loop, status = ".$activity_instance->activity_state);
+                $process->process_state =$activity_instance->activity_state;
+            }else{
+                Log::debug("### Finalizando, Finished");
+                $process->process_state = ActivityEvents::FINISHED;
+            }
             $process->saveOrFail();
+        }catch(NotUserInRoleException $e){
+            $process->process_state = ActivityEvents::ERROR;
+            return response()->json(["message" => $e->getMessage()],403);
         }catch(Exception $e){
             $process->process_state = ActivityEvents::ERROR;
             $process->save();

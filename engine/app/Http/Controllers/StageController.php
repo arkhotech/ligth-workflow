@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use App\ProcessInstance;
 
 class StageController extends Controller{
     
@@ -60,9 +61,28 @@ class StageController extends Controller{
        }
        return response()->json(["id"=> $stage->id],201);
    }
-   
-   private function actualForm(Request $request, $id_process_instance){
-       return response(null,400);
+   /**
+    * 
+    * @param type $id_process_instance
+    * @return type
+    */
+   public function actualStageFromInstance($id_process_instance){
+       $p_instance =ProcessInstance::find($id_process_instance);
+       if( $p_instance == null ){
+           return response()->nofound("No existe la intancia de proceso ".$id_process_instance);
+       }
+
+        $result = array();       
+        $activities = $p_instance->activitiesInstances()->get(); 
+        foreach($activities as $activity){
+            $stages = $activity->with(array('stagesInstances' => function($query) use ($activity){
+                    Log::debug($activity->stage);
+                    $query->where("stage_id",$activity->stage)->first();
+               }))->get();
+            $result[] = $stages;
+        }
+             
+        return response()->json($result,200);
    }
    
    private function updateForm(Request $request, $id_process_instance){

@@ -17,6 +17,7 @@ class CreateActivityInstancesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('process_instance_id');
             $table->unsignedInteger('activity_id');
+            $table->unsignedInteger('assigned_user');
             $table->foreign('activity_id')
                     ->references('id')
                     ->on('activities')

@@ -9,6 +9,16 @@ use App\Actions\DoubleLinkedIF;
 class Field extends Model implements DoubleLinkedIF
 {
     //
+    
+    public function createFieldInstance(FormInstance $form){
+        $field = new FieldInstance();
+        $field->name = $this->name;
+        $field->form_instance_id = $form->id;
+        $field->field_id = $this->id;
+        $field->save();
+        return $field;
+    }
+    
     public function getNextId() {
         return $this->next_field;
     }
