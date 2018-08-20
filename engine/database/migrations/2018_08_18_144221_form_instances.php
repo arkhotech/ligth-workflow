@@ -18,6 +18,11 @@ class FormInstances extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('stage_instance_id');
+            $table->unsignedInteger('form_id');
+            $table->foreign('form_id')
+                    ->references('id')
+                    ->on('forms')
+                    ->onDelete('cascade');
             $table->foreign('stage_instance_id')
                     ->references('id')
                     ->on('stage_instances')

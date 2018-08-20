@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\FieldInstance;
+use App\Events\FieldEventListener;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,7 +18,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-  
+        FieldInstance::observe(FieldEventListener::class);
+        
     }
 
     /**

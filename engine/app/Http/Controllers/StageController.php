@@ -67,21 +67,13 @@ class StageController extends Controller{
     * @return type
     */
    public function actualStageFromInstance($id_process_instance){
-       $p_instance =ProcessInstance::find($id_process_instance);
-       if( $p_instance == null ){
+        $p_instance =ProcessInstance::find($id_process_instance);
+        if( $p_instance == null ){
            return response()->nofound("No existe la intancia de proceso ".$id_process_instance);
-       }
-
-        $result = array();       
-        $activities = $p_instance->activitiesInstances()->get(); 
-        foreach($activities as $activity){
-            $stages = $activity->with(array('stagesInstances' => function($query) use ($activity){
-                    Log::debug($activity->stage);
-                    $query->where("stage_id",$activity->stage)->first();
-               }))->get();
-            $result[] = $stages;
-        }
-             
+        }       
+  
+        $result['activity_instance'] = $p_instance->activitiesInstances()->with('actualStage')->get();
+ 
         return response()->json($result,200);
    }
    

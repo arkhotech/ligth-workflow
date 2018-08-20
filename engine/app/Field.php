@@ -9,6 +9,9 @@ use App\Actions\DoubleLinkedIF;
 class Field extends Model implements DoubleLinkedIF
 {
     //
+    public function fieldInstances(){
+        return $this->hasMany("App\FieldInstance");
+    }
     
     public function createFieldInstance(FormInstance $form){
         $field = new FieldInstance();

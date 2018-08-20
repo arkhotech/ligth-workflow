@@ -20,6 +20,10 @@ class ActivityInstance extends Model implements ActivityEvents{
     public function stagesInstances(){
         return $this->hasMany("App\StageInstance","activity_instance_id");
     }
+    
+    public function actualStage(){
+        return $this->hasOne("App\StageInstance","activity_instance_id");
+    }
     /**
      *
      * @return type

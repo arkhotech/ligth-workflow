@@ -7,13 +7,11 @@
  */
 namespace App\Http\Controllers;
 
-use App\Parameter;
 use Illuminate\Http\Request;
 use App\ProcessInstance;
 use App\ActivityInstance;
-use App\StageInstance;
-use App\Form;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class ProcessControlController extends Controller{
     
@@ -47,8 +45,39 @@ class ProcessControlController extends Controller{
     public function nextForm(Request $request, $id_act_inst){
        
         $activity_instance = ActivityInstance::find($id_act_inst);
-        $stages = $activity_instance->stagesInstances()->first()->with('variables');
-        return response()->json($stages);
+        if($activity_instance == null ){
+            return response()->nofound("La instancia de actividad $id_act_inst. no existe");
+        }
+        try{
+            DB::beginTransaction();
+            $stage_instance = $activity_instance->actualStage()->first(); //->formInstance()->first();
+            $form_instance = $stage_instance->formInstances()->first();
+            $form_instance
+                    ->inputVariables($this
+                            ->createVarlist($request
+                                    ->input('fields.*')));
+            DB::commit();
+            //recuperar las variables
+            $form_instance = $stage_instance
+                    ->formInstances()
+                    ->with('fields')
+                    ->first();
+            //Event. Next form
+            $form_instance->nextForm();
+        }catch(Exception $e){
+            Log::error("Error: ".$e->getMessage());
+            DB::rollback();
+            return response()->json(json_decode($e->getMessage()),500);
+        }
+        return response()->json($form_instance,200);
+    }
+    
+    public function createVarlist(array $params){
+        $varlist = array();
+        foreach($params as $param){
+            $varlist[$param['name']] = $param['value']; 
+        }
+        return $varlist;
     }
     
 }

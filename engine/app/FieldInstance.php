@@ -14,13 +14,9 @@ class FieldInstance extends Model
     public function field(){
         return $this->belongsTo("App\Field");
     }
-    //
-    public function newFieldInstance(ActivityInstance $activity_instance){
-        $instance = new FieldInstance();
-        $instance->name = $this->name;
-        $instance->value = $this->value;
-        $instance->field_id = $this->id;
-        $instance->activity_instance_id = $activity_instance->id;
-        $instance->save();
+    
+    public function fieldInstance(){
+        return $this->hasMany("App\FieldInstance");
     }
+    
 }

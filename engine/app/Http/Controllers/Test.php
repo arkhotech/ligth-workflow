@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\ActionFactory;
+use App\Form;
 /**
  * Description of Test
  *
@@ -18,8 +19,13 @@ class Test extends Controller{
     //put your code here
     
     public function test(){
-        $action = ActionFactory::create("EXPRESION");
-        $action->execute();
+        $form = Form::find(8);
+        if($form == null){
+            return response(null,500);
+        }
+        $form_inst = $form->formInstance()->first();
+        $test = array("nombre" => "xxxx", "apellidox" => "yyyy", "archivo" => "pdf");
+        $form_inst->inputVariables($test);
     }
     
 }
