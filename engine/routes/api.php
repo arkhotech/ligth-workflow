@@ -165,5 +165,5 @@ Route::group(
          "middleware" => "roles:admin"],
         function(){
             Route::get("/process/instance/{id}/form","ProcessControlController@currentForm");
-            Route::post("/activity/instance/{id}/form/next","ProcessControlController@submitForm");
+            Route::post("/process/instance/{id}/form/next","ProcessControlController@submitForm");
         });

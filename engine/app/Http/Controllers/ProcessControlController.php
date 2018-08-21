@@ -12,6 +12,7 @@ use App\ProcessInstance;
 use App\ActivityInstance;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Events\ActivityEvents;
 
 class ProcessControlController extends Controller{
     /**
@@ -77,16 +78,28 @@ class ProcessControlController extends Controller{
      * @param type $id_act_inst
      * @return type
      */
-    public function submitForm(Request $request, $id_act_inst){
-        
-        $activity_instance = ActivityInstance::find($id_act_inst);
+    public function submitForm(Request $request, $id_proc_inst){
+        $process_instance = ProcessInstance::find($id_proc_inst);
+        if($process_instance == null){
+            return response()->nofound("La instancia de proceso $id_proc_inst. no existe");
+        }
+        $activity_instance = $process_instance->currentActivityInstance();
         if($activity_instance == null ){
-            return response()->nofound("La instancia de actividad $id_act_inst. no existe");
+            return response()->json(["message" => "No existe una instancia asociada a esta actividad"],500);
         }
         try{
-            DB::beginTransaction();
+            
+            if ( $activity_instance->activity_state == ActivityEvents::FINISHED ||
+                  $activity_instance->activity_state ==   ActivityEvents::ERROR){
+                Log::warning("Instancia terminada");
+                return response()->json(["message" => 
+                    "No se puede operar una instancia en error o terminada"],400);
+            }
+            //DB::beginTransaction();
             $current_stage = $activity_instance->currentStage()->first(); 
+            
             $current_form_instance = $current_stage->formInstances()->first();
+            
             $result =$current_form_instance
                     ->injectInputVariables($this
                             ->createVarlist($request
@@ -96,7 +109,7 @@ class ProcessControlController extends Controller{
                 DB::rollback();
                 return response()->json($result,400);
             }
-            DB::commit();
+            //DB::commit();
             //Acá debería retornar el resultado de la validación.
             $result['output'] = $current_form_instance->execute();
             //Recuperar el próximo formulario. Responsabilidad de Stage.
@@ -109,7 +122,7 @@ class ProcessControlController extends Controller{
             return response()->json($result,200);
         }catch(Exception $e){
             Log::error("Error: ".$e->getMessage());
-            DB::rollback();
+            //DB::rollback();
             return response()->json(json_decode($e->getMessage()),500);
         }
 

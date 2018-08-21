@@ -57,5 +57,9 @@ class Field extends Model implements DoubleLinkedIF
     public function setPrevId($id) {
         $this->prev_field = $id;
     }
+    
+    public function validate(){
+        return true;
+    }
 
 }

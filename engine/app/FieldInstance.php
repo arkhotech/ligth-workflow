@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class FieldInstance extends Model
 {
-    
+    protected $primaryKey = "id";
+  
     public function activityInstance(){
         return $this->belongsTo("App\ActivityInstance");
     }

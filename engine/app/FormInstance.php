@@ -43,14 +43,17 @@ class FormInstance extends Model
                 && $variables[$field->name] != null ){
                 Log::debug('Mapeando variable: '.$field->name);
                 $i_field = $field->fieldInstances()->first();
+
                 if($i_field == null){
+                    Log::debug('Creando variable: '.$field->name);
                     $i_field = $field->createFieldInstance($this);
                 }
                 Log::debug("valor: ".$variables[$field->name]);
                 $i_field->value = $variables[$field->name];
-                
+                $i_field->save();
                 if( $i_field->validate() ){
-                    $i_field->save();
+                    Log::debug("Guardando valor en campo: ".$i_field->value);
+                    ;
                 }else{
                     $error[] = [ $i_field->name.".validation.error" 
                         => $i_field->validationError()];
