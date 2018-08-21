@@ -227,15 +227,18 @@
 						"header": [
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							},
 							{
 								"key": "Accept",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							},
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{token}}",
+								"description": ""
 							}
 						],
 						"body": {
@@ -263,7 +266,7 @@
 				{
 					"name": "Edit Process",
 					"request": {
-						"url": "http://{{host}}/api/process/1",
+						"url": "http://{{host}}/api/process/6",
 						"method": "PUT",
 						"header": [
 							{
@@ -290,7 +293,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Roles\",\n\t\"assign_roles\" : [ \"admin\" , \"users\" ],\n\t\"assign_users\"  : [ \"msilva@arkhotech.com\"]\n}"
+							"raw": "{\n\t\"name\" : \"Roles 2\",\n\t\"assign_roles\" : [ \"admin\" , \"users\" ],\n\t\"assign_users\"  : [ \"msilva@arkhotech.com\"]\n}"
 						},
 						"description": "Editar un proceso"
 					},
@@ -369,20 +372,23 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{token}}",
+								"description": ""
 							},
 							{
 								"key": "Accept",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"activity_name\" : \"Conditional\",\n\t\"type\" : \"conditional\"\n}"
+							"raw": "{\n\t\"name\" : \"Prueba\",\n\t\"type\" : \"activity\",\n\t\"start_activity\" : true,\n\t\"end_activity\" : true,\n\t\"role_id\": 0,\n\t\"roles\" : [\"admin\",\"users\"]\n}"
 						},
 						"description": ""
 					},
@@ -391,25 +397,28 @@
 				{
 					"name": "Actualizar Actividad",
 					"request": {
-						"url": "http://{{host}}/api/process/6/activity/4",
+						"url": "http://{{host}}/api/process/6/activity/9",
 						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "Bearer {{token}}"
+								"value": "Bearer {{token}}",
+								"description": ""
 							},
 							{
 								"key": "Accept",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							},
 							{
 								"key": "Content-Type",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Final\",\n\t\"end_activity\": true,\n\t\"start_activity\": false\n}"
+							"raw": "{\n\t\"name\": \"Final\",\n\t\"end_activity\": true,\n\t\"start_activity\": false,\n\t\"roles\" : [\"admin\"]\n}"
 						},
 						"description": ""
 					},
@@ -446,7 +455,19 @@
 						"header": [
 							{
 								"key": "Accept",
-								"value": "application/json"
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -831,7 +852,7 @@
 				{
 					"name": "New Stage",
 					"request": {
-						"url": "http://{{host}}/api/activity/2/stage",
+						"url": "http://{{host}}/api/activity/11/stage",
 						"method": "POST",
 						"header": [
 							{
@@ -867,9 +888,26 @@
 				{
 					"name": "Listar Stages de una actividad",
 					"request": {
-						"url": "http://{{host}}/api/activity/2/stage",
+						"url": "http://{{host}}/api/activity/11/stage",
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
 						"body": {},
 						"description": ""
 					},
@@ -884,7 +922,7 @@
 				{
 					"name": "New Form",
 					"request": {
-						"url": "http://{{host}}/api/stage/1/form",
+						"url": "http://{{host}}/api/stage/7/form",
 						"method": "POST",
 						"header": [
 							{
@@ -911,7 +949,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"form1\",\n\t\"description\": \"test\",\n\t\"fields\": [\n\t\t{ \n\t\t\t\"name\" : \"nombre\",\n\t\t\t\"type\" : \"text\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"string\",\n\t\t\t\"description\" :\"\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"apellido\",\n\t\t\t\"type\" : \"text\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"string\",\n\t\t\t\"description\" :\"\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"archivo\",\n\t\t\t\"type\" : \"file\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"pdf\",\n\t\t\t\"description\" :\"\"\n\t\t}\n\t\t\n\t\t]\n}"
+							"raw": "{\n\t\"name\" : \"form3\",\n\t\"description\": \"Formaulario 3\",\n\t\"fields\": [\n\t\t{ \n\t\t\t\"name\" : \"nombre\",\n\t\t\t\"type\" : \"text\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"string\",\n\t\t\t\"description\" :\"\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"apellido\",\n\t\t\t\"type\" : \"text\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"string\",\n\t\t\t\"description\" :\"\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"archivo\",\n\t\t\t\"type\" : \"file\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"pdf\",\n\t\t\t\"description\" :\"\"\n\t\t}\n\t\t\n\t\t]\n}"
 						},
 						"description": ""
 					},
@@ -920,7 +958,7 @@
 				{
 					"name": "List Form",
 					"request": {
-						"url": "http://{{host}}/api/stage/1/form",
+						"url": "http://{{host}}/api/stage/5/form",
 						"method": "GET",
 						"header": [
 							{
@@ -1004,6 +1042,177 @@
 			]
 		},
 		{
+			"name": "Tray",
+			"description": "",
+			"item": [
+				{
+					"name": "Input Tray",
+					"request": {
+						"url": "http://{{host}}/api/tray/input",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Asigned Work",
+					"request": {
+						"url": "http://{{host}}/api/tray/assigned",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Procesos",
+					"request": {
+						"url": "http://{{host}}/api/tray/process",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": "Lista los procesos dispoibles en la bandeja"
+					},
+					"response": []
+				},
+				{
+					"name": "Tasks List",
+					"request": {
+						"url": "http://{{host}}/api/tray/tasks",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Control",
+			"description": "Operaciones de control",
+			"item": [
+				{
+					"name": "Actual Form",
+					"request": {
+						"url": "http://{{host}}/api/control/process/instance/210/form",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Next",
+					"request": {
+						"url": "http://{{host}}/api/control/activity/instance/189/form/next",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"description": ""
+							},
+							{
+								"key": "",
+								"value": "",
+								"description": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fields\" : [\n\t\t{\"name\" : \"nombre\",\"value\" : \"xxx\"},\n\t\t{\"name\" : \"apellido\",\"value\" : \"yyy\"},\n\t\t{\"name\" : \"archivo\",\"value\" : \"$$$$$$$$$$\"}\n\t\t]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Auth SignUp",
 			"request": {
 				"url": "http://{{host}}/api/auth/signup",
@@ -1059,34 +1268,6 @@
 					"mode": "raw",
 					"raw": ""
 				},
-				"description": ""
-			},
-			"response": []
-		},
-		{
-			"name": "Input Tray",
-			"request": {
-				"url": "http://{{host}}/api/tray/input",
-				"method": "GET",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"description": ""
-					},
-					{
-						"key": "Authorization",
-						"value": "Bearer {{token}}",
-						"description": ""
-					},
-					{
-						"key": "",
-						"value": "",
-						"description": "",
-						"disabled": true
-					}
-				],
-				"body": {},
 				"description": ""
 			},
 			"response": []
