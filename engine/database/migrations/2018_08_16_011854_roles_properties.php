@@ -16,9 +16,9 @@ class RolesProperties extends Migration
         //
         Schema::create('process_roles',function(Blueprint $table){
             $table->unsignedInteger('process_id');
-            $table->unsignedInteger('roles_id');
+            $table->unsignedInteger('role_id');
             $table->timeStamps();
-            $table->unique(['process_id','roles_id']);
+            $table->unique(['process_id','role_id']);
         });
         
         Schema::create('activity_roles',function(Blueprint $table){

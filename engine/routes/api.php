@@ -46,29 +46,24 @@ Route::group(
             Route::get('/variables/{id_process?}','ProcessController@listVariables');
             Route::get('/from/domain/{id_domain}', 'ProcessController@listProcess');
             Route::get('/trash/{id_domain}', 'ProcessController@listTrashedProcess');
+            Route::get('/{id_instance}/form',"StageController@actualForm"); //Obtener el formulario actual
+            Route::get('/{id_proceso}/instances/{id?}','ProcessInstanceController@instances');
             Route::patch('/trash/{id_process}','ProcessController@restoreProcess');
             Route::post('/{id_domain}','ProcessController@newProcess');
             Route::put('/{id}','ProcessController@updateProcess');
             Route::delete('/{id}','ProcessController@deleteProcess');
             Route::post('/start/{id}','ProcessController@startProcess');
-            Route::get('/{id_proceso}/instances/{id?}','ProcessInstanceController@instances');
+            
             Route::post('compiler',"CompileProcessController@compile");
-            Route::get('/{id_instance}/form',"StageController@actualForm"); //Obtener el formulario actual
+            
             Route::post('/{id_instance}/form',"StageController@updateForm");  //Actualizar el formaulario actual
             
+            Route::get('/{id_proceso}/activity/','ActivityController@listActivities');
+            Route::post('/{id_proceso}/activity/','ActivityController@newActivity');
+            
+            Route::put('/{id_proceso}/activity/{id}','ActivityController@editActivity');
+            
         });
-
-
-Route::group(
-        ["prefix" => "process/{id_proceso}/activity"],
-        function(){
-            Route::get('/','ActivityController@listActivities');
-            Route::post('/','ActivityController@newActivity');
-            Route::delete('/{id}','ActivityController@deleteActivity');
-            Route::put('/{id}','ActivityController@editActivity');
-        });
-
-
 
 Route::group(
     ["prefix" => 'activity',
@@ -86,6 +81,7 @@ Route::group(
             Route::post("/{id}/stage","StageController@newStage");
             Route::post("/{id}/stage/prev/{id_prev?}/next/{id_next?}","StageController@newStage");
             Route::get("/{id}/stage","StageController@listStages");
+            Route::delete('/{id}','ActivityController@deleteActivity');
             
         });        
 

@@ -13,7 +13,8 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use App\FormInstance;
+
+use App\ActivityInstance;
 use Illuminate\Support\Facades\Log;
 /**
  * Description of FinishStageEvent
@@ -29,20 +30,17 @@ class FinishActivityEvent {
     const FINISH = 1;
     
     const START=0;
-    
-    private $event;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(ActivityInstance $instance, $event){
+    public function __construct(ActivityInstance $instance){
         $this->nstance = $instance;
-        $this->event = $event;
         //
     }
 
-    public function getSourceForm(){
+    public function getActivityInstance(){
         return $this->instance;
     }
     

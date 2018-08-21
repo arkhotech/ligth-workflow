@@ -34,7 +34,7 @@ class Process extends Model implements EditableFieldsIF{
         return $this->belongsToMany("App\Role","process_roles");
     }
     
-    public function createInstance(){
+    public function newProcessInstance(){
         $instance = new ProcessInstance();
         $instance->process_id = $this->id;
         $instance->process_state = ActivityEvents::IDLE;

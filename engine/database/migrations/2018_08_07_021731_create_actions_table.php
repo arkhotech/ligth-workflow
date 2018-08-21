@@ -23,9 +23,6 @@ class CreateActionsTable extends Migration
             $table->unsignedInteger('post_activity')->before('pre_activity')->nullable();
         });
         
-        Schema::table('activity_instances', function (Blueprint $table) {
-            $table->unsignedInteger('state')->before('id')->deafult(0);
-        });
     }
 
     /**
@@ -42,8 +39,5 @@ class CreateActionsTable extends Migration
             $table->dropColumn('post_activity');
         });
         
-        Schema::table('activity_instances', function (Blueprint $table) {
-            $table->dropColumn('state');
-        });
     }
 }

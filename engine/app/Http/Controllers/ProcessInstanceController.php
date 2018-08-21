@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\Events;
 use App\Process;
-use \App\ProcessInstance;
-use \App\ActivityInstance;
+use App\ProcessInstance;
+use App\ActivityInstance;
 
 class ProcessInstanceController extends Controller{
    
     public function instances($id_proceso,$id=null){
         $retval = array();
-        $process = Process::where("id",$id_proceso)->first();
+        $process = Process::find($id_proceso);
         if($process!= null){
             
             $instancias = ($id==null) ? 
-                    $process->instances()->get() :
-                    $process->instances()->get()->where("id",$id);
+                    $process->processInstances()->get() :
+                    $process->processInstances()->get()->where("id",$id);
             
             foreach($instancias as $instancia){
                 $instancia->state = ProcessInstance::$STATES[$instancia->process_state];

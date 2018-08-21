@@ -17,6 +17,7 @@ use App\Events\ActivityEvents;
 use App\EditableFieldsIF;
 use Illuminate\Support\Facades\Log;
 use App\Form;
+use App\Events\FinishActivityEvent;
 
 
 class StageInstance extends Model implements   EditableFieldsIF, ActivityEvents{
@@ -91,16 +92,20 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvents{
         if( $stage->next_stage == null ){
             //TODO enviar evento de fin
             Log::debug("Fin de la actividad");
-            event(new FinishActivityEvent($this));
+            //event(new FinishActivityEvent($this->activityInstance()->first()));
+            $activity_instance->onExit();
             return null;
         }
         $next_stage = Stage::find($stage->next_stage);
         //Crear la nueva instancia
         $new_stage_instance = $next_stage->newStageInstance($activity_instance);
         //Asginar el nuevo stage a la actividad actual.
-        $activity_instance->stage = $new_stage_instance->id;
+        $activity_instance->current_stage = $new_stage_instance->id;
         $activity_instance->save();
         $new_stage_instance->createFormInstance();
         return $new_stage_instance;
     }
+    
 }
+
+

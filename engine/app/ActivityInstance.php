@@ -22,7 +22,7 @@ class ActivityInstance extends Model implements ActivityEvents{
     }
     
     public function currentStage(){
-        return StageInstance::where('id',$this->stage);
+        return StageInstance::where('id',$this->current_stage);
     }
     /**
      *
@@ -58,7 +58,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         if($stage != null ){
             //Ejecutar las etapas
             $stage_instance = $stage->newStageInstance($this);
-            $this->stage = $stage_instance->id;
+            $this->current_stage = $stage_instance->id;
             $stage_instance->onActivity();
             $this->activity_state = ActivityEvents::PENDDING;
         }else{
@@ -153,6 +153,7 @@ class ActivityInstance extends Model implements ActivityEvents{
     }
 
     public function onExit() {
+        //TODO revisar las salidas
         Log::debug("[onExit]");
         $root_action = $this->hasMany("App\Action","id_activity")
                     ->where("id_prev_action")
@@ -162,9 +163,15 @@ class ActivityInstance extends Model implements ActivityEvents{
         if($root_action != null){
             Actions\LinkedExecutionHandler::executeChain($root_action);
         }
-
+        Log::info("Fianlizando actividad");
         $this->activity_state = ActivityEvents::FINISHED;
         $this->save();
+        
+        if($this->end_activity){
+            Log::info("Informando a proceso finalización de actividad");
+            $process = $this->process()->first();
+            $process->finalize();
+        }
     }
 
 }

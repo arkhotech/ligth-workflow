@@ -4,22 +4,53 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Process;
 use App\ActivityRole;
 use App\ProcessRole;
+/*
+ * const IDLE = 0;
+    
+    const ON_ENTRY=1;
+    
+    const ON_ACTIVITY = 2;
+    
+    const ON_EXIT = 3;
+    
+    const PENDDING = 4;
+    
+    const FINISHED = 5;
+    
+    const ERROR = 6;
+ */
+
 
 class TrayController extends Controller
 {
     //
     public function listProcess(){
-        $process = Process::all();
-        return response()->json($process,200);
+        $process = Process::with(['processInstances'=> function($query){
+           $query->selectRaw("id, process_id,state,"
+                   . "case process_state "
+                   . "when 0 then 'IDLE'"
+                   . "when 1 then 'ON_ENTRY'"
+                   . "when 2 then 'ON_ACTIVITY'"
+                   . "when 3 then 'ON_EXIT'"
+                   . "when 4 then 'PENDDING'"
+                   . "when 5 then 'FINISHED'"
+                   . "when 6 then 'ERROR'"
+                   . " end as process_state");
+            
+        }])->with('roles')->select("id","name","asynch")
+                ->get();
+        $retval['process'] = $process;
+        return response()->json($retval,200);
     }
     
     
     public function listTask(){
         $user = Auth::user();
-        $roles = $user->roles()->select('id')->get();
+        $roles = $user->roles()->select("id")->get();
         
         $p = Process::join('process_roles',
                 'process_roles.process_id',

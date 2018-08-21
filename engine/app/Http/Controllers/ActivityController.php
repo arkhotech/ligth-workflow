@@ -7,6 +7,7 @@ use App\Process;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\User;
 use App\Role;
 use App\ActivityRole;
@@ -16,10 +17,11 @@ class ActivityController extends Controller{
     
     private function asignActivityRoles($roles,Activity $activity){
          if(count($roles)==0){ //Asginar roles por defecto
+             Log::info("Asignando rol por defecto");
             $role = new ActivityRole();
             $role->activity_id = $activity->id;
             $role->role_id = Role::ADMIN_ROLE_ID;
-             
+            $role->save();
          }else{
             foreach($roles as $role_name){
                $role = Role::where("name",$role_name)->first();
@@ -59,7 +61,10 @@ class ActivityController extends Controller{
                 }
                 $activity->process_id = $id_proceso;
                 $activity->save();
-                $this->asignActivityRoles($request->input("roles.*"),$activity);
+                $roles = ( $request->input("roles.*") != null ) 
+                        ? $request->input("roles.*") : 
+                    array();
+                $this->asignActivityRoles($roles,$activity);
                 DB::commit();
                 return response()->json([ "activity_id" => $activity->id ], 201);
             }
@@ -107,15 +112,11 @@ class ActivityController extends Controller{
       
     }
     
-    public function deleteActivity($id_proceso, $id_activity){
-        $process = Process::find($id_proceso);
-        if($process != null){
-            $activity = $process->activites()
-                    ->where('id',$id_activity)
-                    ->first();
-            if($activity == null ){
-                return response(null,404);
-            }
+    public function deleteActivity( $id_activity){
+        $activity = Activity::find($id_activity);
+        if($activity!= null){
+            $activity->delete();
+            return response(null,200);
         }
         response()->json(array("message" => "No existe el proceso"),412);
     }

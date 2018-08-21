@@ -18,8 +18,8 @@ class StageInstances extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('activity_instance_id');
-            $table->unsignedInteger('next_stage')->nullable();
-            $table->unsignedInteger('prev_stage')->nullable();
+//            $table->unsignedInteger('next_stage')->nullable();
+//            $table->unsignedInteger('prev_stage')->nullable();
             $table->unsignedInteger('type');
             $table->foreign('activity_instance_id')
                     ->references('id')

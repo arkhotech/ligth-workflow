@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class FieldsProperties extends Migration
+class ActivityCurrentStage extends Migration
 {
     /**
      * Run the migrations.
@@ -14,12 +14,9 @@ class FieldsProperties extends Migration
     public function up()
     {
         //
-        Schema::table('fields',function(Blueprint $table){
-            $table->boolean('readOnly');
-            $table->boolean('required');
+        Schema::table('activity_instances',function(Blueprint $table){
+            $table->unsignedInteger('current_stage')->default(0);
         });
-        
-        
     }
 
     /**
@@ -30,9 +27,8 @@ class FieldsProperties extends Migration
     public function down()
     {
         //
-         Schema::table('fields',function(Blueprint $table){
-            $table->removeColumn('readOnly');
-            $table->removeColumn('required');
+        Schema::table('activity_instances',function(Blueprint $table){
+            $table->dropColumn('current_stage');
         });
     }
 }

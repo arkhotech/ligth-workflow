@@ -14,14 +14,14 @@ class ProcessInstance extends Model implements ActivityEvents{
 
     private $state = ActivityEvents::IDLE;
     
-    public static $STATES=[ 
-                0 => "IDLE",
-                1 => "ON_ENTRY",
-                2 => "ON_ACTIVITY",
-                3 => "ON_EXIT",
-                4 => "PENDDING",
-                5 => "FINISHED",
-                6 => "ERROR"];
+//    public static $STATES=[ 
+//                0 => "IDLE",
+//                1 => "ON_ENTRY",
+//                2 => "ON_ACTIVITY",
+//                3 => "ON_EXIT",
+//                4 => "PENDDING",
+//                5 => "FINISHED",
+//                6 => "ERROR"];
     
     public function __construct() {
         parent::__construct();
@@ -50,15 +50,16 @@ class ProcessInstance extends Model implements ActivityEvents{
      * @return type La primera actividad del proceo
      * @throws \ActivityException
      */
-    public function run($user){
+    public function run(User $user){
         $activity = Activity::where("process_id", $this->process_id)
                 ->where("start_activity", 1)
                 ->first();
         if($activity==null){
-            throw new \ActivityException("Error. No existe actividad de inicio");
+            throw new ActivityException("Error. No existe actividad de inicio");
         }
         if(!$activity->userCanStart($user)){
-            throw new NotUserInRoleException("El usuario no puede iniciar la actividad");
+            throw new NotUserInRoleException(
+                    "[ProcessInstance]: El usuario [$user->name] no puede iniciar la actividad");
         }
         $inst_activity = $activity->newActivityInstance($this,$user);
         return $inst_activity;
@@ -83,4 +84,11 @@ class ProcessInstance extends Model implements ActivityEvents{
         //no implementada aún
     }
 
+    public function finalize(){
+        Log::info("#####  FINALIZANDO PROCESO  #######");
+        $this->onExit();
+        $this->state = ActivityEvents::FINISHED;
+        $this->save();
+    }
+    
 }

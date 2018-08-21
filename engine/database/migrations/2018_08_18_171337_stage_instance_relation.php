@@ -17,11 +17,11 @@ class StageInstanceRelation extends Migration
        
         Schema::table('stage_instances',function(Blueprint $table){
             //$table->dropForeign('stage_instances_activity_instance_id_foreign');
-            //$table->unsignedInteger('stage_id');
-//            $table->foreign('stage_id')
-//                    ->references('id')
-//                    ->on('stages')
-//                    ->onDelete('cascade');
+            $table->unsignedInteger('stage_id');
+            $table->foreign('stage_id')
+                    ->references('id')
+                    ->on('stages')
+                    ->onDelete('cascade');
         });
         
     }

@@ -41,19 +41,21 @@ class ProcessControlController extends Controller{
         if($pi!= null ){
             Log::debug("Cursor: ".$pi->activityCursor);
             $current_activity = $pi->currentActivityInstance();
-
+            if($current_activity==null){
+                return response()->nofound("No exite la activiad actual asociada");
+            }
             Log::info("Current Activity ID: ".$current_activity->id);
-            Log::info("Current Stage ID: ".$current_activity->stage);
+            Log::info("Current Stage ID: ".$current_activity->current_stage);
             $current_stage =$current_activity->stagesInstances()
-                    ->where('id',$current_activity->stage)
+                    ->where('id',$current_activity->current_stage)
                     ->first();
-            Log::info("Current Stage Instance: ".$current_stage->id);
+           
             if($current_stage == null ){
                 return response()
                         ->nofound("No hay stages instances para el Activity:"
                                 .$proc_inst_id);
             }
-            
+            Log::info("Current Stage Instance: ".$current_stage->id);
             $form = $current_stage->formInstances()
                     ->select("id","stage_instance_id","form_id")
                     ->with(['fields' => function($query){
@@ -70,7 +72,7 @@ class ProcessControlController extends Controller{
         return response(null,404);
     }
     /**
-     * Retornael siguiente formualario, con la entrada del anterior
+     * Retorna el siguiente formualario, con la entrada del anterior
      * @param Request $request
      * @param type $id_act_inst
      * @return type
@@ -99,7 +101,10 @@ class ProcessControlController extends Controller{
             $result['output'] = $current_form_instance->execute();
             //Recuperar el próximo formulario. Responsabilidad de Stage.
             $next_stage = $current_stage->nextStage();
-            $result['next_form']=$next_stage->formInstances()->with('fields')->first();  //CurrentForm
+            $result['next_form']= ($next_stage != null ) ? 
+                        $next_stage->formInstances()->with('fields')->first():
+                       null;  //CurrentForm
+            
             //recuperar las variables
             return response()->json($result,200);
         }catch(Exception $e){

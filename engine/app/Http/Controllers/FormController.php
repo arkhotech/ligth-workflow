@@ -34,6 +34,9 @@ class FormController extends Controller
                 $ffield->description = $field['description'];
                 $ffield->type = $field['type'];
                 $ffield->value= $field['value'];
+                $ffield->readOnly = $field["read_only"];
+                $ffield->required = $field["required"];
+                $ffield->output_field = key_exists("output", $field) ? $field["output"] : false;
                 $ffield->form_id = $form->id;
                 $ffield->prev_field = $id_prev;
                 $ffield->save();

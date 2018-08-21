@@ -40,13 +40,14 @@ class StagesProperties extends Migration
     {
         Schema::table('stages',function(Blueprint $table){
             $table->dropForeign('stages_activity_id_foreign');
+            $table->dropUnique('stages_name_activity_id_unique');
             $table->dropColumn('activity_id');
             $table->dropColumn('next_stage');
             $table->dropColumn('prev_stage');
             $table->dropColumn('descripcion');
             $table->dropColumn('type');
             $table->dropColumn('name');
-            $table->dropUnique('stages_name_activity_id_unique');
+            
         });
         
         

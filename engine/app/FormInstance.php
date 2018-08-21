@@ -73,21 +73,5 @@ class FormInstance extends Model
         return true;
     }
     
-//    public function nextForm(){
-//        $form_def = $this->form()->first();       
-//        if( $form_def->next_form == null ){
-//            //No hay siguiente form. Entonces termina
-//            Log::info('Form chain finished');
-//            //event(new FormEvent($this,FormEvent::FINISH));
-//            $current_stage = $this->stageInstance();
-//            $next_stage = $current_stage->nextStage();
-//            return $next_stage->formInstances()->first();
-//        }
-//        $next_form_def = Form::find($form_def->next_form);
-//        $newform = $next_form_def->createFormInstance($this->stageInstance()->first());
-//        return $newform;
-//    }
-    
-   
     
 }

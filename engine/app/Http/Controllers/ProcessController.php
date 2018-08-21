@@ -30,24 +30,30 @@ class ProcessController extends Controller
     }
     
     private function assignRoles($newRoles,$process){
+        
+        if($newRoles == null){
+            //rol por defecto
+            $newRoles = array("admin");
+        }
+        
         foreach($newRoles as $rol_name){
                 //El rol debe existir
-                $rol = Role::where('name',$rol_name)->first();
-                if($rol==null){
-                    return response()->nofound("El rol $rol_name no existe");
-                }
-
-                if( $process->roles()->where("roles.name",$rol_name)->first() == null){
-                    Log::debug("Creando la relacion process role");
-                    $process_role = new ProcessRole();
-                    $process_role->process_id = $process->id;
-                    $process_role->role_id = $rol->id;
-                    $process_role->save();
-                }else{
-                    //El rol esta asignado
-                    Log::debug("Rol existe");
-                }
+            $rol = Role::where('name',$rol_name)->first();
+            if($rol==null){
+                return response()->nofound("El rol $rol_name no existe");
             }
+
+            if( $process->roles()->where("roles.name",$rol_name)->first() == null){
+                Log::debug("Creando la relacion process role");
+                $process_role = new ProcessRole();
+                $process_role->process_id = $process->id;
+                $process_role->role_id = $rol->id;
+                $process_role->save();
+            }else{
+                //El rol esta asignado
+                Log::debug("Rol existe");
+            }
+        }
     }
     
     private function removeRoles($process, $newRoles){
@@ -123,7 +129,8 @@ class ProcessController extends Controller
             return response()->json(['status' => 'registro existe'],409);
         }
         $process = new Process();
-        
+        //Asignar los roles necesarios
+        $this->assignRoles($request->input('roles.*'), $process);
         foreach($process->fields() as $field){
             if($field == 'domain_id'){
                 $process->domain_id = $domain_id; 
@@ -190,7 +197,7 @@ class ProcessController extends Controller
         if($process != null){
             DB::beginTransaction();
             //check si el usuario es aninimo o no (usuario anonimo 0) 
-            $process_instance = $process->createInstance();
+            $process_instance = $process->newProcessInstance();
             $id_instance = $process_instance->id;
             Log::debug("Id nueva instancia: ".$id_instance);
             $declared_vars = $process
@@ -214,26 +221,30 @@ class ProcessController extends Controller
                     DB::rollback();
                     return response()->json($result,404);
                 }
-                DB::commit();
+                
                 //validar que entrada sea igual 
                 //TODO validar si es un proceso sincrono
                 if($process_instance->asynch){
                    
                     $id_job = $this->dispatch(new AsyncStart($process_instance->id));
                     Log::info('Trabajo despachado, id: '.$id_job);
+                    DB::commit();
                     return response()->json(
                             array("id_process" => $process_instance->id,
                                 "id_job" => $id_job),202);
                 }else{
 //#######  Run process                    
                     $result = $this->runProcess($process_instance);
-                    
+                    DB::commit();
                     return response()->json(
                             array("id_process" => $process_instance->id, 
                                 "output" => $result),201);
                 }
+            }catch(NotUserInRoleException $e){
+                DB::rollback();
+                return response()->json(["message" => $e->getMessage()],403);
             }catch(Throwable $e){
-               DB::rollback();
+               
                return response(null,500);
             }
 
@@ -299,12 +310,11 @@ class ProcessController extends Controller
                 $process->process_state = ActivityEvents::FINISHED;
             }
             $process->saveOrFail();
-        }catch(NotUserInRoleException $e){
-            $process->process_state = ActivityEvents::ERROR;
-            return response()->json(["message" => $e->getMessage()],403);
         }catch(Exception $e){
             $process->process_state = ActivityEvents::ERROR;
             $process->save();
+            throw $e;
+            
         }
     }
   

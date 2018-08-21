@@ -32,7 +32,7 @@ class ProcessState extends Migration
     {
         //
         Schema::table('process_instances',function(Blueprint $table){
-            $table->dropColumn('process_instances');
+            $table->dropColumn('process_state');
         });
         Schema::table('activity_instances',function(Blueprint $table){
             $table->dropColumn('activity_state');
