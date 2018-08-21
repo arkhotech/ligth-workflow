@@ -275,10 +275,11 @@ class ProcessController extends Controller
  // ##### Ejeucion de proceso
             //Solo trae la primera instancia
             $activity_instance = $process->run(Auth::user());
-            
+            //Este loop es necesario si es que son solo actividades
             while($activity_instance != null 
                     && $activity_instance->activity_state != ActivityEvents::PENDDING  ){  
-                // si esta pendiente se rompe el loop
+                // si esta pendiente se rompe el loop. 
+                // Pendiente es por qu enecesita intervención humana o termino
                 Log::info("Procesando instancia de actividad: ".$activity_instance->id);
                 //actualizando el cursor para saber en que actividad esta el proceso
                 $process->activityCursor = $activity_instance->id;

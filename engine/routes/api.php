@@ -168,6 +168,6 @@ Route::group(
          "middleware" => "auth:api",
          "middleware" => "roles:admin"],
         function(){
-            Route::get("/process/instance/{id}/form","StageController@actualStageFromInstance");
-            Route::post("/activity/instance/{id}/form/next","ProcessControlController@nextForm");
+            Route::get("/process/instance/{id}/form","ProcessControlController@currentForm");
+            Route::post("/activity/instance/{id}/form/next","ProcessControlController@submitForm");
         });

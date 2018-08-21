@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
-        FieldInstance::observe(FieldEventListener::class);
+        //FieldInstance::observe(FieldEventListener::class);
         
     }
 

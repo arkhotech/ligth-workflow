@@ -19,4 +19,12 @@ class FieldInstance extends Model
         return $this->hasMany("App\FieldInstance");
     }
     
+    public function validate(){
+        return true;
+    }
+    
+    public function validationError(){
+        return "Not Implemented";
+    }
+    
 }

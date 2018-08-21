@@ -28,6 +28,10 @@ class ProcessInstance extends Model implements ActivityEvents{
         $this->state = ActivityEvents::IDLE;
     }
     
+    public function currentActivityInstance(){
+        return $this->hasOne("App\ActivityInstance")->where("id",$this->activityCursor)->first();
+    }
+    
     public function activitiesInstances(){
         return $this->hasMany("App\ActivityInstance");
     }

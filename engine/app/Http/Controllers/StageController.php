@@ -61,21 +61,6 @@ class StageController extends Controller{
        }
        return response()->json(["id"=> $stage->id],201);
    }
-   /**
-    * 
-    * @param type $id_process_instance
-    * @return type
-    */
-   public function actualStageFromInstance($id_process_instance){
-        $p_instance =ProcessInstance::find($id_process_instance);
-        if( $p_instance == null ){
-           return response()->nofound("No existe la intancia de proceso ".$id_process_instance);
-        }       
-  
-        $result['activity_instance'] = $p_instance->activitiesInstances()->with('actualStage')->get();
- 
-        return response()->json($result,200);
-   }
    
    private function updateForm(Request $request, $id_process_instance){
        return response(null,400);

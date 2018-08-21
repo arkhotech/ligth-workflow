@@ -47,8 +47,7 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvents{
         return $defForm->createFormInstance($this);
     }
     
-    
-    public function onActivity() {
+    public function execute(){
         Log::debug("[Stage: OnActivity]:".$this->id);
         //Cargar la definicion de stage
         $stage = $this->stage()->first();
@@ -58,6 +57,10 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvents{
             Log::warning('No existe instancia asociada a esta instancia');
             throw new Exceptions\ActivityException('No existe instancia asociada a esta instancia');
         }
+    }
+    
+    public function onActivity() {
+        $this->execute();
     }
 
     public function onEntry() {
@@ -70,10 +73,34 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvents{
         return $this->form;
     }
     
-    public function execute(){
-        $this->onActivity();
-        $this->onActivity();
-        return $this->onExit();
-    }
 
+     public function nextStage(){
+//        $form_instance = $event->getSourceForm();
+//                
+//        $stage_instance = $form_instance
+//                        ->stageInstance()
+//                        ->first();
+        $activity_instance = $this->activityInstance()->first();
+        //Definiciond,para determinar el siguiente
+        $stage = $this->stage()
+                        ->first();
+                //TODO So es nulo Termina ->  Y hay un evento para termno 
+                //de actividad. Quizá no es bena idea revisar
+                //esto en este evento...
+                //Buscar la siguiente definicion de stage
+        if( $stage->next_stage == null ){
+            //TODO enviar evento de fin
+            Log::debug("Fin de la actividad");
+            event(new FinishActivityEvent($this));
+            return null;
+        }
+        $next_stage = Stage::find($stage->next_stage);
+        //Crear la nueva instancia
+        $new_stage_instance = $next_stage->newStageInstance($activity_instance);
+        //Asginar el nuevo stage a la actividad actual.
+        $activity_instance->stage = $new_stage_instance->id;
+        $activity_instance->save();
+        $new_stage_instance->createFormInstance();
+        return $new_stage_instance;
+    }
 }

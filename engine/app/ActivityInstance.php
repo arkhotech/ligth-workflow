@@ -21,8 +21,8 @@ class ActivityInstance extends Model implements ActivityEvents{
         return $this->hasMany("App\StageInstance","activity_instance_id");
     }
     
-    public function actualStage(){
-        return $this->hasOne("App\StageInstance","activity_instance_id");
+    public function currentStage(){
+        return StageInstance::where('id',$this->stage);
     }
     /**
      *
@@ -57,8 +57,8 @@ class ActivityInstance extends Model implements ActivityEvents{
 
         if($stage != null ){
             //Ejecutar las etapas
-            $this->stage = $stage->id;
             $stage_instance = $stage->newStageInstance($this);
+            $this->stage = $stage_instance->id;
             $stage_instance->onActivity();
             $this->activity_state = ActivityEvents::PENDDING;
         }else{
@@ -69,7 +69,8 @@ class ActivityInstance extends Model implements ActivityEvents{
     }
     
     public function executeActivity(){
-        $instance = $this->onEntry();
+        $this->onEntry();
+        $instance = $this->onActivity();
         if($instance == null){
             Log::info('LOPP finalizado');
         }else{
@@ -82,7 +83,7 @@ class ActivityInstance extends Model implements ActivityEvents{
      * @return type 
      */
     public function onActivity() {
-        Log::debug("[onActibity]");
+        Log::debug("[onActivity][ActivityInstance][$this->id]");
         //Cambia el estado a onActivity
         $this->activity_state = ActivityEvents::ON_ACTIVITY;
         $this->save();
@@ -148,7 +149,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         if($root_action != null){
             Actions\LinkedExecutionHandler::executeChain($root_action);
         }
-        return $this->onActivity();
+        
     }
 
     public function onExit() {
