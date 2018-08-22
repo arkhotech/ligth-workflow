@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class FieldInstance extends Model
 {
@@ -28,4 +29,10 @@ class FieldInstance extends Model
         return "Not Implemented";
     }
     
+    public function evaluate(){
+        Log::debug("Evaluando campo: ".$this->name);
+        $field_def = $this->field()->first();
+        Log::debug($field_def->validation);
+        //Agregar todo lo necesario pra validar una variable acá.
+    }
 }

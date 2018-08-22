@@ -110,9 +110,10 @@ class ProcessController extends Controller
         return response()->json($process,200);
     }
     /**
-     * Crea un nuevo proceso
+     * Crea una nueva definicion de proceso
+     * 
      * @param Request $request
-     * @param type $domain_id
+     * @param type $domain_id Idetificador del dominio sobre el cual se creará el proceso
      * @return type
      */
     public function newProcess(Request $request,$domain_id){
@@ -129,8 +130,7 @@ class ProcessController extends Controller
             return response()->json(['status' => 'registro existe'],409);
         }
         $process = new Process();
-        //Asignar los roles necesarios
-        $this->assignRoles($request->input('roles.*'), $process);
+        
         foreach($process->fields() as $field){
             if($field == 'domain_id'){
                 $process->domain_id = $domain_id; 
@@ -140,13 +140,16 @@ class ProcessController extends Controller
         } 
         
         $process->save();
+        //Asignar los roles necesarios
+        $this->assignRoles($request->input('roles.*'), $process);
+        
         $variables = $request->input('variables.*');
         foreach($variables as $item){
             $new_var = new ProcessVariable();
             $new_var->name = $item['name'];
             $new_var->process_id = $process->id;
             $new_var->type = $item['type'];
-            $new_var->validator = $item['validator'];
+            //$new_var->validator = $item['validator'];
             $new_var->save();
         }
         
@@ -256,10 +259,10 @@ class ProcessController extends Controller
         
         $error = array();
         foreach($keys as $key ){
-            
+            Log::debug("Check var: ".$key);
             $value = Input::get('parameters.'.$key);
-            Log::debug("val: ".$value);
-            if($value==null){    
+            Log::debug("      val: ".$value);
+            if($value===null){    
                 $error[] = array("variable.no.declarada" => $key); continue;
             }
             $var = $params[$key]->createInstance($id_instance); 

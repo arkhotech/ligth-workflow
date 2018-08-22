@@ -5,8 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Actions\DoubleLinkedIF; 
 use App\Actions\LinkedExecution;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class Action extends Model implements DoubleLinkedIF, LinkedExecution{
+    
+    //use SoftDeletes;
     
     const ON_ENTRY=1;
     
@@ -19,8 +23,10 @@ class Action extends Model implements DoubleLinkedIF, LinkedExecution{
     }
     
     public function execute(){
-        $action = ActionFactory::create(self::$TYPE[$this->type]);
-        $action->execute();
+        //$action = ActionFactory::create(self::$TYPE[$this->type]);
+        //$action->execute();
+        Log::debug("Ejecutando actividad");
+        Log::debug(json_decode($this->config));
     }
     
     

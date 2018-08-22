@@ -27,7 +27,7 @@ class Process extends Model implements EditableFieldsIF{
     }
     
     public function declaredVariables(){
-        return $this->hasMany('App\ProcessVariable','id_process');
+        return $this->hasMany('App\ProcessVariable');
     }
     
     public function roles(){

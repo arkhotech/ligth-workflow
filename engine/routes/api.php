@@ -117,13 +117,13 @@ Route::group(
             Route::delete("/process/{id_process}","DeclaredVariableController@removeGlobalVariables");
         });
      
-        
+//Acciones        
 Route::group(
-        ["prefix" => "actions",
+        ["prefix" => "activity/{id}/action",
          "middleware" => "auth:api",
          "middleware" => "roles:admin"],
         function(){
-            Route::post("/activity/{id}/{id_prev_action?}","ActionController@newAction");
+            Route::post("/","ActionController@newAction");
             Route::delete('/{id}','ActionController@removeAction');
             Route::put('/{id}/{sense}','ActionController@move');
         });

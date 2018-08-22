@@ -41,8 +41,10 @@ class FormInstance extends Model
             if($field->required
                 && key_exists($field->name, $variables) 
                 && $variables[$field->name] != null ){
-                Log::debug('Mapeando variable: '.$field->name);
-                $i_field = $field->fieldInstances()->first();
+                Log::debug('Mapeando variable: '.$field->name."-".$this->id);
+                
+                $i_field = FieldInstance::where("name",$field->name)
+                        ->where("form_instance_id",$this->id)->first();
 
                 if($i_field == null){
                     Log::debug('Creando variable: '.$field->name);
@@ -68,13 +70,16 @@ class FormInstance extends Model
     
     public function execute(){
         Log::info("Ejecutando formulario");
-        return $this->fields()->select(["name","value"])->get();
-        //return $this->validate();
+        //Aejecutar las acciones sobre cada variable
+        $fields = $this->fields()->with('field')->get();
+        $output = array();
+        foreach($this->fields()->get() as $field){
+            $field->evaluate();
+            if($field->field->output_field){
+                $output[] = ["name" => $field->name , "value" => $field->value];
+            }
+        }
+        return $output;
     }
-    
-    public function validate(){
-        return true;
-    }
-    
     
 }

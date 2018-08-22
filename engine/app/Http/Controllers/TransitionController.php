@@ -34,8 +34,10 @@ class TransitionController extends Controller{
     }
     
     public function createTransition(Request $request, $prev_id,$next_id){
-        $request->validate(["name" => "required|string",
-            "condition" => "required|string"]);
+        $request->validate([
+            "name" => "required|string",
+            "condition" => "required|string",
+            "default" => "required|boolean"]);
         
         $prev_act = Activity::find($prev_id);
         $next_act = Activity::find($next_id);

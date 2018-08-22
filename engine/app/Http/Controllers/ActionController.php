@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Action;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use App\ActivityInstance;
 use App\Activity;
@@ -13,31 +14,27 @@ use App\Actions\LinkedListHelper;
 
 class ActionController extends Controller
 {
-    public function newAction(Request $request, $id_activity, $prev_id = null){
+    public function newAction(Request $request, $id_activity){
         
-        $request->validate(["type" => "string|required", 
+        $request->validate([ 
             "command" => "string",
-            "config" => "string"]);
+            "config" => "array|required",
+            "name" => "string|required|max:50",
+            "action_type" => "required|string",
+            "type" => [ "string" , 
+                  Rule::in(["ON_ENTRY","ON_EXIT"])],]);
         $activity = Activity::find($id_activity);
         if($activity!=null){ 
             DB::beginTransaction();
             try{
                 $action = new Action();
                 $action->type = Action::getType($request->input('type'));
-                $action->id_activity = $id_activity;
+                $action->name = $request->input('name');
+                $action->activity_id = $id_activity;
+                $action->description = $request->input('description');
+                $action->config = json_encode($request->input('config.*'));
                 $action->save();
-
-                if($prev_id != null){
-                    $prev_action = Action::find($prev_id);
-                    if($prev_action != null){
-                        //Agregra el valor de la nueva referencia
-                        $prev_action->id_next_action = $action->id;
-                        $prev_action->save();
-                        $action->id_prev_action = $prev_action->id;
-                        $action->save();
-                    }
-                }
-                
+                $this->addToChain($activity,$action,$action->type);
                 DB::commit();
                 return response()->json(["action_id" => $action->id],201);
             }catch(Exception $e){
@@ -46,6 +43,22 @@ class ActionController extends Controller
             }
         }
         return response(null,404);
+    }
+    
+    private function addToChain($activity,$action,$type){
+        $last_action = Action::where('activity_id',$activity->id)
+                            ->whereNull('id_next_action')
+                            ->whereType($type)
+                            ->where('id','<>',$action->id)
+                            ->first();
+        if($last_action===null){
+            Log::debug('No hay ninguna acción configurada');
+            return;
+        }
+        $action->id_prev_action = $last_action->id;
+        $last_action->id_next_action = $action->id;
+        $last_action->save();
+        $action->save();
     }
     
     public function listActionsByActivity($id_activity){

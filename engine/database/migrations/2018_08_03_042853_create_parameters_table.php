@@ -26,7 +26,7 @@ class CreateParametersTable extends Migration
         Schema::create('process_variables',function(Blueprint $table){
             $table->increments('id');
             $table->timestamps();
-            $table->unsignedInteger('id_process');
+            $table->unsignedInteger('process_id');
             $table->string('name');
             $table->json('value');
             $table->string('script')->nullable();

@@ -5,6 +5,8 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use App\Events\ActivityEvents;
+use App\Exceptions\ActivityException;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityInstance extends Model implements ActivityEvents{
     
@@ -14,7 +16,7 @@ class ActivityInstance extends Model implements ActivityEvents{
     }
     
     public function activity(){
-        return $this->belongsTo("\App\Activity","activity_id");
+        return $this->belongsTo("\App\Activity");
     }
     
     public function stagesInstances(){
@@ -94,7 +96,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         
         Log::debug('Ejecutando actividad');
         if($this->type == "conditional"){
-//#####  Ejeución condicional (No probada aún)            
+//#####  Ejeución condicional (No probada aún)       //TODO no se sabe si esto se hará o no       
             Log::debug("Ejecutando actividad condicional");
             //entonces hay varias condiciones
             $transitions = $activity->outputTransitions()->get();
@@ -114,11 +116,15 @@ class ActivityInstance extends Model implements ActivityEvents{
             
             switch($this->activity_state){
                 case ActivityInstance::ON_EXIT:
-                    $transition = $activity->outputTransitions()->first();
-                    if($transition!= null){ 
-                        $transition->evaluate($this);
-                        $next_activity = Activity::find($transition->next_activity_id);
-                        return $next_activity->newActivityInstance($process_instance);
+                    //buscar las condiciones. Pueden ser una o mas.
+                    $activity = $this->activity()->with('outputTransitions')->first();
+                    
+                    $transitions = $activity->outputTransitions;
+                    
+                    if($transitions!= null){ 
+                        //Evaludar las condiciones
+                        return $this->evaluateTransitions($transitions,$process_instance);
+                       
                     }else{
                         Log::debug("Transicion nula. Se asume final del proceso");
                         $this->onExit();
@@ -136,16 +142,76 @@ class ActivityInstance extends Model implements ActivityEvents{
 
         }        
     }
+    
+    private function evaluateTransitions($transitions,$process_instance){
+        if($transitions == null || count($transitions)==0){
+            Log::info('No hay transiciones que evaluar');
+            return null;
+        }
+        $posible_output = array();
+        $default_output = null;
+        foreach($transitions as $transition ){
+            Log::debug("Evaluando condicion de transicion: ".$transition->name." default".$transition->default);
+            if($transition->default){
+                Log::debug("%%%  Entrada por defecto");
+                $default_output = $transition;
+            }
+            if( $transition->evaluate($this)){
+                Log::debug("Output candidato: ".$transition->name);
+                $posible_output[] = $transition;
+            }
+            
+        }
+
+        $output = null;
+        if(count($posible_output) === 0 && $default_output === null){
+            throw new ActivityException("La actividad no tienen ninguna transición que "
+                    . "cumpla con la condución o nunguna salida por defecto");
+        }else  if(count($posible_output) == 0 ){
+            Log::info("[Evaluate] ##### Tomando salida por defecto");
+            $output = $default_output;
+        }else if (count($posible_output) > 1){
+            Log::warning("[Evaluate] ##### Desambiguando multiples salidas");
+            $true_and_default = $this->checkDefault($posible_output);
+            $output =  ($true_and_default !== null ) 
+                    ? $true_and_default :    //Es verdadero y además es por defecto
+                      $posible_output[0];   //Si no, se slecciona la primera opción
+        }else{
+            $output = $posible_output[0];
+        }
+        Log::info("[Transition OUTPUT] ######  tomando la salida: [$output->name]");
+        $next_activity = Activity::find($output->next_activity_id);
+        return $next_activity->newActivityInstance($process_instance,Auth::user());  //Se asigna el usuario actual
+    }
+    
+    private function checkDefault($transitions){
+        foreach($transitions as $transition ){
+            if($transition->default){
+                return $transition;
+            }
+        }
+        return null;
+    }
 
     public function onEntry() {
-        Log::debug("[onEntry]");
+        Log::debug("[ActivityInstance][onEntry] ID: ".$this->id);
         $this->activity_state = ActivityEvents::ON_ENTRY;
         $this->save();
-//Obtener el primer form        
-        $root_action = $this->hasMany("App\Action","id_activity")
-                ->where("id_prev_action")
+//Obtener el primer form  
+        $activity = $this->activity()->first();
+        Log::debug($activity->actions()
+                ->where("id_prev_action",null)
+                ->where("type",Action::ON_ENTRY)->toSql());
+        Log::debug($activity->actions()
+                ->whereNull("id_prev_action")
+                ->where("type",Action::ON_ENTRY)->getBindings());
+        $root_action = $activity->actions()
+                ->whereNull("id_prev_action")
                 ->where("type",Action::ON_ENTRY)
                 ->first();
+        
+        
+        var_dump($root_action);die;
         if($root_action != null){
             Actions\LinkedExecutionHandler::executeChain($root_action);
         }
@@ -155,10 +221,12 @@ class ActivityInstance extends Model implements ActivityEvents{
     public function onExit() {
         //TODO revisar las salidas
         Log::debug("[onExit]");
-        $root_action = $this->hasMany("App\Action","id_activity")
-                    ->where("id_prev_action")
-                    ->where("type",Action::ON_EXIT)
-                    ->first();
+        $activity = $this->activity()->first();
+
+        $root_action = $activity->actions()
+                ->whereNull("id_prev_action")
+                ->where("type",Action::ON_EXIT)
+                ->first();
         
         if($root_action != null){
             Actions\LinkedExecutionHandler::executeChain($root_action);

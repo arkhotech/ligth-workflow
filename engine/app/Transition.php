@@ -12,7 +12,7 @@ class Transition extends Model
   
     public function evaluate(ActivityInstance $instance){
         //$instance = Activity::find($this->prev_activity_id);
-        Log::debug('Ejecutando validacion de reglas');
+        Log::debug('[Transition][Evaluate] Ejecutando validacion de reglas');
         $vars = $instance->globalVariables();
         $ruler = new \Hoa\Ruler\Ruler();
         $rule = $this->condition;
@@ -20,10 +20,11 @@ class Transition extends Model
         
         //reemplazar valores en condicion
         foreach($vars as $var ){
-            Log::debug("Var ". $var->name);
+            Log::debug("[Transition][Evaluate][Var] Injectando". $var->name);
             $context[$var->name] = $var->value;
         }
         $result = $ruler->assert($rule, $context);
+        Log::debug("[Transition][Evaluate][Result] ".(($result) ? "true" : "false"));
         return $result;
  
     }

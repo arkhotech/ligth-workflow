@@ -22,7 +22,7 @@ class Activity extends Model implements EditableFieldsIF{
     }
     
     public function actions(){
-        return $this->hasMany('App\Action','id_activity');
+        return $this->hasMany('App\Action');
     }
     
     public function getPreAction(){

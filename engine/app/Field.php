@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Actions\DoubleLinkedIF;
+use Illuminate\Support\Facades\Log;
 
 
 class Field extends Model implements DoubleLinkedIF
@@ -11,6 +12,10 @@ class Field extends Model implements DoubleLinkedIF
     //
     public function fieldInstances(){
         return $this->hasMany("App\FieldInstance");
+    }
+    
+    public function field(){
+        return $this->belongsTo("App\Field");
     }
     
     public function createFieldInstance(FormInstance $form){
