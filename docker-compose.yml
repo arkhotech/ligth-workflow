@@ -20,9 +20,9 @@ services:
     networks:
      - backend
     environment:
-     - LDAP_ORGANISATION="Arkhotech SpA"
-     - LDAP_DOMAIN="arkhotech.com"
-     - LDAP_PASSWORD="aloja123"
+     - LDAP_ORGANISATION=Arkhotech SpA
+     - LDAP_DOMAIN=arkhotech.com
+     - LDAP_ADMIN_PASSWORD=aloja123
      
   redis:
     image: "redis"
