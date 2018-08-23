@@ -199,19 +199,18 @@ class ActivityInstance extends Model implements ActivityEvents{
         $this->save();
 //Obtener el primer form  
         $activity = $this->activity()->first();
-        Log::debug($activity->actions()
-                ->where("id_prev_action",null)
-                ->where("type",Action::ON_ENTRY)->toSql());
-        Log::debug($activity->actions()
-                ->whereNull("id_prev_action")
-                ->where("type",Action::ON_ENTRY)->getBindings());
+//        Log::debug($activity->actions()
+//                ->where("id_prev_action",null)
+//                ->where("type",Action::ON_ENTRY)->toSql());
+//        Log::debug($activity->actions()
+//                ->whereNull("id_prev_action")
+//                ->where("type",Action::ON_ENTRY)->getBindings());
         $root_action = $activity->actions()
                 ->whereNull("id_prev_action")
                 ->where("type",Action::ON_ENTRY)
                 ->first();
         
         
-        var_dump($root_action);die;
         if($root_action != null){
             Actions\LinkedExecutionHandler::executeChain($root_action);
         }

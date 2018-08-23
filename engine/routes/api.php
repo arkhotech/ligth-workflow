@@ -128,6 +128,13 @@ Route::group(
             Route::put('/{id}/{sense}','ActionController@move');
         });
         
+Route::group(
+        ["prefix" => "system",
+         "middleware" => "auth:api",
+         "middleware" => "roles:admin"],
+        function(){
+            Route::get('/action-types',"ActionController@registeredActions");
+        });
         
 Route::group(
         ["prefix" => "tray",

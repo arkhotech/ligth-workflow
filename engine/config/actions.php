@@ -6,4 +6,8 @@
  * and open the template in the editor.
  */
 
-return ["EXPRESION" => "\App\Actions\ExpresionAction"];
+return [
+       "EXPRESION" => "\App\Actions\ExpresionAction",
+       "rest" => "\App\Actions\ExpresionAction",
+    ];
+       

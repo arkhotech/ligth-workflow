@@ -5,10 +5,15 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use App\Actions\DoubleLinkedIF; 
 use App\Actions\LinkedExecution;
+use App\Actions\ActionFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Config;
+use Actions\WorkflowAction;
 
-class Action extends Model implements DoubleLinkedIF, LinkedExecution{
+class Action extends Model 
+                    implements DoubleLinkedIF, 
+                               LinkedExecution{
     
     //use SoftDeletes;
     
@@ -16,15 +21,32 @@ class Action extends Model implements DoubleLinkedIF, LinkedExecution{
     
     const ON_EXIT=2;
     
-    public static $TYPE = ['ON_ENTRY' => 1,'ON_EXIT' => 2];
+    public static $TYPE = [1 => 'ON_ENTRY', 2 =>'ON_EXIT' ];
+    
+    public function activity(){
+        return $this->belongsTo("App\Activity");
+    }
     
     public function next(){
         $this->nextAction()->first();
     }
     
+    public static function create($type = "rest"){
+        Log::info("actions.".$type);
+        $source = Config::get("actions.".$type);
+        Log::debug("Source: ".$source);
+        $action = new $source;
+        if($source instanceof WorkflowAction){
+            return $action;
+        }else{
+            throw new Exception("La implementacion de Action no es de tipo WorkflowAction");
+        }
+        
+    }
+    
     public function execute(){
-        //$action = ActionFactory::create(self::$TYPE[$this->type]);
-        //$action->execute();
+        $action_imp = Action::create($this->class);
+        $action_imp->execute($this->config);
         Log::debug("Ejecutando actividad");
         Log::debug(json_decode($this->config));
     }

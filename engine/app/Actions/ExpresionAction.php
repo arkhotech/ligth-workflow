@@ -8,22 +8,23 @@
 
 namespace App\Actions;
 
+use Illuminate\Support\Facades\Log;
+use App\ActivityInstance;
 /**
  * Description of ExpresionAction
  *
  * @author msilva
  */
-class ExpresionAction extends Action{
+class ExpresionAction extends WorkflowAction{
     //put your code here
     
     public function __construct(){
         
     }
     
-    public function execute(Array $params = null) {
-        //$parser = new Parsers\ParensParser();
-        //$parser->parse("((1+2)*(1+3)*(4/5) * 5)");
-        eval("((1+2)*(1+3)*(4/5) * 5)");
+    public function execute($params){
+        Log::debug("###################################");
+        $x = $params;
         return null;
     }
     

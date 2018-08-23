@@ -11,9 +11,14 @@ use App\ActivityInstance;
 use App\Activity;
 use Events\ActivityEvents;
 use App\Actions\LinkedListHelper;
+use Illuminate\Support\Facades\Config;
 
 class ActionController extends Controller
 {
+    public function registeredActions(){
+        return response()->json(Config::get('actions'),200);
+    }
+    
     public function newAction(Request $request, $id_activity){
         
         $request->validate([ 

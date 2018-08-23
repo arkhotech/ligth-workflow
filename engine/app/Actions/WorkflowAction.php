@@ -1,13 +1,15 @@
 <?php
-
+//declare(strict_types = 1);
 namespace App\Actions;
+
+use App\ActionInstance;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-abstract class Action {
+abstract class WorkflowAction {
     
     protected $type;
     
@@ -20,8 +22,11 @@ abstract class Action {
     public function getType(){
         return $this->type;
     }
+    /**
+     * 
+     */
     
-    public abstract function execute(Array $params = null);
+    public abstract function execute($params, $variables);
     
     
 }

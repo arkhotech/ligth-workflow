@@ -19,6 +19,7 @@ class AlterActionModel extends Migration
            $table->dropColumn('id_activity');
   
            $table->unsignedInteger('activity_id');
+           $table->string('class');
            $table->json('config');
            $table->string('name')->after('id');
            $table->string('description')->after('name')->nullable();
@@ -57,6 +58,7 @@ class AlterActionModel extends Migration
             $table->dropColumn('config');
             $table->dropColumn('description');
             $table->dropColumn('name');
+            $table->dropColumn('class');
             $table->dropForeign('actions_activity_id_foreign');
             $table->dropColumn('activity_id');
             $table->unsignedInteger('id_activity');
