@@ -7,7 +7,7 @@
  */
 
 return [
-       "EXPRESION" => "\App\Actions\ExpresionAction",
-       "rest" => "\App\Actions\ExpresionAction",
+       "expresion" => "\App\Actions\RestClientAction",
+       "rest" => "\App\Actions\RestClientAction",
     ];
        

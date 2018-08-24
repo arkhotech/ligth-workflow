@@ -12,10 +12,13 @@ use Illuminate\Support\Facades\Config;
 use Actions\WorkflowAction;
 
 class Action extends Model 
-                    implements DoubleLinkedIF, 
-                               LinkedExecution{
+                    implements DoubleLinkedIF{
     
-    //use SoftDeletes;
+    use SoftDeletes;
+    
+    const ACTION_FINISHED_OK = 1;
+    
+    const ACTION_ERROR = 2;
     
     const ON_ENTRY=1;
     
@@ -27,30 +30,14 @@ class Action extends Model
         return $this->belongsTo("App\Activity");
     }
     
-    public function next(){
-        $this->nextAction()->first();
+    public function createActionInstance($activity_instance){
+        $instance = new ActionInstance();
+        $instance->activity_id = $activity_instance->id;
+        $instance->class = $this->class;
+        $instance->action_id = $this->id;
+        $instance->config = $this->config;
+        $instance->save();
     }
-    
-    public static function create($type = "rest"){
-        Log::info("actions.".$type);
-        $source = Config::get("actions.".$type);
-        Log::debug("Source: ".$source);
-        $action = new $source;
-        if($source instanceof WorkflowAction){
-            return $action;
-        }else{
-            throw new Exception("La implementacion de Action no es de tipo WorkflowAction");
-        }
-        
-    }
-    
-    public function execute(){
-        $action_imp = Action::create($this->class);
-        $action_imp->execute($this->config);
-        Log::debug("Ejecutando actividad");
-        Log::debug(json_decode($this->config));
-    }
-    
     
     public static function getType($id){
         return Action::$TYPE[$id];

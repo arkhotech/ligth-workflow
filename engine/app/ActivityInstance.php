@@ -199,22 +199,16 @@ class ActivityInstance extends Model implements ActivityEvents{
         $this->save();
 //Obtener el primer form  
         $activity = $this->activity()->first();
-//        Log::debug($activity->actions()
-//                ->where("id_prev_action",null)
-//                ->where("type",Action::ON_ENTRY)->toSql());
-//        Log::debug($activity->actions()
-//                ->whereNull("id_prev_action")
-//                ->where("type",Action::ON_ENTRY)->getBindings());
-        $root_action = $activity->actions()
+        $current_action = $activity->actions()
                 ->whereNull("id_prev_action")
                 ->where("type",Action::ON_ENTRY)
                 ->first();
         
-        
-        if($root_action != null){
-            Actions\LinkedExecutionHandler::executeChain($root_action);
+        while($current_action != null){
+            $action_instance = $current_action->createActionInstance($this);
+            $action_instance->execute();
+            $current_action = $current_action->getNextNode();
         }
-        
     }
 
     public function onExit() {
@@ -222,14 +216,14 @@ class ActivityInstance extends Model implements ActivityEvents{
         Log::debug("[onExit]");
         $activity = $this->activity()->first();
 
-        $root_action = $activity->actions()
-                ->whereNull("id_prev_action")
-                ->where("type",Action::ON_EXIT)
-                ->first();
-        
-        if($root_action != null){
-            Actions\LinkedExecutionHandler::executeChain($root_action);
-        }
+//        $root_action = $activity->actions()
+//                ->whereNull("id_prev_action")
+//                ->where("type",Action::ON_EXIT)
+//                ->first();
+//                
+//        if($root_action != null){
+//            Actions\LinkedExecutionHandler::executeChain($root_action);
+//        }
         Log::info("Fianlizando actividad");
         $this->activity_state = ActivityEvents::FINISHED;
         $this->save();

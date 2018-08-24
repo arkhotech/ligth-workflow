@@ -15,6 +15,12 @@ abstract class WorkflowAction {
     
     protected $name;
     
+    protected $config;
+    
+    public function __construct($config) {
+        $this->config = $config;
+    }
+    
     public function getName(){
         return $this->name;
     }
@@ -26,7 +32,7 @@ abstract class WorkflowAction {
      * 
      */
     
-    public abstract function execute($params, $variables);
+    public abstract function execute( $variables);
     
-    
+    public abstract function configParamenters();
 }

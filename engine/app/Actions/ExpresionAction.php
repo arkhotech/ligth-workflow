@@ -22,7 +22,7 @@ class ExpresionAction extends WorkflowAction{
         
     }
     
-    public function execute($params){
+    public function execute($params,$variables){
         Log::debug("###################################");
         $x = $params;
         return null;
@@ -31,5 +31,9 @@ class ExpresionAction extends WorkflowAction{
     public function analice(){
                 
     }
-    
+
+    public function configParamenters() {
+        
+    }
+
 }

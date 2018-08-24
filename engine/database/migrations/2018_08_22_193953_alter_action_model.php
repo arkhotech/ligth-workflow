@@ -14,10 +14,13 @@ class AlterActionModel extends Migration
     public function up()
     {
         //
+        Schema::disableForeignKeyConstraints();
         Schema::table('actions',function(Blueprint $table){
+//            
            $table->dropForeign('actions_id_activity_foreign');
            $table->dropColumn('id_activity');
-  
+            
+           $table->datetime('deleted_at')->nullable();
            $table->unsignedInteger('activity_id');
            $table->string('class');
            $table->json('config');
@@ -28,7 +31,9 @@ class AlterActionModel extends Migration
                    ->on('activities')
                    ->onDelete('cascade');
         });
+        Schema::enableForeignKeyConstraints();
         Schema::create('action_instances',function(Blueprint $table){
+            
             $table->timestamps();
             $table->increments('id');
             $table->string('class');
@@ -54,19 +59,25 @@ class AlterActionModel extends Migration
     public function down()
     {
         //
+        Schema::disableForeignKeyConstraints();
         Schema::table('actions',function(Blueprint $table){
-            $table->dropColumn('config');
-            $table->dropColumn('description');
-            $table->dropColumn('name');
-            $table->dropColumn('class');
             $table->dropForeign('actions_activity_id_foreign');
-            $table->dropColumn('activity_id');
             $table->unsignedInteger('id_activity');
             $table->foreign('id_activity')
                     ->references('id')
                     ->on('activities')
                     ->onDelete('cascade');
+            
+            $table->dropColumn('config');
+            $table->dropColumn('description');
+            $table->dropColumn('name');
+            $table->dropColumn('class');
+            $table->dropColumn('deleted_at');
+            $table->dropColumn('activity_id');
+            
+            
         });
+        Schema::enableForeignKeyConstraints();
         Schema::dropIfExists('action_instances');
     }
 }
