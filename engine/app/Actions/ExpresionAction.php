@@ -20,13 +20,23 @@ class ExpresionAction extends WorkflowAction{
     
     public function execute($variables){
         Log::debug("###################################");
-//        $asignaciones = $this->config['assign'];
-//        foreach($asignaciones as $asignacion ){
-//            $var = $this->findVariable($asignacion);
-//            $var['value'] = $this->evaluateExpresion($this->findVariable($asignacion));
-//        }
-//        
+        
+        foreach($this->config["assign"] as $exp ){
+            $this->replaceExpr($exp["value"],$variables);
+            //$value = $variables[$exp["varname"]];
+            Log::debug($value);
+        }
+        
         return null;
+    }
+    
+    private function replaceExpr($value,$var_list){
+        foreach($var_list as $var){
+            Log::debug($value);
+            Log::debug(strpos($value,"@#"));
+            Log::debug(strpos($value, ' '));
+            Log::debug(substr($value, strpos($value,"@#"), strpos($value, ' ')));
+        }
     }
     
     private function evaluateExpresion($exp){
@@ -38,9 +48,8 @@ class ExpresionAction extends WorkflowAction{
     }
 
     public function configParamenters() {
-        return [ "assign" => [  "variable_name" => "array",
-                                "struct" => [ "variable_name" => "variable", 
-                                           "varaible_value" => "value" ]]
+        return [ "assign" => [   [ "varname" => "variable", 
+                                   "value" => "value" ]]
                 ];
     }
 
