@@ -282,13 +282,13 @@ class ProcessController extends Controller
         return $error;
     }
     
-    private function runProcess(ProcessInstance $process){
+    private function runProcess(ProcessInstance $process_instance){
         //TODO ver los requisitos y post procesos
         try{
             
  // ##### Ejeucion de proceso
             //Solo trae la primera instancia
-            $activity_instance = $process->run(Auth::user());
+            $activity_instance = $process_instance->run(Auth::user());
             //Este loop es necesario si es que son solo actividades
             while($activity_instance != null 
                     && $activity_instance->activity_state != ActivityEvents::PENDDING  ){  
@@ -296,8 +296,8 @@ class ProcessController extends Controller
                 // Pendiente es por qu enecesita intervención humana o termino
                 Log::info("Procesando instancia de actividad: ".$activity_instance->id);
                 //actualizando el cursor para saber en que actividad esta el proceso
-                $process->activityCursor = $activity_instance->id;
-                $process->save(); 
+                $process_instance->activityCursor = $activity_instance->id;
+                $process_instance->save(); 
 // #######  Ejecucion de actividad
                 //ejecutar efectivamente la instancia
                 $next_activity = $activity_instance->executeActivity();
@@ -307,21 +307,39 @@ class ProcessController extends Controller
             //
             if($activity_instance != null ){
                Log::debug("### saliendo del loop, status = ".$activity_instance->activity_state);
-                $process->process_state =$activity_instance->activity_state;
+                $process_instance->process_state =$activity_instance->activity_state;
             }else{
                 Log::debug("### Finalizando, Finished");
-                $process->process_state = ActivityEvents::FINISHED;
+                $retval = array();
+                $this->collectResult($process_instance,$retval);
+                $process_instance->process_state = ActivityEvents::FINISHED;
+                return $retval;
             }
-            $process->saveOrFail();
+            $process_instance->saveOrFail();
         }catch(Exception $e){
-            $process->process_state = ActivityEvents::ERROR;
-            $process->save();
+            $process_instance->process_state = ActivityEvents::ERROR;
+            $process_instance->save();
             throw $e;
             
         }
     }
+    
+    private function collectResult($process_instance,&$retval){
+        $activity_instances = $process_instance->activitiesInstances()->with('actionsInstances')->get();
+        foreach($activity_instances as $activity_instance){
+            $this->collectActivityResult($activity_instance->actionsInstances,$retval);//array($action_result->name => $action_result->output);
+        }
+    }
+    
+    private function collectActivityResult($res,&$retval){
+        foreach($res as $action_result){
+            $retval[] = array($action_result->name => json_decode($action_result->output));
+        }
+    }
   
 }
+
+
 
 
 class ProcessRequest extends Request{

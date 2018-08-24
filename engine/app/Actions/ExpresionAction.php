@@ -18,22 +18,30 @@ use App\ActivityInstance;
 class ExpresionAction extends WorkflowAction{
     //put your code here
     
-    public function __construct(){
-        
-    }
-    
-    public function execute($params,$variables){
+    public function execute($variables){
         Log::debug("###################################");
-        $x = $params;
+//        $asignaciones = $this->config['assign'];
+//        foreach($asignaciones as $asignacion ){
+//            $var = $this->findVariable($asignacion);
+//            $var['value'] = $this->evaluateExpresion($this->findVariable($asignacion));
+//        }
+//        
         return null;
     }
     
-    public function analice(){
-                
+    private function evaluateExpresion($exp){
+        return 1;
+    }
+    
+    private function findVariable($var_name){
+        return array("value" => "");
     }
 
     public function configParamenters() {
-        
+        return [ "assign" => [  "variable_name" => "array",
+                                "struct" => [ "variable_name" => "variable", 
+                                           "varaible_value" => "value" ]]
+                ];
     }
 
 }

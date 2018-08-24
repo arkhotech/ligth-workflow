@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Events\ActivityEvents;
 use App\Exceptions\ActivityException;
 use Illuminate\Support\Facades\Auth;
+//use App\ActionInstance;
 
 class ActivityInstance extends Model implements ActivityEvents{
     
@@ -17,6 +18,10 @@ class ActivityInstance extends Model implements ActivityEvents{
     
     public function activity(){
         return $this->belongsTo("\App\Activity");
+    }
+    
+    public function actionsInstances(){
+        return $this->hasMany("App\ActionInstance");
     }
     
     public function stagesInstances(){

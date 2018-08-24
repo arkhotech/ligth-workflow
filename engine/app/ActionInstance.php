@@ -3,12 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Config;
 
 class ActionInstance extends Model
 {
     //
- 
-    
     public function activityInstance(){
         return $this->belongsTo("App\ActivityInstance");
     }
@@ -34,14 +34,18 @@ class ActionInstance extends Model
             $this->saveToVariable($response);
             Log::debug($response);
             Log::debug("Ejecutando actividad");
-            //Log::debug(json_decode($this->config));
         }catch(Exception $e){
             $this->exception = array("error" => $e->getMessage());
             $this->action_status = Action::ACTION_ERROR;
         }finally{
             $this->save();
+        } 
+    }
+    
+    private function saveToVariable($value){
+        if($value!=null){
+            $this->output = $value;
         }
-        
     }
     
 }

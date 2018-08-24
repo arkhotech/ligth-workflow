@@ -19,13 +19,7 @@ class Test extends Controller{
     //put your code here
     
     public function test(){
-        $form = Form::find(8);
-        if($form == null){
-            return response(null,500);
-        }
-        $form_inst = $form->formInstance()->first();
-        $test = array("nombre" => "xxxx", "apellidox" => "yyyy", "archivo" => "pdf");
-        $form_inst->inputVariables($test);
+        return response()->json(array("mensaje" => "esto es una prueba"),200);
     }
     
 }

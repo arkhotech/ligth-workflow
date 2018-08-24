@@ -32,11 +32,13 @@ class Action extends Model
     
     public function createActionInstance($activity_instance){
         $instance = new ActionInstance();
-        $instance->activity_id = $activity_instance->id;
+        $instance->activity_instance_id = $activity_instance->id;
         $instance->class = $this->class;
+        $instance->name = $this->name;
         $instance->action_id = $this->id;
         $instance->config = $this->config;
         $instance->save();
+        return $instance;
     }
     
     public static function getType($id){
