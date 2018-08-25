@@ -28,7 +28,7 @@ class ProcessInstance extends Model implements ActivityEvents{
     }
     
     public function variables() {
-        return $this->hasMany("App\ProcVarInstance", "id_process_instance");
+        return $this->hasMany("App\VariableInstance");
     }
 
     public function exportVariables() {

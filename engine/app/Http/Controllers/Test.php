@@ -18,7 +18,10 @@ class Test extends Controller{
     
     public function test(){
         
-        $config = array("assign" => array(array("varname"=> "p1","value" => "@#Action1.result")) );
+ 
+//        preg_match(, "@#Action.result",$out);
+//        var_dump($out);
+        $config = array("assign" => array(array("to_var"=> "p1","from_var" => "@#Action1.result")) );
         
         $expresion = new ExpresionAction($config);
         $actions = ActionInstance::selectRaw("name, output as value")->get();

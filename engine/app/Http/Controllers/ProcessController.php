@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
-use App\ProcessVariable;
+use App\Variable;
 use App\ProcessInstance;
 use App\Jobs\AsyncStart;
 use App\Events\ActivityEvents;
@@ -145,7 +145,7 @@ class ProcessController extends Controller
         
         $variables = $request->input('variables.*');
         foreach($variables as $item){
-            $new_var = new ProcessVariable();
+            $new_var = new Variable();
             $new_var->name = $item['name'];
             $new_var->process_id = $process->id;
             $new_var->type = $item['type'];

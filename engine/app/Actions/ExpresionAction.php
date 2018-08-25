@@ -18,24 +18,38 @@ use App\ActivityInstance;
 class ExpresionAction extends WorkflowAction{
     //put your code here
     
+    const ACTION_PATTERN = "/@#[\w+\S]+[.\w+\S]*/";  //ACtion vars
+    
+    const GLOBAL_PATTERN = "/#[\w+\S]+[.\w+\S]*/";
+    
+    const ACTIVITY_PATTERN = "/@[\w+\S]+[.\w+\S]*/";
+    
     public function execute($variables){
         Log::debug("###################################");
         
-        foreach($this->config["assign"] as $exp ){
-            $this->replaceExpr($exp["value"],$variables);
+        foreach($this->config["assign"] as $item ){  //par variable destino <--  variable desde
+            ;  //Variable a asignar 
+              
+            $this->replaceExpr($item['to_var'], $item['from_var'],$variables);
+            //Se debe buscar la variable a la que apunta a la variable reigistrada
+            //$this->replaceExpr($exp["value"],$variables);
             //$value = $variables[$exp["varname"]];
-            Log::debug($value);
+
         }
         
         return null;
     }
     
-    private function replaceExpr($value,$var_list){
-        foreach($var_list as $var){
-            Log::debug($value);
-            Log::debug(strpos($value,"@#"));
-            Log::debug(strpos($value, ' '));
-            Log::debug(substr($value, strpos($value,"@#"), strpos($value, ' ')));
+    private function replaceExpr($to,$from,$source_varmap){
+        preg_match(self::ACTION_PATTERN, $from,$out);
+        if(count($out) > 0 ){
+            $val = $out[0];
+            $var_path = explode('.',str_replace('@#', "", $val));
+            if(key_exists($var_path[0], $source_varmap)){
+                
+            }
+            $source_varmap[$var_path[0]];
+            Log::debug("Variable: ".$var_path[0]);
         }
     }
     
@@ -49,7 +63,7 @@ class ExpresionAction extends WorkflowAction{
 
     public function configParamenters() {
         return [ "assign" => [   [ "varname" => "variable", 
-                                   "value" => "value" ]]
+                                   "value" => "pattern" ]]
                 ];
     }
 

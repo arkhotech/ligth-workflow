@@ -7,7 +7,7 @@ use App\EditableFieldsIF;
 use App\ProcVarInstance;
 use Illuminate\Support\Facades\Log;
 
-class ProcessVariable   
+class Variable   
         extends Model 
             implements EditableFieldsIF {
     //
@@ -20,12 +20,12 @@ class ProcessVariable
     }
     
     public function createInstance(ProcessInstance $proc_inst){
-        $var = new ProcVarInstance();
+        $var = new VariableInstance();
         foreach($this->fields() as $field){
             $var->{$field} = $this->{$field};
         }
-        $var->id_process_var = $this->id;
-        $var->id_process_instance = $proc_inst->id;
+        $var->variable_id = $this->id;
+        $var->process_instance_id = $proc_inst->id;
         $var->save();
         return $var;
     }

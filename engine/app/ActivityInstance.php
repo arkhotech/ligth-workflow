@@ -36,7 +36,7 @@ class ActivityInstance extends Model implements ActivityEvents{
      * @return type
      */
     public function variables(){
-        return $this->hasMany("App\ActivityVariable");
+        return $this->hasMany("App\Variable");
     }
     
     public function globalVariables(){
@@ -52,7 +52,7 @@ class ActivityInstance extends Model implements ActivityEvents{
      * @return type
      */
     public function declaredVariables(){
-        return $this->hasMany("App\ActivityVariable","id_activity");
+        return $this->hasMany("App\Variable");
     }
 
     private function executeStages(){
@@ -211,7 +211,7 @@ class ActivityInstance extends Model implements ActivityEvents{
         
         while($current_action != null){
             $action_instance = $current_action->createActionInstance($this);
-            $action_instance->execute();
+            $action_instance->execute($this->variables()->get());
             $current_action = $current_action->getNextNode();
         }
     }

@@ -9,7 +9,7 @@ use App\ActionInstance;
  * and open the template in the editor.
  */
 
-abstract class WorkflowAction {
+abstract class WorkflowAction{
     
     protected $type;
     
@@ -24,14 +24,17 @@ abstract class WorkflowAction {
     public function getName(){
         return $this->name;
     }
-    
+    /**
+     * 
+     * @return type
+     */
     public function getType(){
         return $this->type;
     }
-    /**
-     * 
-     */
     
+    /**
+     * Pasar un lista de variables dentro del contexto de ejecución.
+     */
     public abstract function execute( $variables);
     
     public abstract function configParamenters();
