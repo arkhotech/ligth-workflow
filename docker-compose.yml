@@ -12,18 +12,19 @@ services:
      - frontend
      - backend
   ldap:
-    image: "osixia/openldap:1.2.1"
+    image: "openfrontier/openldap-server"
     ports:
      - 389:389
     volumes:
      - ldap:/var/lib/ldap
+#     - ./assets/ldap.conf:/etc/ldap/ldap.conf
     networks:
      - backend
     environment:
-     - LDAP_ORGANISATION=Arkhotech SpA
-     - LDAP_DOMAIN=arkhotech.com
-     - LDAP_ADMIN_PASSWORD=aloja123
-     
+     - SLAPD_PASSWORD=aloja123
+     - SLAPD_DOMAIN=arkhotech.com
+     - SLAPD_ORGANIZATION=Arkhotech SpA
+  
   redis:
     image: "redis"
     networks:

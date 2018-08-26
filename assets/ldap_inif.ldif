@@ -1,19 +1,5 @@
 version: 1
 
-dn: dc=arkhotech,dc=com
-objectClass: organization
-objectClass: dcObject
-objectClass: top
-dc: arkhotech
-o: Arkhotech SpA
-
-dn: cn=admin,dc=arkhotech,dc=com
-objectClass: organizationalRole
-objectClass: simpleSecurityObject
-cn: admin
-userPassword:: e1NTSEF9MWk0REwrdWJSV1VqdzdlVEN0L3VMSVdmaDloK1FTUDQ=
-description: LDAP administrator
-
 dn: ou=People,dc=arkhotech,dc=com
 objectClass: organizationalUnit
 objectClass: top
