@@ -1,0 +1,68 @@
+version: "3.0"
+
+services:
+  frontend:
+    image: "nginx"
+    ports:
+     - 80:80
+    volumes:
+     - ./engine:/app
+     - ./assets/site.conf:/etc/nginx/conf.d/site.conf
+    networks:
+     - frontend
+     - backend
+  ldap:
+    image: "openfrontier/openldap-server"
+    ports:
+     - 389:389
+    volumes:
+     - ldap:/var/lib/ldap
+#     - ./assets/ldap.conf:/etc/ldap/ldap.conf
+    networks:
+     - backend
+    environment:
+     - SLAPD_PASSWORD=aloja123
+     - SLAPD_DOMAIN=arkhotech.com
+     - SLAPD_ORGANIZATION=Arkhotech SpA
+  
+  redis:
+    image: "redis"
+    networks:
+      - backend
+  worker:
+    image: "arkhotech/php-fpm:7.2"
+    volumes:
+      - ./engine:/app
+    networks:
+      - backend
+    command: "php artisan queue:work redis"
+  core:
+    image: "arkhotech/php-fpm:7.2"
+    volumes:
+      - ./engine:/app
+    networks:
+      - backend
+
+  database:
+    image: "mysql:5.7.22"
+    networks:
+      - backend
+    volumes:
+      - data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: "aloja123"
+      MYSQL_DATABASE: "engine"
+      MYSQL_USER: "workflow"
+      MYSQL_PASSWORD: "workflow123"
+
+networks:
+  backend:
+    driver: bridge
+  frontend: 
+    driver: bridge
+
+volumes:
+  data:
+  ldap:  
