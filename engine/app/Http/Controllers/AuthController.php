@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\User;
+
 class AuthController extends Controller
 {
     /**
@@ -51,6 +52,7 @@ class AuthController extends Controller
             'remember_me' => 'boolean'
         ]);
         $credentials = request(['email', 'password']);
+//        if(Adldap::auth()->attempt($credentials))
         if(!Auth::guard('web')->attempt($credentials))
             return response()->json([
                 'message' => 'Unauthorized'

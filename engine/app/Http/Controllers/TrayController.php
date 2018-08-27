@@ -2,31 +2,58 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use App\Process;
 use App\ActivityRole;
-use App\ProcessRole;
+use App\Tray;
+use App\Role;
 /*
- * const IDLE = 0;
-    
-    const ON_ENTRY=1;
-    
-    const ON_ACTIVITY = 2;
-    
-    const ON_EXIT = 3;
-    
-    const PENDDING = 4;
-    
-    const FINISHED = 5;
-    
-    const ERROR = 6;
+ * 
  */
 
 
 class TrayController extends Controller
 {
+    public function listUserTrays(){
+        $user = Auth::user();
+        $id = 1;
+        //Bandeja personal
+        
+        Collection::macro('to_state', function () {
+            return $this->map(function ($value) {
+                $value->process_instance->each(
+                        
+                );
+                return Str::upper($value);
+            });
+        });
+        
+        //Bandejas generales
+        $trays = Tray::with('roles')
+                ->select(['id','tray_name','description'])
+                ->get();
+        
+        $trays->each(function($item,$key){
+            $item->roles;
+            
+            $process = Role::join('process_roles','roles.id','=','process_roles.role_id')
+                            ->join('processes','processes.id','=','process_roles.process_id')
+                            ->join('process_instances','process_instances.process_id','=','processes.id')
+                            ->whereIn('roles.id',$item->roles)
+                            ->select("process_instances.id",
+                                    "processes.name",
+                                    "process_instances.activityCursor",
+                                    "process_instances.process_state")
+                            ->get(); 
+            $item->process_instances = $process;
+            
+        });
+        $trays->to_state();
+        $result['trays'] = $trays->forget('roles');
+        return response()->json($result);
+    }
+    
     //
     public function listProcess(){
         $process = Process::with(['processInstances'=> function($query){

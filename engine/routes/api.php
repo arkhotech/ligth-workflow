@@ -135,12 +135,15 @@ Route::group(
         function(){
             Route::get('/action-types',"ActionController@registeredActions");
         });
-        
+/**
+ * 
+ */        
 Route::group(
         ["prefix" => "tray",
          "middleware" => "auth:api",
          "middleware" => "roles:admin,users"],
         function(){
+           Route::get("/","TrayController@listUserTrays");
            Route::get("tasks","TrayController@listTask");   
            Route::get("process","TrayController@listProcess"); 
            Route::get("assigned","TrayController@asignedWork");
