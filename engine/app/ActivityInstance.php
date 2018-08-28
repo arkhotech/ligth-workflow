@@ -111,6 +111,17 @@ class ActivityInstance extends Model implements ActivityEvents{
                     return $next_activity->newActivityInstance($process_instance);
                 }
             }
+        }else if($this->type == Activity::FORK){
+            Log::info("Ejecuando bifurcacion");
+            $transitions = $activity->outputTransitions()->get();
+            foreach($transitions as $transition){
+                $next_activity = Activity::find($transition->next_activity_id);
+                $next_activity->flow_path_id = Transition::createPathId();
+                $next_activity->save();
+            }
+        }else if($this->type == Activity::JOIN){
+            Log::info("Cerrando un path");
+            //TODO ver como registrar los path abiertos
         }else{
 //#####  Ejeucion de stages
             Log::debug("Ejecutando stages");

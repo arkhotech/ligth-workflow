@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Hoa\Ruler\Context;
 use Illuminate\Support\Facades\Log;
+use Webpatser\Uuid\Uuid;
 
 class Transition extends Model
 {
@@ -27,5 +28,9 @@ class Transition extends Model
         Log::debug("[Transition][Evaluate][Result] ".(($result) ? "true" : "false"));
         return $result;
  
+    }
+    
+    public static function createPathId(){
+        return Uuid::generate();
     }
 }

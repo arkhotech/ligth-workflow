@@ -20,14 +20,24 @@ class TrayController extends Controller
         $id = 1;
         //Bandeja personal
         
-        Collection::macro('to_state', function () {
-            return $this->map(function ($value) {
-                $value->process_instance->each(
-                        
-                );
-                return Str::upper($value);
-            });
-        });
+//        Collection::macro('to_state', function () {
+//            return $this->map(function ($value) {
+//                
+//                $value->each(function($item){
+//                    switch($item->process_state){
+//                        case 0: 
+//                            $item->process_state = "IDLE";break;
+//                        case 4:
+//                           $item->process_state = "PENDDING";break; 
+//                        case 5:
+//                            $item->process_state = "FINISH";break;
+//                        case 6: 
+//                            $item->process_state = "ERROR";break;
+//                    }
+//                });
+//                return $value;
+//            });
+//        });
         
         //Bandejas generales
         $trays = Tray::with('roles')
@@ -45,11 +55,15 @@ class TrayController extends Controller
                                     "processes.name",
                                     "process_instances.activityCursor",
                                     "process_instances.process_state")
-                            ->get(); 
+                            ->get();
+            
+            
+            
             $item->process_instances = $process;
             
         });
-        $trays->to_state();
+//        var_dump($trays->first());die;
+                        
         $result['trays'] = $trays->forget('roles');
         return response()->json($result);
     }

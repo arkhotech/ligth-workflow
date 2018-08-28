@@ -10,6 +10,8 @@ use App\ActionInstance;
 use App\Actions\ExpresionAction;
 use App\User;
 use Adldap\Laravel\Facades\Adldap;
+use App\Transition;
+
 /**
  * Description of Test
  *
@@ -20,7 +22,9 @@ class Test extends Controller{
     
     public function test(){
         
-        $user = Adldap::search()->users()->find("msilva@arkhotech.com");
+        return response(Transition::createPathId());
+        
+//        $user = Adldap::search()->users()->find("msilva@arkhotech.com");
         
         //$user=User::where("email","msilva@arkhotech.com")->first();
         

@@ -9,6 +9,14 @@ class Activity extends Model implements EditableFieldsIF{
     
     public static $STATES = ['active','finished','error'];
     
+    const ACTIVITY = 0;
+    
+    const CONDITIONAL = 1;
+    
+    const FORK = 2;
+    
+    const JOIN = 3;
+    
     public function stages(){
         return $this->hasMany("App\Stage");
     }
