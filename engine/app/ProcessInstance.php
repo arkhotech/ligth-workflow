@@ -62,7 +62,7 @@ class ProcessInstance extends Model implements Executable{
             throw new ActivityException("Error. No existe actividad de inicio");
         }
 
-        $inst_activity = $activity->newActivityInstance($this,$this->user);
+        $inst_activity = $activity->newActivityInstance($this);
         //Nueva actividad
         event(new ActivityEvent($inst_activity,Events::NEW_INSTANCE));
         
@@ -74,14 +74,11 @@ class ProcessInstance extends Model implements Executable{
         //No implementada aún
         //Finalizado el evento
         event(new ProcessEvent($this,Events::ON_ACTIVITY));
-        //throw new Exception("Error de prueba");
     }
 
     public function end() {
-        Log::info("[ProcessInstance][Start] #####  FINALIZANDO PROCESO  #######");
- 
+        Log::info("[ProcessInstance][Fin] #####  FINALIZANDO PROCESO  #######");
         
-        event(new ProcessEvent($this,Events::FINISHED));
     }
 
     public function handleError(Exception $e) {

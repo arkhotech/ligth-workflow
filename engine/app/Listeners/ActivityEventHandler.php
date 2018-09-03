@@ -12,7 +12,7 @@ use App\Events\Events;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
-class ActivityEventHandler { //implements ShouldQueue{
+class ActivityEventHandler implements ShouldQueue{
     
     public $queue = "engine";
     

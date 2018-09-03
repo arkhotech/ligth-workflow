@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use App\Events\ActivityEvent;
+use App\Events\ProcessEvent;
 use App\Exceptions\ActivityException;
 use Illuminate\Support\Facades\Auth;
 use App\Events\Executable;
@@ -98,6 +99,11 @@ class ActivityInstance extends Model implements Executable{
         if($this->type == Activity::JOIN){
             $process_instance = $this->process()->first();
             $this->join($process_instance,$this->activity()->first());
+            //check para verificar si es que aún quedan path pendientes
+            if( $this->isPendingsPaths() ) {
+                Log::info("[ActivityInstance][init][JOIN] =====  EXISTEN PATHS PENDIENTES");
+                return;
+            }
         }
         
         event(new ActivityEvent($this,Events::ON_ACTIVITY));
@@ -170,19 +176,24 @@ class ActivityInstance extends Model implements Executable{
                 ->with('outputTransitions')
                 ->first();
         $transitions = $activity->outputTransitions;
-        if($transitions!== null){ 
+        if($transitions!== null && !empty($transitions)){ 
             //Evaludar las condiciones
             $next_activity =  $this->evaluateTransitions($transitions,$process_instance);
+            if($next_activity === null){  //Doble check. Revisar si esto es necesario.
+                Log::debug("Transicion nula. Terminando proceso");
+                event(new ProcessEvent($this->process()->first(),Events::ON_EXIT));
+                return;
+            }
             Log::debug("Procesando las siguientes transiciones");
             event(new ActivityEvent($next_activity,Events::NEW_INSTANCE));
         }else{
             Log::debug("Transicion nula. Se asume final del proceso");
-            event(new ActivityEvent($this->process()->first(),Events::ON_EXIT));
+            event(new ProcessEvent($this->process()->first(),Events::ON_EXIT));
         }
     }
     
     private function evaluateTransitions($transitions,$process_instance){
-        if($transitions == null || count($transitions)==0){
+        if($transitions === null || count($transitions)==0){
             Log::info('No hay transiciones que evaluar');
             return null;
         }
@@ -219,44 +230,65 @@ class ActivityInstance extends Model implements Executable{
         }
         Log::info("[Transition OUTPUT] ######  tomando la salida: [$output->name]");
         $next_activity = Activity::find($output->next_activity_id);
-        return $next_activity->newActivityInstance($process_instance,Auth::user());  //Se asigna el usuario actual
+        
+        
+        return $next_activity->newActivityInstance($process_instance,$this->flow_path_id);  //Se asigna el usuario actual
     }
     
-     private function join(ProcessInstance $process_instance, Activity $activity ){
-         Log::info("[JOIN] Cerrando un path: ".$this->flow_path_id);
-        $metadata = $process_instance->meta_data;
-
+     private function join(ProcessInstance $process_instance ){
+        Log::info("[JOIN] Cerrando un path: ".$this->flow_path_id);
+        $metadata = json_decode($process_instance->meta_data,true);
+        
         if($this->flow_path_id  === null){
             Log::error("Se esta usando un join y no hay inicio de bifucación");
             throw new ActivityException("Se esta usando un join y no hay inicio de bifucación");
         }
         //Eliminar del registro
         //TODO ver como registrar los path abiertos
-        if( key_exists($this->flow_path_id, $metadata["flow_paths"])){
-            unset($metadata["flow_paths"][$this->flow_path_id]);
-            $process_instance->meta_data = $metadata;
+       
+        if(($key = array_search( $this->flow_path_id,$metadata["flow_paths"]))!== false){
+            Log::debug("Removiendo PATH: ".$this->flow_path_id);
+            unset($metadata["flow_paths"][$key]);
+            $process_instance->meta_data = json_encode($metadata);
             $process_instance->save();
         }
+
+    }
+    
+    private function isPendingsPaths(){
+        $process_instance = $this->process()->first();
+        $metadata = json_decode($process_instance->meta_data,true);
+        
+        foreach( $metadata["flow_paths"] as $path ){
+            Log::debug("[ActivityInstnace] Path pendiente: ". $path );
+        }
+        
+        return (count( $metadata["flow_paths"] ) > 0 ) ? true : false;
     }
     
     private function fork(ProcessInstance $process_instance, Activity $activity){
         Log::info("[FORK] Ejecuando bifurcacion");
         $transitions = $activity->outputTransitions()->get();
-        $result = array();
+
         $paths = array();
+        $next_activities = array();  //Preparando antes de realizar dispatch. Para sincronizar
         foreach($transitions as $transition){
             Log::info("[ActivityInstance][fork] Salida ======>  ".$transition->name);
             $next_def = Activity::find($transition->next_activity_id);
             $uuid = Transition::createPathId();
-            $next_activity = $next_def->newActivityInstance($process_instance,Auth::user(),(String)$uuid);
-            $result[] = $next_activity;
+            $next_activities[] = $next_def->newActivityInstance($process_instance,(String)$uuid);
             $paths[] = (String)$uuid;
-            event(new ActivityEvent($next_activity,Events::NEW_INSTANCE));
-        }
+            //event(new ActivityEvent($next_activity,Events::NEW_INSTANCE));
+        } 
         //Agregra informacion en process instance de los caminos iniciados
         $process_instance->meta_data = json_encode(["flow_paths" => $paths]);
         $process_instance->save();
-        return $result;
+        
+        foreach($next_activities as $activity){
+            event(new ActivityEvent($activity,Events::NEW_INSTANCE));
+        }
+        
+        return $next_activities;
     }
     
     private function checkDefault($transitions){

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\ActivityException;
+use App\User;
 
 class Activity extends Model implements EditableFieldsIF{
     
@@ -64,12 +65,14 @@ class Activity extends Model implements EditableFieldsIF{
         return $this->hasMany('\App\Transition','next_activity_id');
     }
     
-    public function newActivityInstance(ProcessInstance $proc_inst,User $user,$path_token = null){
+    public function newActivityInstance(ProcessInstance $proc_inst,$path_token = null){
+        $user = User::find(1);  //usuario admnistrador
+        
         $instance = new ActivityInstance();
         $instance->process_instance_id = $proc_inst->id;
         $instance->activity_id = $this->id;
         $instance->activity_state = 0;
-        $instance->assigned_user = $user->id;
+        $instance->assigned_user = ( $user === null ) ? 1 : $user->id;
         $instance->flow_path_id = $path_token;
         $instance->type = $this->type;
         $instance->save();
@@ -89,7 +92,7 @@ class Activity extends Model implements EditableFieldsIF{
         
         $user_roles = $user->roles()->select('id')->get();
         $exists = ActivityRole::where("activity_id",$this->id)
-                ->whereIn("role_id",[1])->first();
+                ->whereIn("role_id",$user_roles)->first();
         
         return ( $exists == null ) ? false : true;
     }
