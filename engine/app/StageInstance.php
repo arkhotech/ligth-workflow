@@ -13,14 +13,13 @@ namespace App;
  * @author msilva
  */
 use Illuminate\Database\Eloquent\Model;
-use App\Events\ActivityEvents;
+use App\Events\Executable;
 use App\EditableFieldsIF;
 use Illuminate\Support\Facades\Log;
 use App\Form;
-use App\Events\FinishActivityEvent;
 
 
-class StageInstance extends Model implements   EditableFieldsIF, ActivityEvent{
+class StageInstance extends Model implements   EditableFieldsIF, Executable{
     
     private $form;
     
@@ -48,7 +47,7 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvent{
         return $defForm->createFormInstance($this);
     }
     
-    public function execute(){
+    public function start(){
         Log::debug("[Stage: OnActivity]:".$this->id);
         //Cargar la definicion de stage
         $stage = $this->stage()->first();
@@ -59,17 +58,13 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvent{
             throw new Exceptions\ActivityException('No existe instancia asociada a esta instancia');
         }
     }
-    
-    public function onActivity() {
-        $this->execute();
-    }
 
-    public function onEntry() {
+    public function init() {
        Log::debug("[Stage: OnEntry]");
         
     }
 
-    public function onExit() {
+    public function end() {
         Log::debug("[Stage: OnExit]");
         return $this->form;
     }
@@ -105,7 +100,11 @@ class StageInstance extends Model implements   EditableFieldsIF, ActivityEvent{
         $new_stage_instance->createFormInstance();
         return $new_stage_instance;
     }
-    
+
+    public function handleError(\Exception $e) {
+        Log::error("[StageInstance] ".$e->getMessage());
+    }
+
 }
 
 

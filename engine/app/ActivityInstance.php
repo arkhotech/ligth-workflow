@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use App\Events\ActivityEvents;
+use App\Events\ActivityEvent;
 use App\Exceptions\ActivityException;
 use Illuminate\Support\Facades\Auth;
 use App\Events\Executable;
@@ -68,11 +68,11 @@ class ActivityInstance extends Model implements Executable{
             //Ejecutar las etapas
             $stage_instance = $stage->newStageInstance($this);
             $this->current_stage = $stage_instance->id;
-            $stage_instance->onActivity();
-            $this->activity_state = ActivityEvents::PENDDING;
+            $stage_instance->start();
+            $this->activity_state = Events::PENDDING;
         }else{
             Log::warning("No hay stages");
-            $this->activity_state = ActivityEvents::ON_EXIT; //Para el siguiente evento
+            $this->activity_state = Events::ON_EXIT; //Para el siguiente evento
         }
         $this->save();
     }
@@ -89,66 +89,41 @@ class ActivityInstance extends Model implements Executable{
     }
     
     public function init() {
-        Log::debug("[ActivityInstance][onEntry] ID: ".$this->id);
+        Log::debug("[ActivityInstance][init] ID: ".$this->id);
 //Obtener el primer form  
-        $activity = $this->activity()->first();
-        $current_action = $activity->actions()
-                ->whereNull("id_prev_action")
-                ->where("type",Action::ON_ENTRY)
-                ->first();
-        
-        while($current_action != null){
-            $action_instance = $current_action->createActionInstance($this);
-            $action_instance->execute($this->variables()->get());
-            $current_action = $current_action->getNextNode();
-        }
+        $current_action = $this->getRootAction(Events::ON_ENTRY);
+        $this->executeActionChain($current_action);
+
         //Finalizado hay que llamar al avento correspondiente
         if($this->type == Activity::JOIN){
             $process_instance = $this->process()->first();
-            $this->fork($process_instance,$activity);
+            $this->join($process_instance,$this->activity()->first());
         }
         
         event(new ActivityEvent($this,Events::ON_ACTIVITY));
     }
 
     public function start() {
-        Log::debug("[onActivity][ActivityInstance][$this->id]");
-
-        //trae la definicion del proceso
-//        $process_instance = $this->process()->first();
-        //trae la definicion de la actividad
+        Log::debug("[ActivityInstance][start][$this->id]");
         $activity = $this->activity()->first();
         
-        Log::debug('===================   Ejecutando actividad: '.$this->type);
-//        if($this->type == Activity::FORK){
-//            return $this->fork($process_instance,$activity);
-//        }else if($this->type == Activity::JOIN){
-//           $this->join($process_instance,$activity);
-//            
-//        }else{
+        Log::debug('[ActivityInstance][start] Type: '.$this->type);
 //#####  Ejeucion de stages
-        Log::debug("$activity->name Ejecutando stages");
+        Log::debug("[ActivityInstance][start] $activity->name Ejecutando stages");
         $this->executeStages();
         Log::debug('Tipo actividada: Activity');
         Log::debug("Estado; ". $this->activity_state);
-                
+        event(new ActivityEvent($this,Events::ON_EXIT));        
     }
     
     public function end() {
           //TODO revisar las salidas
         Log::debug("[onExit]");
-        $activity = $this->activity()->first();
-
-//        $root_action = $activity->actions()
-//                ->whereNull("id_prev_action")
-//                ->where("type",Action::ON_EXIT)
-//                ->first();
-//                
-//        if($root_action != null){
-//            Actions\LinkedExecutionHandler::executeChain($root_action);
-//        }
-        Log::info("Fianlizando actividad");
-        $this->activity_state = ActivityEvents::FINISHED;
+        
+        $current_action = $this->getRootAction(Events::ON_EXIT);
+        $this->executeActionChain($current_action);
+        Log::info("Finalizando actividad");
+        $this->activity_state = Events::FINISHED;
         $this->save();
         
         if($this->end_activity){
@@ -157,25 +132,52 @@ class ActivityInstance extends Model implements Executable{
             $process->finalize();
         }
         
-        if($this->type == Activity::JOIN){
+        if($this->type == Activity::FORK){
             $process_instance = $this->process()->first();
-            $this->join($process_instance,$activity);
+            $this->fork($process_instance,$this->activity()->first());
+        }else{
+            $this->findOutputTransitions();
         }
-        
-        $this->findOutputTransitions();
+        event(new ActivityEvent($this,Events::FINISHED));
+    }
+    
+    private function executeActionChain($root_action){
+        $current_action = $root_action;
+        while($current_action != null){
+            $action_instance = $current_action->createActionInstance($this);
+            $action_instance->execute($this->variables()->get());
+            $current_action = $current_action->getNextNode();
+        }
         
     }
     
+    private function getRootAction($direction){
+        $activity = $this->activity()->first();
+        if($direction !== Events::ON_ENTRY && $direction !== Events::ON_EXIT){
+            Log::error("Se esta intentando obtener un tipo de acciones que no existe");
+            throw new ActivityException("Se esta intentando obtener un tipo de acciones que no existe");
+        }
+        $root_action = $activity->actions()
+                ->whereNull("id_prev_action")
+                ->where("type",$direction)
+                ->first();
+        return $root_action;
+    }
+    
     private function findOutputTransitions(){
-        $activity = $this->activity()->with('outputTransitions')->first();
+        $process_instance = $this->process()->first();
+        $activity = $this->activity()
+                ->with('outputTransitions')
+                ->first();
         $transitions = $activity->outputTransitions;
         if($transitions!== null){ 
             //Evaludar las condiciones
             $next_activity =  $this->evaluateTransitions($transitions,$process_instance);
-            event(new ActivityInstance($next_activity,Events::NEW_INSTANCE));
+            Log::debug("Procesando las siguientes transiciones");
+            event(new ActivityEvent($next_activity,Events::NEW_INSTANCE));
         }else{
             Log::debug("Transicion nula. Se asume final del proceso");
-            event(new ProcessEvent($this->process()->first(),Events::ON_EXIT));
+            event(new ActivityEvent($this->process()->first(),Events::ON_EXIT));
         }
     }
     
@@ -243,11 +245,10 @@ class ActivityInstance extends Model implements Executable{
         $result = array();
         $paths = array();
         foreach($transitions as $transition){
+            Log::info("[ActivityInstance][fork] Salida ======>  ".$transition->name);
             $next_def = Activity::find($transition->next_activity_id);
-            $next_activity = $next_def->newActivityInstance($process_instance,Auth::user());
             $uuid = Transition::createPathId();
-            $next_activity->flow_path_id = (String)$uuid;
-            $next_activity->save();
+            $next_activity = $next_def->newActivityInstance($process_instance,Auth::user(),(String)$uuid);
             $result[] = $next_activity;
             $paths[] = (String)$uuid;
             event(new ActivityEvent($next_activity,Events::NEW_INSTANCE));
@@ -256,6 +257,15 @@ class ActivityInstance extends Model implements Executable{
         $process_instance->meta_data = json_encode(["flow_paths" => $paths]);
         $process_instance->save();
         return $result;
+    }
+    
+    private function checkDefault($transitions){
+        foreach($transitions as $transition ){
+            if($transition->default){
+                return $transition;
+            }
+        }
+        return null;
     }
 
     public function handleError(Exception $e) {

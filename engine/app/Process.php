@@ -38,7 +38,8 @@ class Process extends Model implements EditableFieldsIF{
     public function newProcessInstance(User $user){
         if($user !== null  && $this->userCantStart($user) ){ 
             Log::debug("Creando instancia");
-            $instance = new ProcessInstance($user);
+            $instance = new ProcessInstance();
+            $instance->setUser($user);
             $instance->process_id = $this->id;
             $instance->process_state = Events::IDLE;
             $instance->activityCursor = 0;

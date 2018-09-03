@@ -22,10 +22,14 @@ class ProcessInstance extends Model implements Executable{
     
     private $user;
     
-    public function __construct($user) {
+    public function __construct() {
         parent::__construct();
-        $this->user = $user;
+        
         $this->state = Events::IDLE;
+    }
+    
+    public function setUser($user){
+        $this->user = $user;
     }
     
     public function currentActivityInstance(){
@@ -48,6 +52,7 @@ class ProcessInstance extends Model implements Executable{
     }
 
     public function start() {
+        Log::info("[ProcessInstance][Start] Ejecutando proceso");
          //iniciar prerequisitos;
         //Se debe buscar la primera actividad asociada para crear una instancia
          $activity = Activity::where("process_id", $this->process_id)
@@ -65,6 +70,7 @@ class ProcessInstance extends Model implements Executable{
     }
 
     public function init() {
+        Log::info("[ProcessInstance][Start] Inicializando");
         //No implementada aún
         //Finalizado el evento
         event(new ProcessEvent($this,Events::ON_ACTIVITY));
@@ -72,7 +78,7 @@ class ProcessInstance extends Model implements Executable{
     }
 
     public function end() {
-        Log::info("#####  FINALIZANDO PROCESO  #######");
+        Log::info("[ProcessInstance][Start] #####  FINALIZANDO PROCESO  #######");
  
         
         event(new ProcessEvent($this,Events::FINISHED));

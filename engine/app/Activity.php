@@ -64,12 +64,13 @@ class Activity extends Model implements EditableFieldsIF{
         return $this->hasMany('\App\Transition','next_activity_id');
     }
     
-    public function newActivityInstance(ProcessInstance $proc_inst,User $user){
+    public function newActivityInstance(ProcessInstance $proc_inst,User $user,$path_token = null){
         $instance = new ActivityInstance();
         $instance->process_instance_id = $proc_inst->id;
         $instance->activity_id = $this->id;
         $instance->activity_state = 0;
         $instance->assigned_user = $user->id;
+        $instance->flow_path_id = $path_token;
         $instance->type = $this->type;
         $instance->save();
         return $instance;

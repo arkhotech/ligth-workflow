@@ -21,27 +21,18 @@ class ActivityEventHandler { //implements ShouldQueue{
     }
     
     public function handle(ActivityEvent $event){
-        Log::info("iniciando proceso");
+        
         $source = $event->getSource();
         switch($event->getEvent()){
             case Events::NEW_INSTANCE:
-                $source->init();
+                Log::info("[ActivityEventHandler] ==========  INICIANDO ACTIVIDAD  ============");
+                $source->init(); break;
             case Events::ON_ACTIVITY:
-                $source->start();
+                $source->start(); break;
+            case Events::ON_EXIT:
+                Log::info("[ActivityEventHandler] ==========  FINALIZANDO ACTIVIDAD  ============");
+                $source->end(); break;
         }
     }
-    
-   
-    
-   
-    
-    private function checkDefault($transitions){
-        foreach($transitions as $transition ){
-            if($transition->default){
-                return $transition;
-            }
-        }
-        return null;
-    }
-    
+
 }
