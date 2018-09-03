@@ -14,6 +14,10 @@ class Transition extends Model
     public function evaluate(ActivityInstance $instance){
         //$instance = Activity::find($this->prev_activity_id);
         Log::debug('[Transition][Evaluate] Ejecutando validacion de reglas');
+        if($this->condition === null || $this->condition == "" || $this->condition === 0){
+            Log::debug("[Transition][$this->name] No hay condición para evaluar");
+            return true;
+        }
         $vars = $instance->globalVariables();
         $ruler = new \Hoa\Ruler\Ruler();
         $rule = $this->condition;

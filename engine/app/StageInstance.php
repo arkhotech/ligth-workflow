@@ -20,7 +20,7 @@ use App\Form;
 use App\Events\FinishActivityEvent;
 
 
-class StageInstance extends Model implements   EditableFieldsIF, ActivityEvents{
+class StageInstance extends Model implements   EditableFieldsIF, ActivityEvent{
     
     private $form;
     

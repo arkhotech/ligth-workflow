@@ -4,8 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\EditableFieldsIF;
-use App\ProcVarInstance;
-use Illuminate\Support\Facades\Log;
+use App\VariableInstance;
 
 class Variable   
         extends Model 

@@ -13,10 +13,17 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+        "App\Events\ActivityEvent" => [
+            "App\Listeners\ActivityEventHandler"
+        ],
+        "App\Events\ProcessEvent" => [
+            "App\Listeners\ProcessEventHandler"
+        ]
     ];
 
     protected $subscribe = [
         "App\Listeners\FormEventListener",
+        
     ];
     /**
      * Register any events for your application.

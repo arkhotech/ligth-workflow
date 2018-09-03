@@ -7,13 +7,15 @@ use Illuminate\Support\Facades\Log;
 use App\Events\ActivityEvents;
 use App\Exceptions\ActivityException;
 use Illuminate\Support\Facades\Auth;
-//use App\ActionInstance;
+use App\Events\Executable;
+use App\Events\Events;
+use Exception;
 
-class ActivityInstance extends Model implements ActivityEvents{
+class ActivityInstance extends Model implements Executable{
     
      public function __construct() {
         parent::__construct();
-        $this->activity_state = ActivityEvents::IDLE;
+        $this->activity_state = Events::IDLE;
     }
     
     public function activity(){
@@ -85,78 +87,96 @@ class ActivityInstance extends Model implements ActivityEvents{
         }
         return $instance;
     }
-    /**
-     * 
-     * @return type 
-     */
-    public function onActivity() {
+    
+    public function init() {
+        Log::debug("[ActivityInstance][onEntry] ID: ".$this->id);
+//Obtener el primer form  
+        $activity = $this->activity()->first();
+        $current_action = $activity->actions()
+                ->whereNull("id_prev_action")
+                ->where("type",Action::ON_ENTRY)
+                ->first();
+        
+        while($current_action != null){
+            $action_instance = $current_action->createActionInstance($this);
+            $action_instance->execute($this->variables()->get());
+            $current_action = $current_action->getNextNode();
+        }
+        //Finalizado hay que llamar al avento correspondiente
+        if($this->type == Activity::JOIN){
+            $process_instance = $this->process()->first();
+            $this->fork($process_instance,$activity);
+        }
+        
+        event(new ActivityEvent($this,Events::ON_ACTIVITY));
+    }
+
+    public function start() {
         Log::debug("[onActivity][ActivityInstance][$this->id]");
-        //Cambia el estado a onActivity
-        $this->activity_state = ActivityEvents::ON_ACTIVITY;
-        $this->save();
+
         //trae la definicion del proceso
-        $process_instance = $this->process()->first();
+//        $process_instance = $this->process()->first();
         //trae la definicion de la actividad
         $activity = $this->activity()->first();
         
-        Log::debug('Ejecutando actividad');
-        if($this->type == "conditional"){
-//#####  Ejeución condicional (No probada aún)       //TODO no se sabe si esto se hará o no       
-            Log::debug("Ejecutando actividad condicional");
-            //entonces hay varias condiciones
-            $transitions = $activity->outputTransitions()->get();
-            foreach($transitions as $transition){
-                if( $transition->evaluate() ) {  //Si es correcta, el camino es por acá
-                    $next_activity = Activity::find($transition->next_activity_id);
-                    return $next_activity->newActivityInstance($process_instance);
-                }
-            }
-        }else if($this->type == Activity::FORK){
-            Log::info("Ejecuando bifurcacion");
-            $transitions = $activity->outputTransitions()->get();
-            foreach($transitions as $transition){
-                $next_activity = Activity::find($transition->next_activity_id);
-                $next_activity->flow_path_id = Transition::createPathId();
-                $next_activity->save();
-            }
-        }else if($this->type == Activity::JOIN){
-            Log::info("Cerrando un path");
-            //TODO ver como registrar los path abiertos
-        }else{
+        Log::debug('===================   Ejecutando actividad: '.$this->type);
+//        if($this->type == Activity::FORK){
+//            return $this->fork($process_instance,$activity);
+//        }else if($this->type == Activity::JOIN){
+//           $this->join($process_instance,$activity);
+//            
+//        }else{
 //#####  Ejeucion de stages
-            Log::debug("Ejecutando stages");
-            $this->executeStages();
-            Log::debug('Tipo actividada: Activity');
-            Log::debug($activity->name);
-            Log::debug("Estado; ". $this->activity_state);
-            
-            switch($this->activity_state){
-                case ActivityInstance::ON_EXIT:
-                    //buscar las condiciones. Pueden ser una o mas.
-                    $activity = $this->activity()->with('outputTransitions')->first();
-                    
-                    $transitions = $activity->outputTransitions;
-                    
-                    if($transitions!= null){ 
-                        //Evaludar las condiciones
-                        return $this->evaluateTransitions($transitions,$process_instance);
-                       
-                    }else{
-                        Log::debug("Transicion nula. Se asume final del proceso");
-                        $this->onExit();
-                        return null;
-                    }
-                    
-                    break;
-                case ActivityInstance::PENDDING:
-                    Log::debug("Retnornando actividad en modo pending");
-                    return $this;
-                default:
-                    throw new ActivityException("Estado desconocido ".$this->activity_state);
-                    
-            }
+        Log::debug("$activity->name Ejecutando stages");
+        $this->executeStages();
+        Log::debug('Tipo actividada: Activity');
+        Log::debug("Estado; ". $this->activity_state);
+                
+    }
+    
+    public function end() {
+          //TODO revisar las salidas
+        Log::debug("[onExit]");
+        $activity = $this->activity()->first();
 
-        }        
+//        $root_action = $activity->actions()
+//                ->whereNull("id_prev_action")
+//                ->where("type",Action::ON_EXIT)
+//                ->first();
+//                
+//        if($root_action != null){
+//            Actions\LinkedExecutionHandler::executeChain($root_action);
+//        }
+        Log::info("Fianlizando actividad");
+        $this->activity_state = ActivityEvents::FINISHED;
+        $this->save();
+        
+        if($this->end_activity){
+            Log::info("Informando a proceso finalización de actividad");
+            $process = $this->process()->first();
+            $process->finalize();
+        }
+        
+        if($this->type == Activity::JOIN){
+            $process_instance = $this->process()->first();
+            $this->join($process_instance,$activity);
+        }
+        
+        $this->findOutputTransitions();
+        
+    }
+    
+    private function findOutputTransitions(){
+        $activity = $this->activity()->with('outputTransitions')->first();
+        $transitions = $activity->outputTransitions;
+        if($transitions!== null){ 
+            //Evaludar las condiciones
+            $next_activity =  $this->evaluateTransitions($transitions,$process_instance);
+            event(new ActivityInstance($next_activity,Events::NEW_INSTANCE));
+        }else{
+            Log::debug("Transicion nula. Se asume final del proceso");
+            event(new ProcessEvent($this->process()->first(),Events::ON_EXIT));
+        }
     }
     
     private function evaluateTransitions($transitions,$process_instance){
@@ -200,55 +220,46 @@ class ActivityInstance extends Model implements ActivityEvents{
         return $next_activity->newActivityInstance($process_instance,Auth::user());  //Se asigna el usuario actual
     }
     
-    private function checkDefault($transitions){
-        foreach($transitions as $transition ){
-            if($transition->default){
-                return $transition;
-            }
-        }
-        return null;
-    }
+     private function join(ProcessInstance $process_instance, Activity $activity ){
+         Log::info("[JOIN] Cerrando un path: ".$this->flow_path_id);
+        $metadata = $process_instance->meta_data;
 
-    public function onEntry() {
-        Log::debug("[ActivityInstance][onEntry] ID: ".$this->id);
-        $this->activity_state = ActivityEvents::ON_ENTRY;
-        $this->save();
-//Obtener el primer form  
-        $activity = $this->activity()->first();
-        $current_action = $activity->actions()
-                ->whereNull("id_prev_action")
-                ->where("type",Action::ON_ENTRY)
-                ->first();
-        
-        while($current_action != null){
-            $action_instance = $current_action->createActionInstance($this);
-            $action_instance->execute($this->variables()->get());
-            $current_action = $current_action->getNextNode();
+        if($this->flow_path_id  === null){
+            Log::error("Se esta usando un join y no hay inicio de bifucación");
+            throw new ActivityException("Se esta usando un join y no hay inicio de bifucación");
+        }
+        //Eliminar del registro
+        //TODO ver como registrar los path abiertos
+        if( key_exists($this->flow_path_id, $metadata["flow_paths"])){
+            unset($metadata["flow_paths"][$this->flow_path_id]);
+            $process_instance->meta_data = $metadata;
+            $process_instance->save();
         }
     }
-
-    public function onExit() {
-        //TODO revisar las salidas
-        Log::debug("[onExit]");
-        $activity = $this->activity()->first();
-
-//        $root_action = $activity->actions()
-//                ->whereNull("id_prev_action")
-//                ->where("type",Action::ON_EXIT)
-//                ->first();
-//                
-//        if($root_action != null){
-//            Actions\LinkedExecutionHandler::executeChain($root_action);
-//        }
-        Log::info("Fianlizando actividad");
-        $this->activity_state = ActivityEvents::FINISHED;
-        $this->save();
-        
-        if($this->end_activity){
-            Log::info("Informando a proceso finalización de actividad");
-            $process = $this->process()->first();
-            $process->finalize();
+    
+    private function fork(ProcessInstance $process_instance, Activity $activity){
+        Log::info("[FORK] Ejecuando bifurcacion");
+        $transitions = $activity->outputTransitions()->get();
+        $result = array();
+        $paths = array();
+        foreach($transitions as $transition){
+            $next_def = Activity::find($transition->next_activity_id);
+            $next_activity = $next_def->newActivityInstance($process_instance,Auth::user());
+            $uuid = Transition::createPathId();
+            $next_activity->flow_path_id = (String)$uuid;
+            $next_activity->save();
+            $result[] = $next_activity;
+            $paths[] = (String)$uuid;
+            event(new ActivityEvent($next_activity,Events::NEW_INSTANCE));
         }
+        //Agregra informacion en process instance de los caminos iniciados
+        $process_instance->meta_data = json_encode(["flow_paths" => $paths]);
+        $process_instance->save();
+        return $result;
+    }
+
+    public function handleError(Exception $e) {
+        Log::info("Controlando error");
     }
 
 }

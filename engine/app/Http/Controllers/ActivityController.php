@@ -46,7 +46,7 @@ class ActivityController extends Controller{
     public function newActivity(Request $request,$id_proceso){
         $request->validate(
                 ["name" => "required|string",
-                 "type" => [ "required","string",Rule::in(["activity","conditional"])],
+                 "type" => [ "required","string",Rule::in(["activity","conditional","fork","join"])],
                  "roles" => "array|nullable"]
                 );
         

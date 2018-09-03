@@ -20,6 +20,7 @@ class Variable extends Migration
         Schema::dropIfExists('process_vars_instances');
         Schema::create('variables',function(Blueprint $table){
             $table->increments('id');
+            $table->timestamps();
             $table->unsignedInteger('process_id');
             $table->string('name');
             $table->unsignedInteger('scope')->default(0); //0 global, 1 activity
@@ -29,6 +30,7 @@ class Variable extends Migration
         
         Schema::create('variable_instances',function(Blueprint $table){
             $table->increments('id');
+            $table->timestamps();
             $table->string('name');
             $table->unsignedInteger('variable_id');
             $table->unsignedInteger('process_instance_id');

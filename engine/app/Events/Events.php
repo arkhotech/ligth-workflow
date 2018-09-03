@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Events;
-/*
+/* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-/**
- * Description of ActivityEvents
- *
- * @author msilva
- */
-interface ActivityEvents {
-    //put your code here
+namespace App\Events;
+
+interface Events{
+    
+    const NEW_INSTANCE = 0;
     
     const IDLE = 0;
     
@@ -28,11 +25,4 @@ interface ActivityEvents {
     const FINISHED = 5;
     
     const ERROR = 6;
-    
-    public function onEntry();
-    
-    public function onExit();
-    
-    public function onActivity();
-    
 }

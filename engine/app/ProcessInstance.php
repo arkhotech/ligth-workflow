@@ -4,23 +4,34 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
-use App\Events\ActivityEvents;
+use App\Events\Executable;
+use App\Events\Events;
+use App\Events\ProcessEvent;
+use App\Events\ActivityEvent;
 use App\Exceptions\ActivityException;
 use App\Exceptions\NotUserInRoleException;
+use Illuminate\Support\Facades\Auth;
+use Exception;
+
 /**
  * Sec crea a partir de una definición Process
  */
-class ProcessInstance extends Model implements ActivityEvents{
+class ProcessInstance extends Model implements Executable{
 
-    private $state = ActivityEvents::IDLE;
-   
-    public function __construct() {
+    private $state = Events::IDLE;
+    
+    private $user;
+    
+    public function __construct($user) {
         parent::__construct();
-        $this->state = ActivityEvents::IDLE;
+        $this->user = $user;
+        $this->state = Events::IDLE;
     }
     
     public function currentActivityInstance(){
-        return $this->hasOne("App\ActivityInstance")->where("id",$this->activityCursor)->first();
+        return $this->hasOne("App\ActivityInstance")
+                ->where("id",$this->activityCursor)
+                ->first();
     }
     
     public function activitiesInstances(){
@@ -35,51 +46,40 @@ class ProcessInstance extends Model implements ActivityEvents{
         $variables = $this->variables()->select("name", "value")->get();
         return array("variables" => $variables);
     }
-    /**
-     * 
-     * @param type $user Usuario que inicia el proceso
-     * @return type La primera actividad del proceo
-     * @throws \ActivityException
-     */
-    public function run(User $user){
-        $activity = Activity::where("process_id", $this->process_id)
+
+    public function start() {
+         //iniciar prerequisitos;
+        //Se debe buscar la primera actividad asociada para crear una instancia
+         $activity = Activity::where("process_id", $this->process_id)
                 ->where("start_activity", 1)
                 ->first();
         if($activity==null){
             throw new ActivityException("Error. No existe actividad de inicio");
         }
-        if(!$activity->userCanStart($user)){
-            throw new NotUserInRoleException(
-                    "[ProcessInstance]: El usuario [$user->name] no puede iniciar la actividad");
-        }
-        $inst_activity = $activity->newActivityInstance($this,$user);
+
+        $inst_activity = $activity->newActivityInstance($this,$this->user);
+        //Nueva actividad
+        event(new ActivityEvent($inst_activity,Events::NEW_INSTANCE));
+        
         return $inst_activity;
     }
 
-    /**
-     * @deprecated        
-     */
-    public function onActivity() {
-         //iniciar prerequisitos;
-        //Se debe buscar la primera actividad asociada para crear una instancia
-        
-        
-        //iniciar postrequisitos;
-    }
-
-    public function onEntry() {
+    public function init() {
         //No implementada aún
+        //Finalizado el evento
+        event(new ProcessEvent($this,Events::ON_ACTIVITY));
+        //throw new Exception("Error de prueba");
     }
 
-    public function onExit() {
-        //no implementada aún
-    }
-
-    public function finalize(){
+    public function end() {
         Log::info("#####  FINALIZANDO PROCESO  #######");
-        $this->onExit();
-        $this->state = ActivityEvents::FINISHED;
-        $this->save();
+ 
+        
+        event(new ProcessEvent($this,Events::FINISHED));
     }
-    
+
+    public function handleError(Exception $e) {
+        Log::error("[Error Handle] ".$this->getMessage());
+    }
+
 }

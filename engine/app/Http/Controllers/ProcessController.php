@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Variable;
 use App\ProcessInstance;
 use App\Jobs\AsyncStart;
-use App\Events\ActivityEvents;
+use App\Events\Events;
+use App\Events\ProcessEvent;
 use App\Exceptions\NotUserInRoleException;
 
 class ProcessController extends Controller
@@ -200,7 +201,7 @@ class ProcessController extends Controller
         if($process != null){
             DB::beginTransaction();
             //check si el usuario es aninimo o no (usuario anonimo 0) 
-            $process_instance = $process->newProcessInstance();
+            $process_instance = $process->newProcessInstance(Auth::user());
             $id_instance = $process_instance->id;
             Log::debug("Id nueva instancia: ".$id_instance);
             $declared_vars = $process
@@ -226,7 +227,7 @@ class ProcessController extends Controller
                 }
                 
                 //validar que entrada sea igual 
-                //TODO validar si es un proceso sincrono
+                //ELIMINAR Todos los procesos comienzan asincronamente. validar si es un proceso sincrono 
                 if($process_instance->asynch){
                    
                     $id_job = $this->dispatch(new AsyncStart($process_instance->id));
@@ -236,8 +237,10 @@ class ProcessController extends Controller
                             array("id_process" => $process_instance->id,
                                 "id_job" => $id_job),202);
                 }else{
-//#######  Run process                    
-                    $result = $this->runProcess($process_instance);
+//#######  Run process
+                    //Iniciar el proceso
+                    event(new ProcessEvent($process_instance,Events::IDLE));
+                    //$result = $this->runProcess($process_instance);
                     DB::commit();
                     return response()->json(
                             array("id_process" => $process_instance->id, 
@@ -288,7 +291,7 @@ class ProcessController extends Controller
             
  // ##### Ejeucion de proceso
             //Solo trae la primera instancia
-            $activity_instance = $process_instance->run(Auth::user());
+            $activity_instance = $process_instance->run();
             //Este loop es necesario si es que son solo actividades
             while($activity_instance != null 
                     && $activity_instance->activity_state != ActivityEvents::PENDDING  ){  
@@ -301,6 +304,7 @@ class ProcessController extends Controller
 // #######  Ejecucion de actividad
                 //ejecutar efectivamente la instancia
                 $next_activity = $activity_instance->executeActivity();
+                //Aca podría retornar una o varias instancias si es que hay caminos paralelos
                 
                 $activity_instance = $next_activity;
             }

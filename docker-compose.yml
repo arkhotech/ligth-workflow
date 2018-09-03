@@ -36,6 +36,17 @@ services:
     networks:
       - backend
     command: "php artisan queue:work redis"
+  
+  engine-queue:
+    image: "arkhotech/php-fpm:7.2"
+    deploy:
+    restart: always
+    volumes:
+      - ./engine:/app
+    networks:
+      - backend
+    command: "php artisan queue:work redis --queue=engine --daemon  --sleep=10 --tries=2 --timeout=600"
+
   core:
     image: "arkhotech/php-fpm:7.2"
     volumes:

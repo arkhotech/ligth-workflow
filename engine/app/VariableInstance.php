@@ -11,13 +11,11 @@ use App\EditableFieldsIF;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\BasicTypes;
 
-class ProcVarInstance extends Model 
+class VariableInstance extends Model 
             implements EditableFieldsIF {
     
-    protected $table = "process_vars_instances";
-    
     public function processVariable(){
-        return $this->belongsTo('App\ProcessVariable',"id_process_var");
+        return $this->belongsTo('App\Variable');
     }
     
     public function fields() {
