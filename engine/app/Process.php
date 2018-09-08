@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\ProcessInstance;
 use App\EditableFieldsIF;
 use App\Events\Events;
+use App\Exceptions\NotUserInRoleException;
 
 class Process extends Model implements EditableFieldsIF{
 

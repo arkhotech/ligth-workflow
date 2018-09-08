@@ -15,7 +15,7 @@ class AlterProcessRole extends Migration
     {
         //
         Schema::table('process_roles',function($table){
-            $table->renameColumn('roles_id','role_id');
+//            $table->renameColumn('roles_id','role_id');
         });
     }
 
@@ -28,7 +28,7 @@ class AlterProcessRole extends Migration
     {
         //
         Schema::table('process_roles',function($table){
-            $table->renameColumn('role_id','roles_id');
+//            $table->renameColumn('role_id','roles_id');
         });
     }
 }

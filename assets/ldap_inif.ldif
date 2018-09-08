@@ -1,10 +1,5 @@
 version: 1
 
-dn: ou=People,dc=arkhotech,dc=com
-objectClass: organizationalUnit
-objectClass: top
-ou: People
-
 dn: ou=Group,dc=arkhotech,dc=com
 objectClass: organizationalUnit
 objectClass: top
@@ -15,14 +10,18 @@ objectClass: organizationalUnit
 objectClass: top
 ou: Hosts
 
+dn: ou=People,dc=arkhotech,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: People
+
 dn: cn=operators,ou=Group,dc=arkhotech,dc=com
 objectClass: posixGroup
 objectClass: top
 cn: operators
 gidNumber: 0
 
-dn: cn=operador+givenName=operador+mail=operador@arkhotech.com+sn=Operador+u
- id=1002+userPassword=operador,ou=People,dc=arkhotech,dc=com
+dn: cn=operador,ou=People,dc=arkhotech,dc=com
 objectClass: shadowAccount
 objectClass: posixAccount
 objectClass: person
@@ -38,4 +37,3 @@ uidNumber: 1
 givenName: operador
 mail: operador@arkhotech.com
 userPassword:: b3BlcmFkb3I=
-

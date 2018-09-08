@@ -42,6 +42,10 @@ class ActivityInstance extends Model implements Executable{
         return $this->hasMany("App\Variable");
     }
     
+    public function variableInstances(){
+        return $this->hasMany("App\VariableInstance");
+    }
+    
     public function globalVariables(){
         $process_instance = $this->process()->first();
         return $process_instance->variables()->get();
@@ -78,23 +82,13 @@ class ActivityInstance extends Model implements Executable{
         $this->save();
     }
     
-    public function executeActivity(){
-        $this->onEntry();
-        $instance = $this->onActivity();
-        if($instance == null){
-            Log::info('LOPP finalizado');
-        }else{
-            Log::info("Retornando status : " . $this->activity_state);
-        }
-        return $instance;
-    }
-    
     public function init() {
-        Log::debug("[ActivityInstance][init] ID: ".$this->id);
+        Log::debug("[ActivityInstance][init] Name: ".$this->name);
 //Obtener el primer form  
         $current_action = $this->getRootAction(Events::ON_ENTRY);
+        Log::info("[ActivityInstance][init] Ejecutando acciones de inicio");
         $this->executeActionChain($current_action);
-
+        Log::debug("[ActivityInstance][init] Fianlizando acciones de inicio");
         //Finalizado hay que llamar al avento correspondiente
         if($this->type == Activity::JOIN){
             $process_instance = $this->process()->first();
@@ -146,12 +140,20 @@ class ActivityInstance extends Model implements Executable{
         }
         event(new ActivityEvent($this,Events::FINISHED));
     }
-    
+    /**
+     * 
+     * @param \App\Action $root_action
+     * @return type
+     */
     private function executeActionChain($root_action){
+        if($root_action == null){
+            Log::debug("No hay actions asociadas a esta actividad");
+            return;
+        }
         $current_action = $root_action;
         while($current_action != null){
             $action_instance = $current_action->createActionInstance($this);
-            $action_instance->execute($this->variables()->get());
+            $action_instance->execute();
             $current_action = $current_action->getNextNode();
         }
         

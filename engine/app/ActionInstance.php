@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 class ActionInstance extends Model
 {
     //
+    
     public function activityInstance(){
         return $this->belongsTo("App\ActivityInstance");
     }
@@ -21,8 +22,14 @@ class ActionInstance extends Model
         Log::info("actions.".$type);
         $source = Config::get("actions.".$type);
         Log::debug("Source: ".$source);
-        $action = new $source($this->config);
+        $action = new $source($this->config,$this->variables());
         return $action;
+    }
+    
+    private function variables(){
+        $activity_instance = $this->activityInstance()->first();
+        return $activity_instance->variableInstances()->get();
+        
     }
     
     public function execute(){
@@ -44,7 +51,9 @@ class ActionInstance extends Model
     
     private function saveToVariable($value){
         if($value!=null){
+            Log::debug("Guardando resultado en la salida");
             $this->output = $value;
+            $this->save();
         }
     }
     

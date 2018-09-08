@@ -44,6 +44,7 @@ class ActivityController extends Controller{
      * @return type
      */
     public function newActivity(Request $request,$id_proceso){
+        Log::info("Creando nueva actividad");
         $request->validate(
                 ["name" => "required|string",
                  "type" => [ "required","string",Rule::in(["activity","conditional","fork","join"])],
@@ -51,7 +52,7 @@ class ActivityController extends Controller{
                 );
         
         try{
-            DB::beginTransaction();
+            //DB::beginTransaction();
 
             $activity = new Activity();
             if( Process::find($id_proceso) != null ){  
@@ -65,12 +66,14 @@ class ActivityController extends Controller{
                         ? $request->input("roles.*") : 
                     array();
                 $this->asignActivityRoles($roles,$activity);
-                DB::commit();
+                //DB::commit();
+                Log::info("Actividad creada correctamente");
                 return response()->json([ "activity_id" => $activity->id ], 201);
             }
+            
         }catch(Exception $e){
-            Log::error($e->getMessage());
-            DB::rollback();
+            Log::error("Error al crear actvidad: ".$e->getMessage());
+            //DB::rollback();
             return response(null,500);
         }
         return response()->json(array("message" => "No existe el proceso"),412);

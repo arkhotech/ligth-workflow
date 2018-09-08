@@ -26,12 +26,14 @@ class RestClientAction extends WorkflowAction {
             
             //{{URL}}/zones/{{zone_id}}/dns_records?name=qa.arkhotech.space
     
-    public function __construct($params) {
-        parent::__construct($params);
+    private $headers;
+    
+    public function __construct($params,$vars) {
+        parent::__construct($params,$vars);
         $config = json_decode($this->config,true);
-        $this->headers = $config['properties']['headers'];
-        $this->url = $config['properties']['url'];
-        $this->method = $config['properties']['method'];
+        $this->headers = $config[0]['headers'];
+        $this->url = $config[0]['url'];
+        $this->method = $config[0]['method'];
         $this->client = new Client();
     }
     
@@ -47,6 +49,9 @@ class RestClientAction extends WorkflowAction {
         Log::debug($this->config);
         Log::info("Realizando call");
         
+        foreach($this->variables as $var){
+            Log::debug("Var: ".$var->name);
+        }
        
         Log::debug("Ejecutando llamado");
        $response = $this->call($request);
@@ -55,27 +60,26 @@ class RestClientAction extends WorkflowAction {
     
     private function call($request){
         $response = null;
-        //Log::debug(".".$this->headers.".");
+        Log::debug("Test");
         $verb = strtolower($this->method);
-        
-        
-        $headers = array("X-Auth-Email" => "arkho@arkhotech.com",
-            "X-Auth-Key" => "23ea8d0b31049cbf99ec445720a13fb0a1645",
-            "Content-Type" => "Application/json");
-        
-        switch(strtoupper($this->method)){
-            case "GET":
-                $response = $this->client->{$verb}(
-                        $this->url,
-                        array("headers" => $this->headers));
-                break;
-            case "POST":
-            case "PUT":
-            case "DELETE":
-                $response = $this->client->{$verb}(
-                        $this->url,
-                        array("headers" => $this->headers),$request);
-                break;
+        try{
+            switch(strtoupper($this->method)){
+                case "GET":
+                    $response = $this->client->{$verb}(
+                            $this->url,
+                            array("headers" => $this->headers));
+                    break;
+                case "POST":
+                case "PUT":
+                case "DELETE":
+                    $response = $this->client->{$verb}(
+                            $this->url,
+                            array("headers" => $this->headers),$request);
+                    break;
+            }
+        }catch(RequestException $e){
+            $this->exception = $e->getMessage();
+            $this->save();
         }
         return $response;
     }

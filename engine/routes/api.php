@@ -67,8 +67,8 @@ Route::group(
 
 Route::group(
     ["prefix" => 'activity',
-     "middleware" => "auth:api",
-     "middleware" => "roles:admin"],
+     "middleware" => "auth:api"],   //,
+ //    "middleware" => "roles:admin"
         function(){
             Route::post('/{id_prev}/start','ActivityInstanceController@start');
             Route::get('/instance/{id_instance}/{sense}/transitions',"ActivityInstanceController@listTransitions");
@@ -88,8 +88,8 @@ Route::group(
         
 Route::group(
         ["prefix"=> "transition",
-         "middleware" => "auth:api",
-         "middleware" => "roles:admin"],
+         "middleware" => "auth:api"    //         "middleware" => "roles:admin"
+],
         function(){
             Route::post("/from/{from_id}/to/{to_id}","TransitionController@createTransition");
             Route::get("/list/fromprocess/{id_process}","TransitionController@listTransitions");
@@ -124,8 +124,8 @@ Route::group(
          "middleware" => "roles:admin"],
         function(){
             Route::post("/","ActionController@newAction");
-            Route::delete('/{id}','ActionController@removeAction');
-            Route::put('/{id}/{sense}','ActionController@move');
+            Route::delete('/{id_action}','ActionController@removeAction');
+            Route::put('/{id_action}/{sense}','ActionController@move');
         });
         
 Route::group(
@@ -177,3 +177,10 @@ Route::group(
             Route::get("/process/instance/{id}/form","ProcessControlController@currentForm");
             Route::post("/process/instance/{id}/form/next","ProcessControlController@submitForm");
         });
+        
+        
+Route::group(
+        ["prefix" => "webhook"],
+        function(){
+            Route::post("/receiver/{id_hook}","WebhookController@receiveWebhook");
+   });

@@ -3,9 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Actions\DoubleLinkedIF; 
-use App\Actions\LinkedExecution;
-use App\Actions\ActionFactory;
+use App\Actions\DoubleLinkedIF;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Config;
@@ -24,7 +22,7 @@ class Action extends Model
     
     const ON_EXIT=2;
     
-    public static $TYPE = [1 => 'ON_ENTRY', 2 =>'ON_EXIT' ];
+    public static $TYPE = ['ON_ENTRY'=>1, 'ON_EXIT'=>2 ];
     
     public function activity(){
         return $this->belongsTo("App\Activity");

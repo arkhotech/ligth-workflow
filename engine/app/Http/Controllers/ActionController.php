@@ -35,6 +35,7 @@ class ActionController extends Controller
                 $action = new Action();
                 $action->type = Action::getType($request->input('type'));
                 $action->name = $request->input('name');
+                $action->class = $request->input('action_type');
                 $action->activity_id = $id_activity;
                 $action->description = $request->input('description');
                 $action->config = json_encode($request->input('config.*'));

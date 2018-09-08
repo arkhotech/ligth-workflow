@@ -1,0 +1,12 @@
+apiVersion: v1
+data:
+  mapRoles: 
+    - rolearn: arn:aws:iam::903272718619:role/EKSServiceRole
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+    - rolearn: arn:aws:iam::903272718619:user/eks-user 
+      username: eks-user
+      groups:
+        - system:masters 

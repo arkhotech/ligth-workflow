@@ -16,8 +16,8 @@ return [
 
     'usernames' => [
         'ldap' => [
-            'discover' => 'mail',
-            'authenticate' => 'cn',
+            'discover' => 'cn',
+            'authenticate' => 'mail',
         ],
         'eloquent' => 'email',
         'windows' => [

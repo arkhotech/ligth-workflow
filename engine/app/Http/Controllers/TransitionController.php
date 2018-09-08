@@ -36,7 +36,7 @@ class TransitionController extends Controller{
     public function createTransition(Request $request, $prev_id,$next_id){
         $request->validate([
             "name" => "required|string",
-            "condition" => "required|string",
+//            "condition" => "required|string",
             "default" => "required|boolean"]);
         
         $prev_act = Activity::find($prev_id);
@@ -56,7 +56,9 @@ class TransitionController extends Controller{
         $transition->prev_activity_id = $prev_id;
         $transition->next_activity_id = $next_id;
         $transition->process_id =  $prev_act->process_id;
-        $transition->condition = $request->input('condition');
+        if($request->input('condition') != null){
+            $transition->condition = $request->input('condition');
+        }
         
         $transition->save();
         return response(null,201);        

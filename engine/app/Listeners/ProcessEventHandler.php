@@ -13,7 +13,7 @@ use App\Events\ProcessEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
-class ProcessEventHandler { //implements ShouldQueue{
+class ProcessEventHandler implements ShouldQueue{
     
     public $queue = "engine";
     
