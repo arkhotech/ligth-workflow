@@ -184,3 +184,5 @@ Route::group(
         function(){
             Route::post("/receiver/{id_hook}","WebhookController@receiveWebhook");
    });
+   
+Route::get("/test","Test@test");

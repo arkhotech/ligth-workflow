@@ -19,9 +19,12 @@ abstract class WorkflowAction{
     
     protected $variables;
     
-    public function __construct($config,$variables) {
+    protected $activity_instance;
+    
+    public function __construct($config,$variables,$activity_instance = null) {
         $this->config = $config;
         $this->variables = $variables;
+        $this->activity_instance = $activity_instance;
     }
     
     public function getName(){

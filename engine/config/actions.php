@@ -9,5 +9,6 @@
 return [
        "expresion" => "\App\Actions\ExpresionAction",
        "rest" => "\App\Actions\RestClientAction",
+        "assign" => "\App\Actions\AssignAction"
     ];
        

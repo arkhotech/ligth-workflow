@@ -50,10 +50,18 @@ class ActivityInstance extends Model implements Executable{
         $process_instance = $this->process()->first();
         return $process_instance->variables()->get();
     }
-    
+    /*
+     * 
+     */
+    //@Deprecated
     public function process(){
         return $this->belongsTo("App\ProcessInstance","process_instance_id"); 
     }
+    
+     public function processInstance(){
+        return $this->belongsTo("App\ProcessInstance","process_instance_id"); 
+    }
+    
     /**
      * Trae las variables declaradas en el proecso
      * @return type

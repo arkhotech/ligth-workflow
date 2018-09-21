@@ -18,6 +18,14 @@ class Variable
         return ["name","value","type"];
     }
     
+    public function instances(){
+        return $this->hasMany("App\VariableInstance");
+    }
+    
+    public function existsInstance(ProcessInstance $proc_inst){
+        return $this->instances()->where('process_instance_id',$proc_inst->id)->first();
+    }
+    
     public function createInstance(ProcessInstance $proc_inst){
         $var = new VariableInstance();
         foreach($this->fields() as $field){

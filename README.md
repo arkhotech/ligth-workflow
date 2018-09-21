@@ -88,3 +88,9 @@ Motor de reglas:
 https://github.com/hoaproject/Ruler
 
 https://voltagead.com/the-basics-of-laravel-queues-using-redis-and-horizon/
+
+Mathematical Library
+
+https://github.com/markrogoyski/math-php
+
+

@@ -32,6 +32,10 @@ class ProcessInstance extends Model implements Executable{
         $this->user = $user;
     }
     
+    public function process(){
+        return $this->belongsTo("App\Process");
+    }
+    
     public function currentActivityInstance(){
         return $this->hasOne("App\ActivityInstance")
                 ->where("id",$this->activityCursor)
