@@ -2,4 +2,4 @@ FROM arkhotech/php-fpm:7.2
 
 RUN ls -la
 
-COPY /engine /app 
+COPY ./engine /app 
