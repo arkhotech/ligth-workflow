@@ -1,13 +1,12 @@
 {
 	"info": {
-		"_postman_id": "0590d7a4-dd82-4c98-83e3-458d839b8aca",
+		"_postman_id": "c57eb732-e918-4d1e-9a69-65d33d9072ce",
 		"name": "LigthWorkflowEngine",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Domain",
-			"description": "Servicios para la creación de dominios",
 			"item": [
 				{
 					"name": "Nuevo Dominio",
@@ -126,11 +125,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Servicios para la creación de dominios"
 		},
 		{
 			"name": "Process",
-			"description": null,
 			"item": [
 				{
 					"name": "Recuperar Registro",
@@ -175,7 +174,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\" : \"Inicio\",\n\t\"role_owner_id\": 1,\n\t\"variables\" : [ {\"name\":  \"p1\", \"type\" : \"string\" ,\"validator\" : \"is_string()\" }]\n}"
+							"raw": "{\n\t\"name\" : \"Condicional\",\n\t\"role_owner_id\": 1,\n\t\"variables\" : [ {\"name\":  \"p1\", \"type\" : \"string\" ,\"validator\" : \"is_string()\" }]\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}/api/process/1",
@@ -327,7 +326,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"parameters\" :  { \n\t\t\"p1\" : 1 , \"p2\": 25 }\n}"
+							"raw": "{\n\t\"parameters\" :  { \n\t\t\"p1\" : 4 , \"p2\": 25 }\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}/api/process/start/6",
@@ -355,7 +354,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://{{host}}/api/process/6/instances/113",
+							"raw": "http://{{host}}/api/process/6/instances",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -364,10 +363,52 @@
 								"api",
 								"process",
 								"6",
-								"instances",
-								"113"
+								"instances"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Process",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"Roles 2\",\n\t\"assign_roles\" : [ \"admin\" , \"users\" ],\n\t\"assign_users\"  : [ \"msilva@arkhotech.com\"]\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/process/6",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"process",
+								"6"
+							]
+						},
+						"description": "Editar un proceso"
 					},
 					"response": []
 				}
@@ -375,7 +416,6 @@
 		},
 		{
 			"name": "Attachments",
-			"description": null,
 			"item": [
 				{
 					"name": "Upload",
@@ -424,7 +464,6 @@
 		},
 		{
 			"name": "Activities",
-			"description": null,
 			"item": [
 				{
 					"name": "Listar Actividades",
@@ -480,7 +519,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"activity_name\" : \"Conditional\",\n\t\"type\" : \"conditional\"\n}"
+							"raw": "{\n\t\"name\" : \"Prueba\",\n\t\"type\" : \"activity\",\n\t\"start_activity\" : true,\n\t\"end_activity\" : true,\n\t\"role_id\": 0,\n\t\"roles\" : [\"admin\",\"users\"]\n}"
 						},
 						"url": {
 							"raw": "http://{{host}}/api/process/6/activity",
@@ -518,10 +557,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Final\",\n\t\"end_activity\": true,\n\t\"start_activity\": false\n}"
+							"raw": "{\n\t\"name\": \"Final\",\n\t\"end_activity\": true,\n\t\"start_activity\": false,\n\t\"roles\" : [\"admin\"]\n}"
 						},
 						"url": {
-							"raw": "http://{{host}}/api/process/6/activity/4",
+							"raw": "http://{{host}}/api/process/6/activity/9",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -531,7 +570,7 @@
 								"process",
 								"6",
 								"activity",
-								"4"
+								"9"
 							]
 						}
 					},
@@ -578,6 +617,15 @@
 							{
 								"key": "Accept",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -602,7 +650,6 @@
 		},
 		{
 			"name": "Transition",
-			"description": "Transiciones entre actividades",
 			"item": [
 				{
 					"name": "TransitionTo",
@@ -772,11 +819,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Transiciones entre actividades"
 		},
 		{
 			"name": "Variables",
-			"description": "Grupos de servicios relacionados con variables",
 			"item": [
 				{
 					"name": "Listar Variables Proceso",
@@ -929,11 +976,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Grupos de servicios relacionados con variables"
 		},
 		{
 			"name": "Compiler",
-			"description": "Servicios de compilación",
 			"item": [
 				{
 					"name": "Compiler",
@@ -972,11 +1019,11 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "Servicios de compilación"
 		},
 		{
 			"name": "Actions",
-			"description": null,
 			"item": [
 				{
 					"name": "New Action",
@@ -1003,20 +1050,19 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"type\" : \"ON_ENTRY\",\n\t\"command\" : \"111\",\n\t\"config\" : \"111\"\n}"
+							"raw": "{\n\t\"type\" : \"ON_ENTRY\",\n\t\"command\" : \"111\",\n\t\"action_type\" : \"rest\",\n\t\"config\": {\n\t\t\"properties\" : \n\t\t\t[  {\"key1\" : \"value\"},\n\t\t\t   {\"key2\" : \"value\"} \n\t\t\t],\n\t\t\"input\"  : \"@@variable1\",\n\t\t\"ouput\"  : \"@@variable2\",\n\t\t\"exception\" : \"@@exception\"\n\t}\n}"
 						},
 						"url": {
-							"raw": "http://{{host}}/api/actions/activity/3/1",
+							"raw": "http://{{host}}/api/activity/9/action",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
-								"actions",
 								"activity",
-								"3",
-								"1"
+								"9",
+								"action"
 							]
 						}
 					},
@@ -1139,7 +1185,6 @@
 		},
 		{
 			"name": "Stages",
-			"description": "Agregar statges",
 			"item": [
 				{
 					"name": "New Stage",
@@ -1166,10 +1211,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"s2\",\n\t\"descripcion\" : \"Etapa 3\",\n\t\"type\" : \"FORM\"\n}"
+							"raw": "{\n\t\"name\": \"s3\",\n\t\"descripcion\" : \"Etapa 3\",\n\t\"type\" : \"FORM\"\n}"
 						},
 						"url": {
-							"raw": "http://{{host}}/api/activity/1/stage",
+							"raw": "http://{{host}}/api/activity/11/stage",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1177,7 +1222,7 @@
 							"path": [
 								"api",
 								"activity",
-								"1",
+								"11",
 								"stage"
 							]
 						}
@@ -1188,10 +1233,27 @@
 					"name": "Listar Stages de una actividad",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"body": {},
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "http://{{host}}/api/activity/1/stage",
+							"raw": "http://{{host}}/api/activity/3/stage",
 							"protocol": "http",
 							"host": [
 								"{{host}}"
@@ -1199,14 +1261,429 @@
 							"path": [
 								"api",
 								"activity",
-								"1",
+								"3",
 								"stage"
 							]
 						}
 					},
 					"response": []
 				}
+			],
+			"description": "Agregar statges"
+		},
+		{
+			"name": "Forms",
+			"item": [
+				{
+					"name": "New Form",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\" : \"form3\",\n\t\"description\": \"Formaulario 3\",\n\t\"fields\": [\n\t\t{ \n\t\t\t\"name\" : \"nombre\",\n\t\t\t\"type\" : \"text\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"string\",\n\t\t\t\"description\" :\"\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"apellido\",\n\t\t\t\"type\" : \"text\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"string\",\n\t\t\t\"description\" :\"\"\n\t\t},\n\t\t{\n\t\t\t\"name\" : \"archivo\",\n\t\t\t\"type\" : \"file\",\n\t\t\t\"value\" : \"\",\n\t\t\t\"validation\" : \"pdf\",\n\t\t\t\"description\" :\"\"\n\t\t}\n\t\t\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/stage/7/form",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"stage",
+								"7",
+								"form"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Form",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/stage/2/form",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"stage",
+								"2",
+								"form"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Form",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/stage/1/form/3",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"stage",
+								"1",
+								"form",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mover Campo en formulario",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/form/4/field/11/movedown",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"form",
+								"4",
+								"field",
+								"11",
+								"movedown"
+							]
+						}
+					},
+					"response": []
+				}
 			]
+		},
+		{
+			"name": "Tray",
+			"item": [
+				{
+					"name": "Input Tray",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/tray/input",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"tray",
+								"input"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Asigned Work",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/tray/assigned",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"tray",
+								"assigned"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Procesos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/tray/process",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"tray",
+								"process"
+							]
+						},
+						"description": "Lista los procesos dispoibles en la bandeja"
+					},
+					"response": []
+				},
+				{
+					"name": "Tasks List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/tray/tasks",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"tray",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Control",
+			"item": [
+				{
+					"name": "Actual Form",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://{{host}}/api/control/process/instance/89/form",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"control",
+								"process",
+								"instance",
+								"89",
+								"form"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Next",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"fields\" : [\n\t\t{\"name\" : \"nombre\",\"value\" : \"Marcelo\"},\n\t\t{\"name\" : \"apellido\",\"value\" : \"Silva\"},\n\t\t{\"name\" : \"archivo\",\"value\" : \"readme.txt\"}\n\t\t]\n}"
+						},
+						"url": {
+							"raw": "http://{{host}}/api/control/process/instance/116/form/next",
+							"protocol": "http",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"control",
+								"process",
+								"instance",
+								"116",
+								"form",
+								"next"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Operaciones de control"
 		},
 		{
 			"name": "Auth SignUp",

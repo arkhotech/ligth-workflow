@@ -1,0 +1,4 @@
+FROM arkhotech/php-fpm:7.2
+
+COPY engine /app
+

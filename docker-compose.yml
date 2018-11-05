@@ -1,7 +1,7 @@
 version: "3.0"
 
 services:
-  frontend:
+  fe-proxy:
     image: "nginx"
     ports:
      - 80:80
@@ -21,11 +21,11 @@ services:
     networks:
      - backend
     environment:
-     - SLAPD_PASSWORD=aloja123
-     - SLAPD_DOMAIN=arkhotech.com
-     - SLAPD_ORGANIZATION=Arkhotech SpA
-  
-  redis:
+     - LDAP_ORGANISATION=Arkhotech SpA
+     - LDAP_DOMAIN=arkhotech.com
+     - LDAP_ADMIN_PASSWORD=aloja123
+     
+  lwredis:
     image: "redis"
     networks:
       - backend
@@ -54,7 +54,7 @@ services:
     networks:
       - backend
 
-  database:
+  lwdatabase:
     image: "mysql:5.7.22"
     networks:
       - backend

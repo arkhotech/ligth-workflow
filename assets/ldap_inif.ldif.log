@@ -1,0 +1,13 @@
+version: 1
+
+#!RESULT ERROR
+#!CONNECTION ldap://localhost:389
+#!DATE 2018-09-10T11:51:30.096
+#!ERROR 
+dn: dc=arkhotech,dc=com
+objectClass: organization
+objectClass: dcObject
+objectClass: top
+dc: arkhotech
+o: Arkhotech SpA
+

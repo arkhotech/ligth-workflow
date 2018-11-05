@@ -1,5 +1,10 @@
 version: 1
 
+dn: ou=People,dc=arkhotech,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: People
+
 dn: ou=Group,dc=arkhotech,dc=com
 objectClass: organizationalUnit
 objectClass: top

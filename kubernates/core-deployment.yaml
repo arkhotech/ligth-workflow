@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.1.0 (36652f6)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: core
+  name: core
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: core
+    spec:
+      containers:
+      - image: arkhotech/php-fpm:7.2
+        name: core
+        resources: {}
+        volumeMounts:
+        - mountPath: /app
+          name: core-claim0
+      restartPolicy: Always
+      volumes:
+      - name: core-claim0
+        persistentVolumeClaim:
+          claimName: core-claim0
+status: {}
