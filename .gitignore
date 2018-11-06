@@ -1,3 +1,5 @@
 /engine/nbproject/private/
 *.icloud
 .DS_Store
+var_file
+env_file

@@ -1,0 +1,26 @@
+FROM nginx
+
+
+RUN apt-get update && apt-get -y upgrade ; \
+    apt-get install -y python-pip ;\
+    pip install awscli --upgrade --user
+
+RUN apt-get update && apt-get install -y jq;
+
+COPY ./engine app
+
+RUN chown -R www-data:www-data /app
+
+COPY ./config/env.config /app/.env
+
+ENV ENV_NAME=dev
+
+COPY ./scripts/get-params.sh /get-params.sh
+
+COPY assets/site.conf /etc/nginx/conf.d/site.conf
+
+ENV PATH=~/.local/bin:$PATH
+
+COPY ./scripts/start-nginx.sh /start.sh
+
+CMD /start.sh 

@@ -1,5 +1,33 @@
 FROM arkhotech/php-fpm:7.2
 
-RUN ls -la
+RUN apt-get install -y jq 
+
+RUN apt-get update && apt-get -y upgrade ; \
+    apt-get install -y python-pip ;\
+    pip install awscli --upgrade --user    
+
+RUN apt-get install -y --allow-unauthenticated php7.2-ldap
+
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php ; \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
 COPY ./engine /app 
+
+RUN chown -R www-data:www-data /app
+
+COPY ./config/env.config /app/.env
+
+ENV ENV_NAME=dev
+
+ENV SSM_SCRIPT_PARAMS="/app/.env db_host"
+
+COPY ./scripts/*.sh /
+
+ENV PATH=~/.local/bin:$PATH
+
+WORKDIR /app
+
+RUN composer install
+
+CMD /start.sh
+
