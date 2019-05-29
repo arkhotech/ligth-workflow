@@ -1,0 +1,21 @@
+version: "0"
+
+
+workflows:
+  - name: "test"
+    description: "test"
+    activities:
+      A1: 
+        type: "init"
+        transitions:
+          - name: t1
+            next: b1
+            condition: "params == 1"
+            default: true
+          - name: t2
+            next: b2
+            condition: "params == 2"
+      B1:
+        type: "end"
+      B2: 
+        type: "end"
