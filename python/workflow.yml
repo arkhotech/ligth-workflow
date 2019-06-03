@@ -1,6 +1,5 @@
 version: "0"
 
-
 workflows:
   - name: "test"
     description: "test"
@@ -9,13 +8,27 @@ workflows:
         type: "init"
         transitions:
           - name: t1
-            next: b1
+            next: B1
             condition: "params == 1"
             default: true
           - name: t2
-            next: b2
+            next: B2
             condition: "params == 2"
       B1:
         type: "end"
+        transitions:
+          - name: tb1
+            next: F1
+            condition: "params == 1"
+            default: true
+          - name: tb2
+            next: F2
+            condition: "params == 5"
       B2: 
+        type: "activity"
+        action:
+          - lamdbda: call(asdfasdfadsfa)
+      F1:
+        type: "end"
+      F2:
         type: "end"
