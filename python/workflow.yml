@@ -1,11 +1,34 @@
 version: "0"
 
 workflows:
-  - name: "test"
+  - name: "test2"
     description: "test"
     activities:
       A1: 
         type: "init"
+        execution_type: synch   #async|sync
+        actions:
+          - type: "CallLambda"
+            input:  # dela entrada toma los valores a y b
+              - a: 1
+              - b: 2
+            output: "porcentaje"   # estas variables se van acumulando en cada salida
+          - type: "Webhook"
+            body: 
+              {
+                "a" : 1
+              }
+            headers:
+              - content-type: "text/plain"
+            ouput: "data"
+          - type: "Evaluate"
+            input:  #parametros de entrada 
+              - params: "$procentaje" #referencia a un valor de la entrada
+            operation: params * 5 +45
+            output:  "resulr"  #Nombre de la salida
+        callback:
+          with_response: #"respuesta" #busca este ekemento dentro de la respuesta
+            validate:  "fields a, b, c"  #complejo
         transitions:
           - name: t1
             next: B1

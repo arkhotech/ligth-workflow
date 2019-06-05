@@ -23,7 +23,7 @@ with open("workflow.yml",'r') as stream:
 			w.save()
 			print('Ejecutando')
 			#print(w.serialize())
-			#w.execute({"params": 1})
+			w.execute({"params": 1})
 			print(w.serialize())
 	except yaml.YAMLError as exc:
 		print(exc)

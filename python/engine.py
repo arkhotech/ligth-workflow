@@ -4,6 +4,8 @@ import json
 import ast
 import logging
 
+from actions import *
+
 
 sys.path.append("./lib/python3.7/site-packages")
 
@@ -54,7 +56,7 @@ class Workflow(BaseElement):
 	#Atributos estaticos
 	struct = None
 	#Attributos serializable
-	fields = ['id','name','description','cursor']  #xw
+	fields = ['id','name','description','cursor', "_globa_vars"]  #xw
 
 	_collection_name = 'workflows'
 
@@ -74,35 +76,27 @@ class Workflow(BaseElement):
 		self._activities = {}
 		#inicializar las referfencias a collecions
 		self._collection = self._mydb[self._collection_name] 
-		self._exec_coll = self._mydb['executions']
+		self._executions = self._mydb['executions']
 		self._global_vars = {}
 		self._cursor = None
 		self._id = spec['_id'] if '_id' in spec else None
-		self.instance_data = {}
-		#
-
-
-		self._exec_coll = self._mydb['executions']
+		self.instance_data = None
+		#cargar colleccion de ejeciciones
+		self._executions = self._mydb['executions']
 		if self._id != None:
 			self.load()
 		else:
-			self.instance_data = { "workflow_name": self.name, 
-				"input": params, 
-				"state": "running" , 
-				"current_activity" : "",
-				"stages" : {} }
-			
 			self.description = spec['description']
-			
-			
-			self.__loadFromJSON(spec)
+			self.__loadActivities(spec)
 
-	def __loadFromJSON(self, spec):
-		#print(self._activities)
+
+	def __loadActivities(self,spec):
 		act = spec['activities']
-		for k in act.keys():
-			act[k].update({"name": k})
-			self._activities.update({ k : Activity(workflow=self,spec=act[k])})
+		for k, act_spec in spec['activities'].items():
+			#Agreagra el nombre en la especificacion
+			act_spec.update({"name" : k })
+			activity = Activity(workflow=self,spec=act_spec)
+			self.addActivity(activity)
 
 	def addActivity(self,activity):
 		self._activities.update( { activity.name : activity } )
@@ -151,7 +145,7 @@ class Workflow(BaseElement):
 
 			#Inicializar el array de activities
 			for key in result['activities'].keys():
-				print('---> cargando actividad: ' + key)
+				#print('---> cargando actividad: ' + key)
 				#print(result['activities'][key])
 				self._activities.update({ key: Activity(self, spec =result['activities'][key])})
 		else:
@@ -177,27 +171,30 @@ class Workflow(BaseElement):
 		except DuplicateKeyError:
 			print('Duplicate record Name ' + self.name)
 
-
-	def __updateActotyStates(self,stages):
-		print('update -->' ,stages)
-		for stage in stages:
-			print('Item: ',stage)
-			activity = self._activities[stage['activity']]
-			activity.state = stage['status']
-			activity.output = stage['output']
-
 	
+	def __createInstanceStruct(self):
+		self.instance_data = { "workflow_name": self.name,
+				"state": "running",
+				"current_activity" : self._cursor,
+				"global_variables" : self._global_vars,
+				"stages" : {} }
 
 	def __getInitActivity(self):
-		for activity in self._activities:			
-			current = self._activities[activity]
-			if current.type == 'init':
-				print('Actividad de inicio: ' + activity )
-				self.instance_data['current_activity'] = nextActivity.name
-				return current
+		try:
+			for key, activity in self._activities.items():			
+				if activity.type == 'init':
+					print('Actividad de inicio: ' + key )
+					self.instance_data['current_activity'] = activity.name
+					return activity
+		except Exception as e:
+			print('Actividades: ', self._activities)
+			print('Instance Data: ',self.instance_data)
+			raise e
+	
 
 	"""
-	Esta accion debería ejecutarse paso a paso.
+	Este metodo inicia un workflow desde cero. Si el workflow es sincrono, entonces
+	esta debería iniciar y terminar acá
 
 	"""
 	def execute(self,params = None):
@@ -206,32 +203,24 @@ class Workflow(BaseElement):
 		"""
 		Ejecucion de algo acá
 		"""
-		
-		#crear registro
-		result = self._exec_coll.insert_one(self.instance_data)  #Persistor el workflow
-		record_id = result.inserted_id
-
 		stages = []
 		nextActivity = None
-		if self._cursor == None:
-			print('BEGIN WORKFLOW ############################')
-			nextActivity = self.getInitActivity()
-		else:
-			print('CONTINUE WORKFLOW ',self._cursor, ' ############################')
-			nextActivity = self._activities[self._cursor]
 
+		print('BEGIN WORKFLOW ############################')
+		self.__createInstanceStruct()
+		nextActivity = self.__getInitActivity()
+		print('INICIO:',nextActivity.name)
 		try:
-			#print('guardando el ID')
-			#self._exec_coll.insert_one({ "workflow_name": self.name, "state": "running" })
 			output = nextActivity.execute(params)
-			#registro
+			print('OUTPUT:',output)
+			self.__persistWorkflowData(params)
 
 			stages.append(self.__createRecord(nextActivity.name,output))
 
-			#print(output)
 			while output['state'] in ['COMPLETED','FINISHED']:
 				#buscar las siguientes transiciones
 				next_activity = output['next_activity']
+				print('NEXT ACTIVITY: ',next_activity)
 				if next_activity != None:
 					current = self._activities[next_activity]
 					self.instance_data['current_activity'] = next_activity
@@ -242,12 +231,44 @@ class Workflow(BaseElement):
 
 		except Exception as e:
 		    print(str(e))
+		    raise e
 
+		#print('excute: ',self.instance_data)
 		self.instance_data['stages'] = stages
-		print(self.instance_data)
-		self._exec_coll.update({"_id": ObjectId(record_id)},self.instance_data)
+		#print('excute2: ',self.instance_data)
+		self._state = "FINISHED"
+		self.__persistWorkflowData()
 		print('END WORKFLOW ############################')
-		return record_id
+		return self.instance_data['_id']
+
+
+	def __continueFlow(self,transition):
+		#print(transition.next)
+		if transition != None:
+			#Se supone que debería existir
+			if transition.next not in self._activities:
+				raise Exception(trs.next + ' No existe como actividad registrada')
+			self._cursor = transition.next
+			result = self._activities[self._cursor].execute(self._global_vars)
+			self.instance_data['stages'].append(self.__createRecord(self._cursor,result))
+			#Falta registrar el resultado
+			self.instance_data['current_activity'] = self._cursor
+			self.__persistWorkflowData()
+			#print('---> ', result)
+			while result['state'] in ['COMPLETED','FINISHED']:
+				next_activity = result['next_activity']
+				if next_activity != None:
+					current = self._activities[next_activity]
+					self.instance_data['current_activity'] = next_activity
+					result  = current.execute(params)
+					self.instance_data['current_activity'].append(self.__createRecord(next_activity,result))					
+					self.__persistWorkflowData()
+				else:
+					print('RESULT: ',result['state'])
+					break
+			print('Fin del loop')
+		else:
+			print("WORKFLOW FINALIZADO")
 
 	def callback(self,execution,response):
 		print('<-----  Workflow Callback: ', self.name ,' ------->')
@@ -256,26 +277,17 @@ class Workflow(BaseElement):
 			raise Exception('Se ha enviado un dato nulo')
 		
 
-		self.__updateActotyStates(execution['stages'])
+		self.__loadExecutionData(execution["_id"])
 
 		current_activity_name = execution['current_activity']
 		print('stage -->',current_activity_name)
 		current = self._activities[current_activity_name]
 		if current == None:
 			raise Exception('No se encuentra la actividad dentro de la lista')
-
-		trs = current.callback(response)
-		if trs != None:
-			#Se supone que debería existir
-			if trs.next not in self._activities:
-				raise Exception(trs.next + ' No existe como actividad registrada')
-			self._cursor = trs.next
-			self.execute(self._global_vars)
+		trs = current.callback(response)  #Continuar el proceso pendiente
+		self.__continueFlow(trs)
 		
-		
-		# for item in execution['stages'].items()
-		# 	print(item)
-		
+		self.__persistWorkflowData()
 	
 	def __createRecord(self,act_name,output):
 		return {
@@ -284,22 +296,43 @@ class Workflow(BaseElement):
 				"output"   : output 
 		}
 
-	def update_states(self,execution):
-		"""
-		{ "_id" : ObjectId("5cf195fbc7a52459dbcd6f98"), 
-		"workflow_name" : "test",
-		 "input" : { "params" : 1 }, 
-		 "state" : "running", 
-		 "current_activity" : "A1", 
-		 "stages" : [ { "activity" : "A1", "status" : "WAITING", "output" : { "state" : "WAITING", "next_activity" : null, "output" : { "porcentaje" : 10 } } } ] }
-		"""
-		self._cursor = execution['current_activity']
-		for stage in execution['stages']:
-			print('Updating  ----> ', stage)
-			activity = self._activities[stage['activity']]
-			activity._state = stage['status']
+	def __persistWorkflowData(self,input_params=None):
 
+		if self.instance_data == None:
+			self.instance_data = { "workflow_name": self.name,"state": "running",
+				"current_activity" : self._cursor,
+				"global_variables" : self._global_vars,
+				"stages" : {} }
 
+		if input_params != None:
+			self.instance_data.update({ "input": input_params }) 
+		#Persistir el estado de ejecución. Si tiene ID se actualiza, si no
+		#print('__persistWorkflowData:',self.instance_data)
+		if "_id" not in self.instance_data:
+			print('Creando nuevo registro de ejecucion')
+			result = self._executions.insert_one(self.instance_data)  #Persistor el workflow
+			self.instance_data.update({ "_id" : ObjectId(result.inserted_id)})
+		else:
+			print('actualizando registro de ejecucion')
+			self._executions.update({"_id" : self.instance_data["_id"]},self.instance_data)
+		#print('out: __persistWorkflowData:',self.instance_data)
+
+	def __loadExecutionData(self,_id ):
+		print('LOAD:  ExecucionData')
+		try:
+			self.instance_data = self._executions.find_one({"_id": ObjectId(_id)})
+			if self.instance_data == None:
+				raise Exception('_Id ' + _id + " doesn't exists on execution collection")
+			self._cursor = self.instance_data['current_activity']
+			for stage in self.instance_data['stages']:
+				print('actualizando staage: ', stage['activity'])
+				activity = self._activities[stage['activity']]
+				activity.output = stage['output']
+				activity.state = stage['status']
+				#activity.input = stage['input'] 
+		except Exception as e:
+			print('Instance dta: ', self.instance_data)
+			raise e
 
 
 class Transition(BaseElement):
@@ -367,7 +400,18 @@ class Activity(BaseElement):
 
 	_states = [ 'RUNNING', 'IDLE', 'STOPPED', 'FINISHED','WAITING', 'NO_EXECUTED','COMPLETED']
 
-	#_transitions = {}
+	@property
+	def execution_type(self):
+		return self._execution_type
+	
+
+	@execution_type.setter
+	def execution_type(self,execution_type):
+		if execution_type not in ['sync','async']:
+			raise Exception('Execution type must be sync or async')
+		self._execution_type = execution_type
+
+
 
 	@property
 	def output(self):
@@ -413,15 +457,18 @@ class Activity(BaseElement):
 		self._type = spec['type']
 		self._transitions = {}
 		self._state = 'NO_EXECUTED'
+		self._execution_type  = 'sync' if 'execution_type' not in spec else spec['execution_type']
+		self._actions = spec['actions'] if 'actions' in spec else {}
 
 		if self._type not in ["init","end","activity", None]:
 			raise Exception('You must especify activity tpye ["init", "end" or none ]')
 
 		if 'transitions' in spec:
-			trs = spec['transitions']
-			for k in trs:	
-				print('-->',trs[k])
-				self._transitions.update({ trs[k]['name'] : Transition(spec=trs[k]) })
+			transitions_list = spec['transitions'] #esto es una lista
+			print(transitions_list)
+			for transition in transitions_list:	
+				print('-->',transition)
+				self._transitions.update({ transition['name'] : Transition(spec=transition) })
 			
 		#print(self.name, self._transitions)
 		#print('<-----------------------')
@@ -443,13 +490,14 @@ class Activity(BaseElement):
 	def serialize(self):
 		trs = {}
 		print('serializando transicion')
-		#print(self._transitions)
 		for t in self._transitions:
 			trs.update( {  t : self._transitions[t].serialize() } )
-			#print(trs)
-		#print('--------------------------------------------------')
 
-		return { 'name': self.name, 'type': self._type , 'transitions' : trs }
+		return { 'name': self.name, 
+		'type': self._type, 
+		'execution_type': self._execution_type , 
+		'transitions' : trs,
+		'actions': self._actions }
 
 	"""
 	
@@ -508,14 +556,25 @@ class Activity(BaseElement):
 		return data
 
 	def call(self,_input):
+		af = ActionFactory()
+		result = {}
+		for action in self._actions:
+			print('Ejecutando action:',action)
+			_oper = action['operation'] if 'operation' in action else None
+			_in = action['input'] if 'input' in action else None
+			_out = action['output'] if 'output' in action else None
 
-		return { "state": "WAITING" , "output" : { "porcentaje" : 10 }}  #Esperando por una respuesta.  Si es asícrono
+			action = af.load(action['type'])
+			if action != None:
+				output = action.execute(inputs=_input,params = _in, operation = _oper )
+			result.update()
+
+		return { "state": "WAITING" if self._execution_type == 'async' else 'COMPLETED',
+		 		"output" : result }  #Esperando por una respuesta.  Si es asícrono
 	"""	                               
 	Si es finished, es por que es proceso sincrono, por lo tanto va al siguiente
 	Si es una actividad de fin, entonces va al estado finishe
     """
-
-
 
 
 	def execute(self,params, vars = None ):
@@ -529,9 +588,10 @@ class Activity(BaseElement):
 			#opciones:  Sigue una nueva transición, o podría no tener niguna
 			self.__registerVariables(params)
 			transition = self.__evaluateTransition(params)
+
 			self._state = 'COMPLETED' if transition != None else 'FINISHED'
 			return { "state" :  self._state, 
-					"next_activity" : transition.next , 
+					"next_activity" : transition.next if transition != None else None , 
 					"output": output['output'] }
 		
 		if output['state'] == 'WAITING':  #Esperando por una respuesta
@@ -551,13 +611,16 @@ class Activity(BaseElement):
 			nextActivity = self.__evaluateTransition(response)
 			self._output = { "estado" : "terminado"}
 			self._state = 'COMPLETED'
-			return nextActivity			
+			return nextActivity	
+
 
 	def __registerVariables(self,variables):
-		if not isinstance(variables,'dict'):
-			raise Exception('las variabels deben ser de tipo dict')
-		for key,value in variables.item():
-			self._workflow.global_vars[key] = value
+		print('registrando variables')
+		if not isinstance(variables,dict):
+		 	raise Exception('las variabels deben ser de tipo dict')
+		for var in variables:
+			print(var)
+			#self._workflow.global_vars[key] = value
 	
 
 
