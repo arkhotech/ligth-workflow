@@ -1,0 +1,71 @@
+version: "0"
+
+workflows:
+  - name: "async-test"
+    description: "prueba de acciones en actividad"
+    activities:
+      A1: 
+        type: "init"
+        execution_type: asynch   #async|sync
+        actions:
+          - type: "Evaluate"
+            input:   #Refernecia a los parametros de entreda
+              select:   #Seleccionar desde la entrada, los valores de a contunuacion
+                porc: "porcentaje" #sooo tomar este parametro desde la entrada y asignarselo a params
+                valor: "monto"
+            operation: (porc / 100) * valor
+            output:  "result"  #Nombre de la salida
+        callback:
+          actions:
+            - type: "Evaluate"
+              input: 
+                select:
+                  monto: "result"
+                  impuestos: "iva"
+              operation: "monto * impuestos"
+              output: "total"
+        transitions:
+          - name: t1
+            next: B1
+            default: true
+          - name: t2
+            next: B1
+            default: false
+      B1:
+        execution_type: synch
+        actions: 
+          - type: "Evaluate"
+            input: 
+              select:
+                total: "total"
+            operation:  "total / 10000"
+            output: "resultado"
+        transitions:
+          - name: g1
+            next: G2
+            default: true
+      G2:
+        execution_type: asynch
+        actions: 
+          - type: "Evaluate"
+            input: 
+              select:
+                ponderacion: "resultado"
+            operation:  "ponderacion * 0.25"
+            output: "reultado"
+        callback:
+          actions:
+            - type: "Webhook"
+              input: 
+                select:
+                  payload: "payload"
+    case_error:
+      actions: 
+        - type: "Webhook"
+          config:
+            url: blablabalblaa
+          input: 
+            select:
+              output: "output"
+
+
