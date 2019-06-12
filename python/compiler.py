@@ -12,7 +12,7 @@ def represent_none(self, _):
 yaml.add_representer(type(None), represent_none)
 
 #abrir el YAML y pasarlo a JSON
-with open("workflow.yml",'r') as stream:
+with open("asynch-test.yaml",'r') as stream:
 	try:
 		inp = json.dumps(yaml.safe_load(stream))
 		spec = json.loads(inp)
@@ -20,10 +20,16 @@ with open("workflow.yml",'r') as stream:
 
 		for wf in workflows:
 			w = Workflow(spec=wf)
-			w.save()
+			#w.save()
 			print('Ejecutando')
 			#print(w.serialize())
-			w.execute({"params": 1})
-			print(w.serialize())
+			#w.execute({"params": 60, "porcentaje": 50})
+			result = w.execute({ "porcentaje": 25 , "monto":  100000 })
+			#result = w.callback( id_callback = '5d0022ffb668f859ee7b5dea',response={"result": 300000, "iva": 20 })
+			#result = w.callback( id_callback = result['callback_id'],response={"result": 300000, "iva": 20 })
+			#result = w.callback( id_callback = result['callback_id'],response={"payload": 30 })
+			print(result)
+	
+			#print(w.serialize())
 	except yaml.YAMLError as exc:
 		print(exc)
