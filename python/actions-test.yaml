@@ -1,0 +1,28 @@
+version: "0"
+
+workflows:
+  - name: "action-test"
+    description: "prueba de acciones en actividad"
+    activities:
+      A1: 
+        type: "init"
+        execution_type: synch   #async|sync
+        actions:
+          - type: "Evaluate"
+            input:   #Refernecia a los parametros de entreda
+              select:   #Seleccionar desde la entrada, los valores de a contunuacion
+                porc: "porcentaje" #sooo tomar este parametro desde la entrada y asignarselo a params
+                valor: "valor"
+            operation: (porc / 100) * valor
+            output:  "result"  #Nombre de la salida
+          - type: "Evaluate"
+            input:  "result"  #Esta asignacion, solo toma un valor directamente.
+            operation:  "result * 20"
+            output: "final"
+          - type: "Evaluate"
+            input:
+              select:
+                final:  final
+                result: result
+            operation: "final / result"
+            output: 'mensaje'
