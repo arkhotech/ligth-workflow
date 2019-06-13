@@ -4,7 +4,7 @@ import json
 import ast
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)   #,format='%(levelname)s:%(name)s:%(messages)s'
 
 from actions import *
 
@@ -173,7 +173,7 @@ class Workflow(BaseElement):
 				"global_variables" : self._global_vars,
 				"stages" : None }
 		stages = {}
-		logging.info(self._activities)
+		#logging.info(self._activities)
 		for key , activity in self._activities.items():
 			stages.update( { key : activity.serialize() } )
 		self.instance_data['stages'] = stages
@@ -182,7 +182,7 @@ class Workflow(BaseElement):
 		try:
 			for key, activity in self._activities.items():			
 				if activity.type == 'init':
-					print('Actividad de inicio: ' + key )
+					logging.debug('Actividad de inicio: ' + key )
 					self.instance_data['current_activity'] = activity.name
 					return activity.name
 		except Exception as e:
@@ -294,8 +294,7 @@ class Workflow(BaseElement):
 				#Actualizar el puntero. Esto se ejecuta minumo una vez
 				self._cursor = transition_name
 
-				self.__persistWorflowState(cursor = transition_name, state = "RUNNING")
-				return 
+				self.__persistWorflowState(cursor = transition_name, state = "RUNNING") 
 
 				params = prev_output
 				next_activity = transition_name
@@ -304,32 +303,37 @@ class Workflow(BaseElement):
 
 					activity = self._activities[next_activity]  # Obtener actividad
 					result = activity.execute(params)  # Ejecutar
-					activity.state = "COMPLETED"
 					logging.info('====> EXECUTION RESULT: ',result)
+					self.__updateStage(activity_name = activity.name, 
+						state=result['state'],
+						_input = result['input'],
+						_output = result['output'])
+
 					next_activity = result['next_activity']   #revisar la proxima actividad
 					params = result['output']   #obtener los proximos input
 					#Gutradar la ejecucion actual
-					self._cursor = next_activity
-					self._executed_stages.append(activity.serialize())
-					#El proximo resultado esta en result.  Guardar el resultado de la ejecución
-					self.__persistWorkflowData()
-
+					
 					if result['state'] not in ['COMPLETED','FINISHED'] or next_activity == None:   #While
 						break
 
+					self.__persistWorflowState( state = "RUNNING", cursor = next_activity)
+					self._cursor = next_activity
+
 				if result['state'] == 'WAITING':
-					self._state = "WAITING"
+					self.__persistWorflowState( state = "WAITING", cursor = activity.name) #Aun es la misma
+
 					return self. __registerCallback(activity)
 				else:
 				# fin o pausa del flujo
 					self._state = "FINISHED"
-				self.__persistWorkflowData()
+					self.__persistWorflowState( state = "COMPLETED", cursor = '')
+				
 
 				return result
 			except Exception as e:
 				#Agregar qye el workflow esta en error
 				self.state = "ERROR"
-				#self.__persistWorkflowData()
+				self.__persistWorflowState(self , state = "ERROR", cursor = self._cursor)
 				raise e			
 
 		else:
@@ -359,8 +363,9 @@ class Workflow(BaseElement):
 		#Ejecucion de la actividad
 		result = activity.callback(response)
 		#actualizando el estado
+		logging.debug(type(result))
 		self.__updateStage(activity_name = activity.name, 
-			_output = result['output'], 
+			_output = result['output'] , 
 			_input  = result['input'], 
 			state = 'COMPLETED')
 
@@ -371,7 +376,8 @@ class Workflow(BaseElement):
 			self.__persistWorkflowData()
 			result = self.__continueFlow(result['next_activity'],result['output'])
 		else:
-			self.state = "FINISHED"
+			logging.info('Finalizando Workflow -------------------> ')
+			self.__persistWorflowState(state = "FINISHED")
 
 		self.__persistWorkflowData()
 		 #Guardar el estado actual del Workflow en este piunto
@@ -410,10 +416,6 @@ class Workflow(BaseElement):
 			#print('Creando nuevo registro de ejecucion')
 			result = self._executions.insert_one(self.instance_data)  #Persistor el workflow
 			self.instance_data.update({ "_id" : ObjectId(result.inserted_id)})
-		else:
-			pass
-			#print('actualizando registro de ejecucion')
-			#self._executions.update_one({"_id" : self.instance_data["_id"]}, { "$set": {self.instance_data} })
 
 	"""
 	Este metodo solo carga la información que ya existe en la base de datos.  
@@ -495,6 +497,9 @@ class Transition(BaseElement):
 
 		try:
 			result = eval(self._condition,{'__builtins__': None}, _vars)
+			logging.debug('CONDITION: ' + self._condition )
+			logging.debug('RESULTADO: ' + str(result) )
+			logging.debug('         -----------> ' + self.next)
 			return result
 		except Exception as e:
 			logging.error('condition:', self._condition)
@@ -579,7 +584,7 @@ class Activity(BaseElement):
 			logging.error(self._type)
 			raise Exception('You must especify activity tpye ["init", "end" or none ]')
 
-		logging.debug('---> Cargando transiciones')
+		#logging.debug('---> Cargando transiciones')
 		self.__loadTransitions(spec)
 
 		workflow.addActivity(self)
@@ -587,14 +592,12 @@ class Activity(BaseElement):
 	def __loadTransitions(self,spec ):
 		if 'transitions' in spec:
 			transitions_list = spec['transitions'] #esto es una lista
-			print('Lista de transiciones',transitions_list)
-
+			
 			if isinstance(transitions_list,dict):
 				for name, transition in transitions_list.items():
 					self._transitions.update({ name : Transition(spec=transition) })
 			else:
 				for transition in transitions_list:	
-					print('-->',transition)
 					self._transitions.update({ transition['name'] : Transition(spec=transition) })
 
 	def __loadCallbackActions(self,spec):
@@ -666,14 +669,13 @@ class Activity(BaseElement):
 			raise Exception('Parametros nulos')
 
 		if len(self._transitions) == 0:
+			logging.debug('No hay transiciones de salida')
 			return None
-
-
 
 		for k in self._transitions.keys():
 			trs = self._transitions[k]
-			#print('Transition',k, 'evalute params',params)
 			if trs.evaluate(params):
+				logging.debug('SALIDA: ' + trs.next)
 				return trs
 
 		#si pasa a este punto es por que no se encontró ninguna 
@@ -735,14 +737,16 @@ class Activity(BaseElement):
 		if output['state']  == 'COMPLETED':
 			#Esto significa que la actividad se ejecutó completamente (Sync)
 			#opciones:  Sigue una nueva transición, o podría no tener niguna
-			self.__registerVariables(params)
+			logging.debug('Resultado ejecucion; '+ str(output))
+			#self.__registerVariables(params)
 			transition = self.__evaluateTransition(params)
-
+			logging.debug('validando Salida')
 			self._state = 'COMPLETED' if transition != None else 'FINISHED'
 			self.output = output['output']
 			return { "state" :  self._state, 
 					"next_activity" : transition.next if transition != None else None , 
-					"output": output['output'] }
+					"output": output['output'],
+					"input" : params }
 
 		self._output = output['output']
 
@@ -752,6 +756,7 @@ class Activity(BaseElement):
 					"next_activity" : None ,  
 					"output": output['output'],
 					"input": params }
+
 
 
 
@@ -769,19 +774,19 @@ class Activity(BaseElement):
 			self._output = result['output']
 			self._state = 'COMPLETED'
 
-			return self.__createExcutionReturn(transition.next)
+			return self.__createExcutionReturn(transition.next if transition is not None else None)
 		else:
 			logging.info(self.serialize())
 			raise Exception('Wrong state to call Activity. State: ' + self.state)
 
 
-	def __registerVariables(self,variables):
-		logging.info('registrando variables')
-		if not isinstance(variables,dict):
-		 	raise Exception('las variabels deben ser de tipo dict')
-		for var in variables:
-			logging.warn(var)
-			#self._workflow.global_vars[key] = value
+	# def __registerVariables(self,variables):
+	# 	logging.info('registrando variables')
+	# 	if not isinstance(variables,dict):
+	# 	 	raise Exception('las variabels deben ser de tipo dict')
+	# 	for var in variables:
+	# 		logging.warn(var)
+	# 		#self._workflow.global_vars[key] = value
 
 	def __createExcutionReturn(self,next_activity = None):
 		return { "state" :  self._state, 

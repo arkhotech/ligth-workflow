@@ -1,0 +1,69 @@
+#switch flow
+workflows:
+  - name: "async-test"
+    description: "prueba de acciones en actividad"
+    activities:
+      A1: 
+        type: "init"
+        execution_type: synch   #async|sync
+        actions:
+          - type: "Evaluate"
+            input:   #Refernecia a los parametros de entreda
+              select:   #Seleccionar desde la entrada, los valores de a contunuacion
+                input: "input"
+            operation: "500 * 2 " 
+            output:  "result"  #Nombre de la salida
+        transitions:
+          - name: t1
+            next: PATH_1
+            condition: "result < 1000"
+            default: true
+          - name: t2
+            next: PATH_2
+            condition: "result >= 1000"
+      PATH_1:
+        execution_type: synch
+        actions: 
+          - type: "Evaluate"
+            input: 
+              select:
+                input: "result"
+            operation:  "1000 if input == 0 else 5000"
+            output: "resultado"
+        transitions:
+          - name: g1
+            next: FINAL
+            default: true
+      PATH_2:
+        execution_type: synch
+        actions: 
+          - type: "Evaluate"
+            input: 
+              select:
+                input: "result"
+            operation:  "50 if input == 0 else 10000"
+            output: "resultado"
+        transitions:
+          - name: g1
+            next: FINAL
+            default: true
+      FINAL:
+        execution_type: synch
+        actions: 
+          - type: "Evaluate"
+            input: 
+              select:
+                ponderacion: "resultado"
+            operation:  "ponderacion * 0.25"
+            output: "reultado"
+
+
+#No implementado
+    case_error:
+      actions: 
+        - type: "Webhook"
+          config:
+            url: blablabalblaa
+          input: 
+            select:
+              output: "output"

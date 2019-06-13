@@ -29,8 +29,9 @@ class Webhook(Action):
 		print('init')
 		self._msg ='Ejecutando Webhook'
 
-	def execute(self,inputs = None, params = None, operation = None ):
+	def execute(self,inputs = None, params = None, operation = None, output_name = None ):
 		logging.info('Llamando a un hook')
+		return { "result" : ""}
 
 class Evaluate(Action):
 
@@ -40,6 +41,13 @@ class Evaluate(Action):
 	"""
 	
 	"""
+	def __enter__(self):
+		return self
+
+	def __exit__(self, type, value, tb):
+		pass
+
+
 	def select(self, select, _input):
 		result = {}
 		for key, value in select.items():
@@ -64,8 +72,10 @@ class Evaluate(Action):
 				variables = inputs
 
 			output_name = None if output_name == None else output_name
+			logging.debug('-----> Procesando var  :' + str(variables))
+			logging.debug('-----> Operation       :' + operation )
 			retval = eval(operation,{'__builtins__': None},variables)
-			logging.debug('=========> ACTION RESULT' +str(retval))
+			logging.debug('-----> Result          : ' +str(retval))
 			return {  output_name : retval } 
 		
 		except Exception as e:
