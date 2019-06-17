@@ -269,7 +269,8 @@ class Workflow(BaseElement):
 		#self.__persistWorflowState( state = 'WAITING_CALLBACK', cursor =  activity.name )
 		#actualizar actividad. Esto es provisorio, se determinara su utlizadad en el futuro
 		activity.state = 'WAITING' 
-		data = activity.serialize()
+		#data = activity.serialize()
+		data = {}
 		data.update({ "workflow_id" : self.instance_data['_id']})
 		result = db_callbacks.insert_one(data)
 		
@@ -705,15 +706,16 @@ class Activity(BaseElement):
 		actions = self._actions if input_actions == None else input_actions
 		
 		for action in actions:
-			#print('Ejecutando action con entrada:',input_vars)
+			
 			_oper = action['operation'] if 'operation' in action else None
 			_in = action['input'] if 'input' in action else None
 			#print('entrada',_in)
 			_out = action['output'] if 'output' in action else None
 
+
 			action = af.load(action['type'])
 			if action != None:
-				output = action.execute(inputs=input_vars,params = _in, operation = _oper, output_name = _out )
+				output = action.execute(inputs=input_vars,select = _in, operation = _oper, output = _out )
 				output_vars.update(output)  #la salida debe ser la entrada de la siguiente
 				input_vars.update(output)
 				
@@ -758,9 +760,6 @@ class Activity(BaseElement):
 					"input": params }
 
 
-
-
-
 	def callback(self, response):
 		logging.info('<---------   Callback ' + self.name + ' ' + self.state + '  ----------->')
 		logging.info('INPUT: ' + str(response))
@@ -779,14 +778,6 @@ class Activity(BaseElement):
 			logging.info(self.serialize())
 			raise Exception('Wrong state to call Activity. State: ' + self.state)
 
-
-	# def __registerVariables(self,variables):
-	# 	logging.info('registrando variables')
-	# 	if not isinstance(variables,dict):
-	# 	 	raise Exception('las variabels deben ser de tipo dict')
-	# 	for var in variables:
-	# 		logging.warn(var)
-	# 		#self._workflow.global_vars[key] = value
 
 	def __createExcutionReturn(self,next_activity = None):
 		return { "state" :  self._state, 

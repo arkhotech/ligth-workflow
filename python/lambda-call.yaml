@@ -1,0 +1,36 @@
+version: "0"
+
+workflows:
+  - name: "lambda-call"
+    description: "Llamado a Lambda"
+    activities:
+      CALL_LAMBDA: 
+        type: "init"
+        execution_type: synch   #async|sync
+        actions:
+          - type: "CallLambda"
+            input:   #Refernecia a los parametros de entreda
+              select:   #Seleccionar desde la entrada, los valores de a contunuacion
+                input: "input"   #
+            operation: laboratorio
+            output:  "result"  #Nombre de la salida
+              # select:
+              #   output: "body"  # lo que esta en body asignarlo en outout
+        transitions:
+          - name: t1
+            next: VALIDATE
+            default: true
+      VALIDATE:
+        execution_type: asynch
+        actions:
+          - type: "Evaluate"
+            input:
+              select:
+                input: "result"
+            operation: "print(result)"
+        callback:
+          actions:
+            - type: "Evaluate"
+              input: "result"
+              operation: "print('Procesando call')"
+              output: "resultado"
